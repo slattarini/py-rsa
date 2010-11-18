@@ -160,8 +160,8 @@ class IntegerMod(object):
     def _get_reciprocal(self):
         d, x, y = extended_gcd(self.modulo, self.residue)
         if d != 1:
-            raise ValueError("%d is not prime with %d" %
-                             (self.modulo, self.residue))
+            raise IMValueError("%d is not prime with %d" %
+                               (self.modulo, self.residue))
         # Now we have self.modulo * x + self.residue * y = 1, so
         # self.residue * y = 1 (mod self.modulo), so...
         return self.__class__(y)

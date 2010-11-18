@@ -251,6 +251,14 @@ def test_integermod_reciprocal(modulo, residue, reciprocal):
     cls = TL.integers_mod(modulo)
     assert cls(residue)._get_reciprocal().residue == reciprocal
 
+def test_integermod_invalid_reciprocal():
+    cls = TL.integers_mod(55)
+    py.test.raises(RSA.IMValueError, "cls(0)._get_reciprocal()")
+    py.test.raises(RSA.IMValueError, "cls(5)._get_reciprocal()")
+    py.test.raises(RSA.IMValueError, "cls(11)._get_reciprocal()")
+    py.test.raises(RSA.IMValueError, "cls(44)._get_reciprocal()")
+    py.test.raises(RSA.IMValueError, "cls(55)._get_reciprocal()")
+
 def test_prime_integermod_reciprocal(prime_modulo):
     cls = TL.integers_mod(prime_modulo)
     if prime_modulo == 2:
