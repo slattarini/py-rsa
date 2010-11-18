@@ -1,0 +1,15 @@
+RSA.py: simple "educational" implementation of the RSA encryption and
+digital sign algorithm.  No optimizations, no tight security.
+
+Requires python version 2.5 or later.
+
+Existing documentation is in the docstrings of RSA.py.
+
+There is no installation procedure.
+
+You can run the RSA.py testsuite through the script 'runtest.py'. It
+will require the 'py.test' module.
+
+The Makefile provide a 'check' target to run the testsuite, a 'dist'
+target to repackage the module in a tarball, plus an obvious 'clean'
+target.
