@@ -56,7 +56,6 @@ init_known_values = [
          residue=703780454821668921429157503L)
 ]
 
-# FIXME: more data!
 addition_data = [
     dict(modulo=2,   addend1=1,   addend2=1,   result=0),
     dict(modulo=3,   addend1=1,   addend2=2,   result=0),
@@ -152,8 +151,6 @@ def pytest_generate_tests(metafunc):
             d2["reciprocal"] = d2["modulo"] - d2["reciprocal"]
             for x in (d0, d1, d2):
                 metafunc.addcall(funcargs=x)
-    elif set(["modulo", "residue_without_reciprocal"]) == set(funcargs):
-        pass # TODO
     elif set(["whole", "modulo", "string"]) == set(funcargs):
         for d in stringify_data:
             metafunc.addcall(funcargs=d)
@@ -241,18 +238,12 @@ def test_integermod_subtraction(modulo, addend1, addend2, result):
     subtrahend = - addend2
     assert (cls(minuend) - cls(subtrahend)).residue == result
 
-def test_integermod_multiplication_1(modulo, factor1, factor2, result):
+def test_integermod_multiplication(modulo, factor1, factor2, result):
     cls = TL.integers_mod(modulo)
     assert (cls(factor1) * factor2).residue == result
     assert (factor2 * cls(factor1)).residue == result
-
-def test_integermod_multiplication_2(modulo, factor1, factor2, result):
-    cls = TL.integers_mod(modulo)
     assert (factor1 * cls(factor2)).residue == result
     assert (cls(factor2) * factor1).residue == result
-
-def test_integermod_multiplication_3(modulo, factor1, factor2, result):
-    cls = TL.integers_mod(modulo)
     assert (cls(factor1) * cls(factor2)).residue == result
     assert (cls(factor2) * cls(factor1)).residue == result
 
