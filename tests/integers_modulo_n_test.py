@@ -4,6 +4,7 @@
 
 """Tests for the RSA.py's implementation of integers (mod n)"""
 import py.test
+import tests.pyrsa_testlib as TL
 import RSA
 
 # obtained with GAP, but could also be looked upon a simple table
@@ -115,20 +116,6 @@ stringify_data = [
          string="152921409798503 (mod 825461974345357)"),
 ]
 
-class TestError(Exception):
-    pass
-
-def integers_mod(n, class_name=None):
-    import RSA
-    if not isinstance(n, (int, long)) or n <= 0:
-        raise TestError("Invalid parameter n: %r" % n)
-    if class_name is None:
-        class_name = "IntegerMod%u" % n
-    class klass(RSA.IntegerMod):
-        modulo = n
-    klass.__name__ = class_name
-    return klass
-
 # py.test special hook function to generate test input.
 def pytest_generate_tests(metafunc):
     funcargs = metafunc.funcargnames
@@ -218,63 +205,63 @@ def test_integermod_different_subclasses_not_equal():
             and not (instance_subclass_1 == instance_subclass_2))
 
 def test_integermod_equality(whole, modulo, residue):
-    cls = integers_mod(modulo)
+    cls = TL.integers_mod(modulo)
     assert (cls(whole) == cls(whole) and
             cls(whole) == cls(residue) and
             cls(residue) == cls(whole))
 
 def test_integermod_equality_negated(whole, modulo, residue):
-    cls = integers_mod(modulo)
+    cls = TL.integers_mod(modulo)
     if modulo != 1:
         assert (not (cls(whole+1) == cls(whole)) and
                 not (cls(whole) == cls(residue+1)) and
                 not (cls(whole+1) == cls(residue)))
 
 def test_integermod_inequality_negated(whole, modulo, residue):
-    cls = integers_mod(modulo)
+    cls = TL.integers_mod(modulo)
     assert (not (cls(whole) != cls(whole)) and
             not (cls(whole) != cls(residue)) and
             not (cls(residue) != cls(whole)))
 
 def test_integermod_inequality(whole, modulo, residue):
-    cls = integers_mod(modulo)
+    cls = TL.integers_mod(modulo)
     if modulo != 1:
         assert (cls(whole+1) != cls(whole) and
                 cls(whole) != cls(residue+1) and
                 cls(whole+1) != cls(residue))
 
 def test_integermod_addition(modulo, addend1, addend2, result):
-    cls = integers_mod(modulo)
+    cls = TL.integers_mod(modulo)
     assert (cls(addend1) + cls(addend2)).residue == result
     assert (cls(addend2) + cls(addend1)).residue == result
 
 def test_integermod_subtraction(modulo, addend1, addend2, result):
-    cls = integers_mod(modulo)
+    cls = TL.integers_mod(modulo)
     minuend = addend1
     subtrahend = - addend2
     assert (cls(minuend) - cls(subtrahend)).residue == result
 
 def test_integermod_multiplication_1(modulo, factor1, factor2, result):
-    cls = integers_mod(modulo)
+    cls = TL.integers_mod(modulo)
     assert (cls(factor1) * factor2).residue == result
     assert (factor2 * cls(factor1)).residue == result
 
 def test_integermod_multiplication_2(modulo, factor1, factor2, result):
-    cls = integers_mod(modulo)
+    cls = TL.integers_mod(modulo)
     assert (factor1 * cls(factor2)).residue == result
     assert (cls(factor2) * factor1).residue == result
 
 def test_integermod_multiplication_3(modulo, factor1, factor2, result):
-    cls = integers_mod(modulo)
+    cls = TL.integers_mod(modulo)
     assert (cls(factor1) * cls(factor2)).residue == result
     assert (cls(factor2) * cls(factor1)).residue == result
 
 def test_integermod_reciprocal(modulo, residue, reciprocal):
-    cls = integers_mod(modulo)
+    cls = TL.integers_mod(modulo)
     assert cls(residue)._get_reciprocal().residue == reciprocal
 
 def test_prime_integermod_reciprocal(prime_modulo):
-    cls = integers_mod(prime_modulo)
+    cls = TL.integers_mod(prime_modulo)
     if prime_modulo == 2:
         x = y = 1
     else:
