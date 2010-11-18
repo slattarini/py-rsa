@@ -33,11 +33,6 @@ composite_squarefree_big_modulo = [
     (3, 1), (5, 1), (7, 1), (13, 1), (19, 1), (23, 1), (269, 1),
 ]
 
-invalid_integermod_args = [
-    0, -1, -1L, -10, -10000000000000000000000000000000000, # bad value
-    1.0, 0.43E12, "2", [1], (2,),  object(), object, type, # bad type
-]
-
 misc_modulos = [2, 3, 4, 5, 20, 77, 100, 120, 335, 2047, 2**100, 3*1000]
 
 init_known_values = [
@@ -103,30 +98,6 @@ inversion_data = [
     dict(modulo=97, residue=-6,  reciprocal=16),
 ]
 
-modulo_genclassname_couples = [
-    (1, "IntegerMod1"),
-    (2, "IntegerMod2"),
-    (15, "IntegerMod15"),
-    (823, "IntegerMod823"),
-    (6275631, "IntegerMod6275631"),
-    (1L, "IntegerMod1"),
-    (23L, "IntegerMod23"),
-    (151346247247346257246245713, "IntegerMod151346247247346257246245713"),
-]
-
-modulo_inptclassname_couples = [
-    (1, "foo"),
-    (2, "bar"),
-    (23, "quux"),
-    (1L, "foo_long"),
-    (2L, "bar_long"),
-    (23L, "quux_long"),
-    (1000000000000000000000000000000, "IntMod10e30"),
-    ((4999 * 3203 * 2273 * 1801 * 457 * 2**12),
-     "Integers Modulo (4999 * 3203 * 2273 * 1801 * 457 * 2^12)"),
-    (3, "$%@#!"),
-]
-
 stringify_data = [
     dict(whole=0,   modulo=1,  string="0 (mod 1)" ),
     dict(whole=1,   modulo=1,  string="0 (mod 1)" ),
@@ -144,6 +115,20 @@ stringify_data = [
          string="152921409798503 (mod 825461974345357)"),
 ]
 
+class TestError(Exception):
+    pass
+
+def integers_mod(n, class_name=None):
+    import RSA
+    if not isinstance(n, (int, long)) or n <= 0:
+        raise TestError("Invalid parameter n: %r" % n)
+    if class_name is None:
+        class_name = "IntegerMod%u" % n
+    class klass(RSA.IntegerMod):
+        modulo = n
+    klass.__name__ = class_name
+    return klass
+
 # py.test special hook function to generate test input.
 def pytest_generate_tests(metafunc):
     funcargs = metafunc.funcargnames
@@ -152,15 +137,6 @@ def pytest_generate_tests(metafunc):
     elif set(["prime_modulo"]) == set(funcargs):
         for p in primes:
             metafunc.addcall(funcargs={'prime_modulo': p})
-    elif set(["invalid_integermod_arg"]) == set(funcargs):
-        for v in invalid_integermod_args:
-            metafunc.addcall(funcargs={'invalid_integermod_arg': v})
-    elif set(["modulo_genclassname_couple"]) == set(funcargs):
-        for v in modulo_genclassname_couples:
-            metafunc.addcall(funcargs={'modulo_genclassname_couple': v})
-    elif set(["modulo_inptclassname_couple"]) == set(funcargs):
-        for v in modulo_inptclassname_couples:
-            metafunc.addcall(funcargs={'modulo_inptclassname_couple': v})
     elif set(["whole", "modulo", "residue"]) == set(funcargs):
         for d in init_known_values:
             metafunc.addcall(funcargs=d)
@@ -199,37 +175,11 @@ def pytest_generate_tests(metafunc):
 
 ### TESTS
 
-def test_integermod_named_params_subclass():
+def test_integermod_named_params():
     # Use of IntegerMod with named parameters.
     class IntegerMod2(RSA.IntegerMod):
         modulo = 2
     assert IntegerMod2(whole=1) == IntegerMod2(1)
-
-def test_integermod_named_params_function():
-    # Use of IntegerMod with named parameters.
-    IntegerMod2 = RSA.integers_mod(2)
-    assert IntegerMod2(whole=1) == IntegerMod2(1)
-
-def test_invalid_integermod_arg(invalid_integermod_arg):
-    if isinstance(invalid_integermod_arg, (int, long)):
-        excpt = RSA.IMValueError
-    else:
-        excpt = RSA.IMTypeError
-    # integers_mod() must choke when passed an invalid argument
-    py.test.raises(excpt, RSA.integers_mod, *[invalid_integermod_arg])
-
-def test_integermod_generated_class_name(modulo_genclassname_couple):
-    (modulo, classname) = modulo_genclassname_couple
-    # test that the class returned by integers_mod() has a proper name
-    klass = RSA.integers_mod(modulo)
-    assert klass.__name__ == classname
-
-def test_integermod_with_given_class_name(modulo_inptclassname_couple):
-    (modulo, classname) = modulo_inptclassname_couple
-    # test that the class returned by integers_mod() honour the classname
-    # argument.
-    klass = RSA.integers_mod(modulo, class_name=classname)
-    assert klass.__name__ == classname
 
 def test_integermod_direct_instantiation_exception():
     # check that direct instantiation of IntegerMod fails properly
@@ -241,15 +191,8 @@ def test_integermod_subclass_no_modulo_instantiation_exception():
     class integermod_subclass(RSA.IntegerMod): pass
     py.test.raises(RSA.IMRuntimeError, "integermod_subclass(1)")
 
-# Test that 'whole % modulo == residue' (using function integers_mod)
-def test_make_int_modulo_int_with_function(whole, modulo, residue):
-    cls = RSA.integers_mod(modulo)
-    got = cls(whole).residue
-    assert residue == got, \
-           "%u = %u != %u (mod %u)" % (whole, got, residue, modulo)
-
 # Test that 'whole % modulo == residue' (subclassing IntegerMod)
-def test_make_int_modulo_int_with_subclass(whole, modulo, residue):
+def test_make_int_modulo_int(whole, modulo, residue):
     class integermod_subclass(RSA.IntegerMod):
         pass
     integermod_subclass.modulo = modulo
@@ -275,63 +218,63 @@ def test_integermod_different_subclasses_not_equal():
             and not (instance_subclass_1 == instance_subclass_2))
 
 def test_integermod_equality(whole, modulo, residue):
-    cls = RSA.integers_mod(modulo)
+    cls = integers_mod(modulo)
     assert (cls(whole) == cls(whole) and
             cls(whole) == cls(residue) and
             cls(residue) == cls(whole))
 
 def test_integermod_equality_negated(whole, modulo, residue):
-    cls = RSA.integers_mod(modulo)
+    cls = integers_mod(modulo)
     if modulo != 1:
         assert (not (cls(whole+1) == cls(whole)) and
                 not (cls(whole) == cls(residue+1)) and
                 not (cls(whole+1) == cls(residue)))
 
 def test_integermod_inequality_negated(whole, modulo, residue):
-    cls = RSA.integers_mod(modulo)
+    cls = integers_mod(modulo)
     assert (not (cls(whole) != cls(whole)) and
             not (cls(whole) != cls(residue)) and
             not (cls(residue) != cls(whole)))
 
 def test_integermod_inequality(whole, modulo, residue):
-    cls = RSA.integers_mod(modulo)
+    cls = integers_mod(modulo)
     if modulo != 1:
         assert (cls(whole+1) != cls(whole) and
                 cls(whole) != cls(residue+1) and
                 cls(whole+1) != cls(residue))
 
 def test_integermod_addition(modulo, addend1, addend2, result):
-    cls = RSA.integers_mod(modulo)
+    cls = integers_mod(modulo)
     assert (cls(addend1) + cls(addend2)).residue == result
     assert (cls(addend2) + cls(addend1)).residue == result
 
 def test_integermod_subtraction(modulo, addend1, addend2, result):
-    cls = RSA.integers_mod(modulo)
+    cls = integers_mod(modulo)
     minuend = addend1
     subtrahend = - addend2
     assert (cls(minuend) - cls(subtrahend)).residue == result
 
 def test_integermod_multiplication_1(modulo, factor1, factor2, result):
-    cls = RSA.integers_mod(modulo)
+    cls = integers_mod(modulo)
     assert (cls(factor1) * factor2).residue == result
     assert (factor2 * cls(factor1)).residue == result
 
 def test_integermod_multiplication_2(modulo, factor1, factor2, result):
-    cls = RSA.integers_mod(modulo)
+    cls = integers_mod(modulo)
     assert (factor1 * cls(factor2)).residue == result
     assert (cls(factor2) * factor1).residue == result
 
 def test_integermod_multiplication_3(modulo, factor1, factor2, result):
-    cls = RSA.integers_mod(modulo)
+    cls = integers_mod(modulo)
     assert (cls(factor1) * cls(factor2)).residue == result
     assert (cls(factor2) * cls(factor1)).residue == result
 
 def test_integermod_reciprocal(modulo, residue, reciprocal):
-    cls = RSA.integers_mod(modulo)
+    cls = integers_mod(modulo)
     assert cls(residue)._get_reciprocal().residue == reciprocal
 
 def test_prime_integermod_reciprocal(prime_modulo):
-    cls = RSA.integers_mod(prime_modulo)
+    cls = integers_mod(prime_modulo)
     if prime_modulo == 2:
         x = y = 1
     else:

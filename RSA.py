@@ -103,37 +103,14 @@ def gcd(a, b):
 
 class IntegerMod(object):
     """A class representing integers (modulo n), for an unspecified modulo.
-    Not meant to be used directly.
-
-    You are advised to use the class-factory subroutine 'integers_mod()',
-    which build a proper 'IntegerMod' subclass for you:
-       >>> IntegerMod7 = integers_mod(7)
-       >>> _1mod7 = IntegerMod7(1)
-       >>> _2mod7 = IntegerMod7(2)
-       >>> _3mod7 = IntegerMod7(3)
-       >>> print (_1mod7 + _2mod7 * _3mod7)
-       0 (mod 7)
-
-    It's also possible to specify a custom name for the returned class:
-       >>> IntegerMod5 = integers_mod(5, 'custom_name')
-       >>> print IntegerMod5.__name__
-       custom_name
-       >>> _1mod5 = IntegerMod5(1)
-       >>> _2mod5 = IntegerMod5(2)
-       >>> _3mod5 = IntegerMod5(3)
-       >>> print (_1mod5 + _2mod5 * _3mod5)
-       2 (mod 5)
-
-    You might also use 'IntegerMod' by subclassing it first, as in:
+    Not meant to be used directly; you should use it by subclassing:
        >>> class IntegerMod6(IntegerMod):
        ...    modulo = 6
-       >>> _1mod7 = IntegerMod7(1)
-       >>> _2mod7 = IntegerMod7(2)
-       >>> _3mod7 = IntegerMod7(3)
-       >>> print (_1mod6 + _2mod7 + _3mod6)
+       >>> _1mod6 = IntegerMod6(1)
+       >>> _2mod6 = IntegerMod6(2)
+       >>> _3mod6 = IntegerMod6(3)
+       >>> print (_1mod6 + _2mod6 + _3mod6)
        0 (mod 6)
-
-    but this use is discouraged.
     """
 
     """The modulo the integers are reduced with.  Must be overridden
@@ -215,58 +192,6 @@ class IntegerMod(object):
 
     def __pow__(self, other):
         raise NotImplementedError #TODO
-
-
-def integers_mod(n, class_name=None):
-    """Return a class representing integers (modulo n), for the specified
-    modulo n.
-
-    If n is not an instance of 'int' or 'long', raise a IMTypeError
-    exception; if n is <= 0, raise an IMValueError exception.
-
-    The optional argument 'class_name' is used to se the name of the
-    returned class; if it is not given or 'None', a proper name will
-    be provided automatically (e.g. "IntegerMod11" if n is 11, etc).
-
-    Some examples:
-        >>> # erroneous usage #1
-        >>> IntegerMod7 = integers_mod("foo")
-        Traceback (most recent call last):
-            ...
-        IMTypeError: parameter n is not an integer
-        >>> # erroneous usage #2
-        >>> IntegerMod7 = integers_mod(-7)
-        Traceback (most recent call last):
-            ...
-        IMValueError: parameter n is negative or zero
-        >>> # let's verify that 2 * 6 = 12 = 1 (mod 11)
-        >>> IntegerMod11 = integers_mod(11)
-        >>> _2mod11 = IntegerMod11(2)
-        >>> _6mod11 = IntegerMod11(6)
-        >>> print (_2mod11 * _6mod11)
-        1 (mod 11)
-        >>> # see that we can override the class name, without other
-        >>> # side-effects
-        >>> IntMod13 = integers_mod(13, class_name='IntegerModuloThirteen')
-        >>> print IntMod13.__name__
-        IntegerModuloThirteen
-        >>> _5mod13 = IntMod13(2)
-        >>> _6mod13 = IntMod13(6)
-        >>> print (_5mod13 * _6mod13)
-        >>> # one-line verification of Fermat's theorem with p=23, a=11
-        >>> print ((integers_mod(23)(11))**(23-1))
-        1 (mod 23)
-    """
-    if not isinstance(n, (int, long)):
-        raise IMTypeError("parameter n (%s) is not an integer" % repr(n))
-    if not n > 0:
-        raise IMValueError("parameter n (%s) is negative or zero" % repr(n))
-    if class_name is None:
-        class_name = "IntegerMod%u" % n
-    class klass(IntegerMod):
-        modulo = n
-    klass.__name__ = class_name
-    return klass
 
 #--------------------------------------------------------------------------
 
