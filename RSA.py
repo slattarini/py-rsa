@@ -196,11 +196,23 @@ class IntegerMod(object):
             base = self._get_reciprocal()
         else:
             base = self
-        result = self.__class__(1)
+            if self.residue == 0:
+                # FIXME: what about e.g. 0**0? not easy to detect in the general
+                # case, since we can't easily know the value of phi(modulo),
+                # and thus we can't know if exponent % phi(modulo) == 0.
+                # Just return 0 for the moment.
+                return self.__class__(0)
+        partial1 = partial2 = self.__class__(1)
         while exponent > 0:
-            exponent -= 1
-            result *= base
-        return result
+            if exponent % 2 == 1:
+                partial1 *= base
+                exponent -= 1
+            else:
+                exponent /= 2
+                partial2 = base = base * base
+                if exponent == 1:
+                    break
+        return partial1 * partial2
 
 #--------------------------------------------------------------------------
 

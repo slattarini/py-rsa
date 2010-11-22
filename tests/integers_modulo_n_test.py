@@ -101,26 +101,49 @@ inversion_data = [
 exponentiation_data = [
 
     dict(modulo=2,   base=0,  exponent=1,   result=0),
+    dict(modulo=2,   base=0,  exponent=4,   result=0),
     dict(modulo=2,   base=1,  exponent=0,   result=1),
     dict(modulo=2,   base=1,  exponent=1,   result=1),
+
     dict(modulo=3,   base=2,  exponent=0,   result=1),
     dict(modulo=3,   base=2,  exponent=1,   result=2),
     dict(modulo=3,   base=2,  exponent=2,   result=1),
-    dict(modulo=3,   base=2,  exponent=100, result=1),
+
+    dict(modulo=5,   base=2,  exponent=0,   result=1),
+    dict(modulo=5,   base=2,  exponent=1,   result=2),
+    dict(modulo=5,   base=2,  exponent=2,   result=4),
+    dict(modulo=5,   base=2,  exponent=3,   result=3),
+    dict(modulo=5,   base=2,  exponent=4,   result=1),
+    dict(modulo=5,   base=3,  exponent=0,   result=1),
+    dict(modulo=5,   base=3,  exponent=1,   result=3),
+    dict(modulo=5,   base=3,  exponent=2,   result=4),
+    dict(modulo=5,   base=3,  exponent=3,   result=2),
+    dict(modulo=5,   base=3,  exponent=4,   result=1),
+
     dict(modulo=10,  base=2,  exponent=2,   result=4),
     dict(modulo=10,  base=3,  exponent=3,   result=7),
     dict(modulo=100, base=5,  exponent=3,   result=25),
     dict(modulo=100, base=20, exponent=2,   result=0),
     dict(modulo=35,  base=6,  exponent=2,   result=1),
     dict(modulo=35,  base=6,  exponent=16,  result=1),
+    dict(modulo=3,   base=2,  exponent=100, result=1),
+    dict(modulo=5,   base=7,  exponent=44,  result=1),
 
     dict(modulo=797159,    base=3,  exponent=13,  result=5),
     dict(modulo=7**30-1,   base=7,  exponent=32,  result=49),
     dict(modulo=7**30+1,   base=7,  exponent=31,  result=7**30-6),
     dict(modulo=97**300-1, base=97, exponent=322, result=97**22),
 
-#   dict(modulo=5**200,  base=5,  exponent=4*(97**199), result=1)
-#   dict(modulo=97**100, base=97, exponent=96*(97**99), result=1)
+    # tests for QoI w.r.t. speed
+    dict(modulo=5**20,   base=7**10,  exponent=4*(5**19),    result=1),
+    dict(modulo=5**100,  base=3**100, exponent=4*(5**99),    result=1),
+    dict(modulo=47**60,  base=45*20,  exponent=46*(47**59),  result=1),
+    dict(modulo=97**200, base=53*120, exponent=96*(97**199), result=1),
+
+    # stress tests for QoI w.r.t. speed
+    dict(modulo=11**2001,  base=2, exponent=10*(11**2000), result=1),
+    dict(modulo=2047**365, base=1111*273, exponent=11*88*(2047**364),
+         result=1),
 
 ]
 
@@ -180,6 +203,12 @@ def pytest_generate_tests(metafunc):
     elif set (["modulo", "base", "exponent", "result"]) == set(funcargs):
         for d in exponentiation_data:
             metafunc.addcall(funcargs=d)
+            d1 = d.copy()
+            if d['exponent'] % 2 == 1:
+                if d['result'] != 0:
+                    d1['result'] = d['modulo'] - d['result']
+            d1['base'] = d['modulo'] - d['base']
+            metafunc.addcall(funcargs=d1)
     elif set(["whole", "modulo", "string"]) == set(funcargs):
         for d in stringify_data:
             metafunc.addcall(funcargs=d)
@@ -300,14 +329,6 @@ def test_prime_integermod_reciprocal(prime_modulo):
 def test_integermod_exponentiation(modulo, base, exponent, result):
     cls = TL.integers_mod(modulo)
     assert ((cls(base) ** exponent).residue == result)
-
-def test_integermod_exponentiation_invertsign(modulo, base, exponent, result):
-    cls = TL.integers_mod(modulo)
-    if exponent % 2 == 1:
-        result = (modulo - result)
-        if result == modulo:
-            result = 0
-    assert ((cls(modulo - base) ** exponent).residue == result)
 
 def test_fermat_little_theorem(prime_modulo):
     cls = TL.integers_mod(prime_modulo)
