@@ -190,8 +190,17 @@ class IntegerMod(object):
         # FIXME: better exception?
         raise IMValueError('cannot divide "%s" for "%s"' % (self, other))
 
-    def __pow__(self, other):
-        raise NotImplementedError #TODO
+    def __pow__(self, exponent):
+        if exponent < 0:
+            exponent *= -1
+            base = self._get_reciprocal()
+        else:
+            base = self
+        result = self.__class__(1)
+        while exponent > 0:
+            exponent -= 1
+            result *= base
+        return result
 
 #--------------------------------------------------------------------------
 

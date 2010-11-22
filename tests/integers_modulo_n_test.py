@@ -98,6 +98,32 @@ inversion_data = [
     dict(modulo=97, residue=-6,  reciprocal=16),
 ]
 
+exponentiation_data = [
+
+    dict(modulo=2,   base=0,  exponent=1,   result=0),
+    dict(modulo=2,   base=1,  exponent=0,   result=1),
+    dict(modulo=2,   base=1,  exponent=1,   result=1),
+    dict(modulo=3,   base=2,  exponent=0,   result=1),
+    dict(modulo=3,   base=2,  exponent=1,   result=2),
+    dict(modulo=3,   base=2,  exponent=2,   result=1),
+    dict(modulo=3,   base=2,  exponent=100, result=1),
+    dict(modulo=10,  base=2,  exponent=2,   result=4),
+    dict(modulo=10,  base=3,  exponent=3,   result=7),
+    dict(modulo=100, base=5,  exponent=3,   result=25),
+    dict(modulo=100, base=20, exponent=2,   result=0),
+    dict(modulo=35,  base=6,  exponent=2,   result=1),
+    dict(modulo=35,  base=6,  exponent=16,  result=1),
+
+    dict(modulo=797159,    base=3,  exponent=13,  result=5),
+    dict(modulo=7**30-1,   base=7,  exponent=32,  result=49),
+    dict(modulo=7**30+1,   base=7,  exponent=31,  result=7**30-6),
+    dict(modulo=97**300-1, base=97, exponent=322, result=97**22),
+
+#   dict(modulo=5**200,  base=5,  exponent=4*(97**199), result=1)
+#   dict(modulo=97**100, base=97, exponent=96*(97**99), result=1)
+
+]
+
 stringify_data = [
     dict(whole=0,   modulo=1,  string="0 (mod 1)" ),
     dict(whole=1,   modulo=1,  string="0 (mod 1)" ),
@@ -151,6 +177,9 @@ def pytest_generate_tests(metafunc):
             d2["reciprocal"] = d2["modulo"] - d2["reciprocal"]
             for x in (d0, d1, d2):
                 metafunc.addcall(funcargs=x)
+    elif set (["modulo", "base", "exponent", "result"]) == set(funcargs):
+        for d in exponentiation_data:
+            metafunc.addcall(funcargs=d)
     elif set(["whole", "modulo", "string"]) == set(funcargs):
         for d in stringify_data:
             metafunc.addcall(funcargs=d)
@@ -249,15 +278,15 @@ def test_integermod_multiplication(modulo, factor1, factor2, result):
 
 def test_integermod_reciprocal(modulo, residue, reciprocal):
     cls = TL.integers_mod(modulo)
-    assert cls(residue)._get_reciprocal().residue == reciprocal
+    assert (cls(residue)**(-1)).residue == reciprocal
 
 def test_integermod_invalid_reciprocal():
     cls = TL.integers_mod(55)
-    py.test.raises(RSA.IMValueError, "cls(0)._get_reciprocal()")
-    py.test.raises(RSA.IMValueError, "cls(5)._get_reciprocal()")
-    py.test.raises(RSA.IMValueError, "cls(11)._get_reciprocal()")
-    py.test.raises(RSA.IMValueError, "cls(44)._get_reciprocal()")
-    py.test.raises(RSA.IMValueError, "cls(55)._get_reciprocal()")
+    py.test.raises(RSA.IMValueError, "cls(0)**(-1)")
+    py.test.raises(RSA.IMValueError, "cls(5)**(-1)")
+    py.test.raises(RSA.IMValueError, "cls(11)**(-1)")
+    py.test.raises(RSA.IMValueError, "cls(44)**(-1)")
+    py.test.raises(RSA.IMValueError, "cls(55)**(-1)")
 
 def test_prime_integermod_reciprocal(prime_modulo):
     cls = TL.integers_mod(prime_modulo)
@@ -266,6 +295,24 @@ def test_prime_integermod_reciprocal(prime_modulo):
     else:
         x = (prime_modulo - 1) / 2
         y = prime_modulo - 2
-    assert cls(x)._get_reciprocal() == cls(y)
+    assert (cls(x)**(-1)) == cls(y)
+
+def test_integermod_exponentiation(modulo, base, exponent, result):
+    cls = TL.integers_mod(modulo)
+    assert ((cls(base) ** exponent).residue == result)
+
+def test_integermod_exponentiation_invertsign(modulo, base, exponent, result):
+    cls = TL.integers_mod(modulo)
+    if exponent % 2 == 1:
+        result = (modulo - result)
+        if result == modulo:
+            result = 0
+    assert ((cls(modulo - base) ** exponent).residue == result)
+
+def test_fermat_little_theorem(prime_modulo):
+    cls = TL.integers_mod(prime_modulo)
+    for d in (2, 3, 10):
+        x = max(1, prime_modulo/d)
+        assert cls(x)**(prime_modulo - 1) == cls(1)
 
 # vim: et sw=4 ts=4 ft=python
