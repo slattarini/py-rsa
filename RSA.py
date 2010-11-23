@@ -7,7 +7,7 @@
 ##  Metadata & Global Documentation  ##
 ## --------------------------------- ##
 
-"""An "education" implementation of the RSA encryption/digital sign
+"""An "educational" implementation of the RSA encryption/digital sign
 algorithm"""
 
 #--------------------------------------------------------------------------
