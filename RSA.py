@@ -186,7 +186,6 @@ class IntegerMod(object):
 
     @_operation_modulo_integer
     def __div__(self, other):
-        # TODO: check that self and other belong to the same class
         # With this point, we'll need r = a / b (mod m), i.e. an integer
         # r such that b * r = a (mod m)
         m = self.modulo
