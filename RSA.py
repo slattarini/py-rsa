@@ -196,15 +196,14 @@ class IntegerMod(object):
         d, x, y = extended_gcd(b, m)
         # If d | a ...
         if a % d == 0:
-            # ... then , t := a / d, we have :
-            #   a = d * t = d * (b*x + m*y) = b * (d*x) (mod m)
-            # so that a / b = d*x (mod m), and we're done.
-            return d * x
+            # ... then, letting t := a / d, we have :
+            #   a = d * t = (b*x + m*y) * t = b * (t*x) (mod m)
+            # so that a / b = t*x (mod m), and we're done.
+            return ((a / d) * x)
         # Else, if d does not divide a, the equation b * r = a (mod m) has
         # no solution; for if it had one, we'd have:
         #   a = b*r + m*s  for some integer s
-        # which, being d | m and d | b, implies d | a, false.
-        # FIXME: better exception?
+        # which, since d | m and d | b, would imply d | a, false.
         raise IMValueError('cannot divide "%s" for "%s"' % (self, other))
 
     def _get_reciprocal(self):
