@@ -7,7 +7,7 @@
 ##  Metadata & Global Documentation  ##
 ## --------------------------------- ##
 
-"""An "educational" implementation of the RSA encryption/digital sign
+"""An "educational" implementation of the RSA encryption and digital sign
 algorithm"""
 
 #--------------------------------------------------------------------------
@@ -217,6 +217,7 @@ class IntegerMod(object):
         return self.__class__(y)
 
     def __pow__(self, exponent):
+        # TODO: assert exponent is integer
         if exponent < 0:
             exponent *= -1
             base = self._get_reciprocal()
