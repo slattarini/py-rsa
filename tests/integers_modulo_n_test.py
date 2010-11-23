@@ -289,12 +289,16 @@ def test_integermod_addition(modulo, addend1, addend2, result):
     cls = TL.integers_mod(modulo)
     assert (cls(addend1) + cls(addend2)).residue == result
     assert (cls(addend2) + cls(addend1)).residue == result
+    assert (cls(addend1) + addend2).residue == result
+    assert (addend1 + cls(addend2)).residue == result
 
 def test_integermod_subtraction(modulo, addend1, addend2, result):
     cls = TL.integers_mod(modulo)
     minuend = addend1
     subtrahend = - addend2
     assert (cls(minuend) - cls(subtrahend)).residue == result
+    assert (minuend - cls(subtrahend)).residue == result
+    assert (cls(minuend) - subtrahend).residue == result
 
 def test_integermod_multiplication(modulo, factor1, factor2, result):
     cls = TL.integers_mod(modulo)

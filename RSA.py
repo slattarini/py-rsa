@@ -12,6 +12,14 @@ algorithm"""
 
 #--------------------------------------------------------------------------
 
+## ---------------- ##
+##  Global Imports  ##
+## ---------------- ##
+
+import functools
+
+#--------------------------------------------------------------------------
+
 ## ------------------------ ##
 ##  List of exported stuff  ##
 ## ------------------------ ##
@@ -54,6 +62,21 @@ class IMValueError(IMException, ValueError):
     """ValueError exception that can be raised by classes and subroutines
     dealing with integers (mod n)"""
     pass
+
+#--------------------------------------------------------------------------
+
+## ---------------------------------------------- ##
+##  Internal Classes, Subroutines and Decorators  ##
+## ---------------------------------------------- ##
+
+def _operation_modulo_integer(func):
+    def wrapper(self, other):
+        if isinstance(other, (int, long)):
+            other = self.__class__(other)
+        elif not isinstance(other, self.__class__):
+            raise IMTypeError("%r is not a %s", other, self.__class__)
+        return self.__class__(func(self, other))
+    return functools.update_wrapper(wrapper, func)
 
 #--------------------------------------------------------------------------
 
@@ -140,35 +163,29 @@ class IntegerMod(object):
     def __ne__(self, other):
         return (not (self == other))
 
+    @_operation_modulo_integer
     def __add__(self, other):
-        # TODO: check that self and other belong to the same class
-        return self.__class__(self.residue + other.residue)
+        return self.residue + other.residue
 
+    @_operation_modulo_integer
     def __sub__(self, other):
-        # TODO: check that self and other belong to the same class
-        return self.__class__(self.residue - other.residue)
+        return self.residue - other.residue
 
+    @_operation_modulo_integer
     def __mul__(self, other):
-        if isinstance(other, (int, long)):
-            other = self.__class__(other)
-        # TODO: check that self and other belong to the same class
-        return self.__class__(self.residue * other.residue)
+        return self.residue * other.residue
+
+    def __radd__(self, other):
+        return self + other
+
+    def __rsub__(self, other):
+        return (-1) * (self - other)
 
     def __rmul__(self, other):
         return self * other
 
-    def _get_reciprocal(self):
-        d, x, y = extended_gcd(self.modulo, self.residue)
-        if d != 1:
-            raise IMValueError("%d is not prime with %d" %
-                               (self.modulo, self.residue))
-        # Now we have self.modulo * x + self.residue * y = 1, so
-        # self.residue * y = 1 (mod self.modulo), so...
-        return self.__class__(y)
-
+    @_operation_modulo_integer
     def __div__(self, other):
-        if isinstance(other, (int, long)):
-            other = self.__class__(other)
         # TODO: check that self and other belong to the same class
         # With this point, we'll need r = a / b (mod m), i.e. an integer
         # r such that b * r = a (mod m)
@@ -182,13 +199,22 @@ class IntegerMod(object):
             # ... then , t := a / d, we have :
             #   a = d * t = d * (b*x + m*y) = b * (d*x) (mod m)
             # so that a / b = d*x (mod m), and we're done.
-            return self.__class__(d*x)
+            return d * x
         # Else, if d does not divide a, the equation b * r = a (mod m) has
         # no solution; for if it had one, we'd have:
         #   a = b*r + m*s  for some integer s
         # which, being d | m and d | b, implies d | a, false.
         # FIXME: better exception?
         raise IMValueError('cannot divide "%s" for "%s"' % (self, other))
+
+    def _get_reciprocal(self):
+        d, x, y = extended_gcd(self.modulo, self.residue)
+        if d != 1:
+            raise IMValueError("%d is not prime with %d" %
+                               (self.modulo, self.residue))
+        # Now we have self.modulo * x + self.residue * y = 1, so
+        # self.residue * y = 1 (mod self.modulo), so...
+        return self.__class__(y)
 
     def __pow__(self, exponent):
         if exponent < 0:
