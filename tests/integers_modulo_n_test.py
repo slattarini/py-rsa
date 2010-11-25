@@ -82,7 +82,20 @@ multiplication_data = [
          result=4756614),
 ]
 
-inversion_data = [
+inverse_data = [
+    dict(modulo=2,   residue=0,   inverse=0),
+    dict(modulo=2,   residue=1,   inverse=1),
+    dict(modulo=3,   residue=0,   inverse=0),
+    dict(modulo=3,   residue=1,   inverse=2),
+    dict(modulo=55,  residue=49,  inverse=6),
+    dict(modulo=97,  residue=24,  inverse=73),
+    dict(modulo=121, residue=11, inverse=110),
+    dict(modulo=14513461357231752457,
+         residue=9734356935945946979,
+         inverse=4779104421285805478),
+]
+
+reciprocal_data = [
     dict(modulo=2,  residue=1,   reciprocal=1),
     dict(modulo=3,  residue=2,   reciprocal=2),
     dict(modulo=5,  residue=2,   reciprocal=3),
@@ -184,6 +197,14 @@ def pytest_generate_tests(metafunc):
     elif set(["whole", "modulo", "residue"]) == set(funcargs):
         for d in init_known_values:
             metafunc.addcall(funcargs=d)
+    elif set(["modulo", "residue", "inverse"]) == set(funcargs):
+        for d in inverse_data:
+            metafunc.addcall(funcargs=d)
+            if d["inverse"] != d["residue"]:
+                d1 = dict(modulo=d["modulo"],
+                          residue=d["inverse"],
+                          inverse=d["residue"])
+                metafunc.addcall(funcargs=d1)
     elif set(["modulo", "addend1", "addend2", "result"]) == set(funcargs):
         for d in addition_data:
             metafunc.addcall(funcargs=d)
@@ -204,7 +225,7 @@ def pytest_generate_tests(metafunc):
         for d in division_data:
             metafunc.addcall(funcargs=d)
     elif set(["modulo", "residue", "reciprocal"]) == set(funcargs):
-        for d in inversion_data:
+        for d in reciprocal_data:
             d0, d1, d2 = d.copy(), d.copy(), d.copy()
             d1["residue"] *= -1
             d1["reciprocal"] = d1["modulo"] - d1["reciprocal"]
@@ -326,6 +347,10 @@ def test_integermod_division(modulo, dividend, divisor, result):
     assert (cls(dividend) / cls(divisor)).residue == result
     assert (cls(dividend) / divisor).residue == result
     assert (dividend / cls(divisor)).residue == result
+
+def test_integermod_inverse(modulo, residue, inverse):
+    cls = TL.integers_mod(modulo)
+    assert (- cls(residue)).residue == inverse
 
 def test_integermod_reciprocal_pow(modulo, residue, reciprocal):
     cls = TL.integers_mod(modulo)

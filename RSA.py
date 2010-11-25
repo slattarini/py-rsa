@@ -212,6 +212,8 @@ class IntegerMod(object):
             other = self.__class__(other)
         return (self**(-1))*other
 
+    def __neg__(self):
+        return (-1) * self
 
 # FIXME: more this in e.g. a function or something like that?
 #    def __div__(self, other):
