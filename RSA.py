@@ -127,13 +127,27 @@ def gcd(a, b):
 class IntegerMod(object):
     """A class representing integers (modulo n), for an unspecified modulo.
     Not meant to be used directly; you should use it by subclassing:
-       >>> class IntegerMod6(IntegerMod):
-       ...    modulo = 6
-       >>> _1mod6 = IntegerMod6(1)
-       >>> _2mod6 = IntegerMod6(2)
-       >>> _3mod6 = IntegerMod6(3)
-       >>> print (_1mod6 + _2mod6 + _3mod6)
-       0 (mod 6)
+      >>> class IntegerMod15(IntegerMod):
+      ...    modulo = 15
+      >>> # A nice trick to have all integers (modulo 15) at hand
+      >>> mod15 = []
+      >>> for i in range(0,15):
+      ...   mod15.append(IntegerMod15(i))
+      >>> print (mod15[1] + mod15[3] + mod15[11])
+      0 (mod 15)
+      >>> print (mod15[1] - mod15[3])
+      13 (mod 15)
+      >>> print (mod15[11] * mod15[5])
+      10 (mod 15)
+      >>> print (mod15[11] / mod15[4])
+      14 (mod 15)
+      >>> # They can be multiplied and divided for regualr integers too!
+      >>> print (1 / mod15[2])
+      8 (mod 15)
+      >>> print (5 * mod15[3])
+      0 (mod 15)
+      >>> print ((2 + 15 * 10**100) * mod15[2])
+      4 (mod 15)
     """
 
     """The modulo the integers are reduced with.  Must be overridden
