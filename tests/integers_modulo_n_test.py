@@ -98,6 +98,15 @@ inversion_data = [
     dict(modulo=97, residue=-6,  reciprocal=16),
 ]
 
+division_data = [
+    dict(modulo=2,   dividend=0,  divisor=1,  result=0),
+    dict(modulo=2,   dividend=1,  divisor=1,  result=1),
+    dict(modulo=3,   dividend=0,  divisor=1,  result=0),
+    dict(modulo=3,   dividend=1,  divisor=1,  result=1),
+    dict(modulo=3,   dividend=2,  divisor=1,  result=2),
+    dict(modulo=3,   dividend=1,  divisor=2,  result=2),
+]
+
 exponentiation_data = [
 
     dict(modulo=2,   base=0,  exponent=1,   result=0),
@@ -191,6 +200,9 @@ def pytest_generate_tests(metafunc):
             d3["factor2"] *= -1
             for x in (d0, d1, d2, d3):
                 metafunc.addcall(funcargs=x)
+    elif set(["modulo", "dividend", "divisor", "result"]) == set(funcargs):
+        for d in division_data:
+            metafunc.addcall(funcargs=d)
     elif set(["modulo", "residue", "reciprocal"]) == set(funcargs):
         for d in inversion_data:
             d0, d1, d2 = d.copy(), d.copy(), d.copy()
@@ -309,9 +321,23 @@ def test_integermod_multiplication(modulo, factor1, factor2, result):
     assert (cls(factor1) * cls(factor2)).residue == result
     assert (cls(factor2) * cls(factor1)).residue == result
 
-def test_integermod_reciprocal(modulo, residue, reciprocal):
+def test_integermod_division(modulo, dividend, divisor, result):
+    cls = TL.integers_mod(modulo)
+    assert (cls(dividend) / cls(divisor)).residue == result
+    assert (cls(dividend) / divisor).residue == result
+    assert (dividend / cls(divisor)).residue == result
+
+def test_integermod_reciprocal_pow(modulo, residue, reciprocal):
     cls = TL.integers_mod(modulo)
     assert (cls(residue)**(-1)).residue == reciprocal
+
+def test_integermod_reciprocal_div(modulo, residue, reciprocal):
+    cls = TL.integers_mod(modulo)
+    assert ((cls(1)/residue).residue == reciprocal)
+
+def test_integermod_reciprocal_rdiv(modulo, residue, reciprocal):
+    cls = TL.integers_mod(modulo)
+    assert ((1/cls(residue)).residue == reciprocal)
 
 def test_integermod_invalid_reciprocal():
     cls = TL.integers_mod(55)
