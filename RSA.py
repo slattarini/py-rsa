@@ -193,6 +193,12 @@ class IntegerMod(object):
             other = self.__class__(other)
         return self*(other**(-1))
 
+    def __rdiv__(self, other):
+        if isinstance(other, (int, long)):
+            other = self.__class__(other)
+        return (self**(-1))*other
+
+
 # FIXME: more this in e.g. a function or something like that?
 #    def __div__(self, other):
 #        # With this point, we'll need r = a / b (mod m), i.e. an integer
