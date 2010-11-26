@@ -225,6 +225,9 @@ def pytest_generate_tests(metafunc):
             d3["factor2"] *= -1
             for x in (d0, d1, d2, d3):
                 metafunc.addcall(funcargs=x)
+                x1 = x.copy()
+                x1["factor1"], x1["factor2"] = x1["factor2"], x1["factor1"]
+                metafunc.addcall(funcargs=x1)
     elif set(["modulo", "dividend", "divisor", "result"]) == set(funcargs):
         for d in division_data:
             metafunc.addcall(funcargs=d)
@@ -358,10 +361,7 @@ def test_integermod_subtraction(modulo, addend1, addend2, result):
 def test_integermod_multiplication(modulo, factor1, factor2, result):
     cls = TL.integers_mod(modulo)
     assert (cls(factor1) * factor2).residue == result
-    assert (factor2 * cls(factor1)).residue == result
     assert (factor1 * cls(factor2)).residue == result
-    assert (cls(factor2) * factor1).residue == result
-    assert (cls(factor1) * cls(factor2)).residue == result
     assert (cls(factor2) * cls(factor1)).residue == result
 
 def test_integermod_division(modulo, dividend, divisor, result):
