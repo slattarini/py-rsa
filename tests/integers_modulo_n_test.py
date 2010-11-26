@@ -208,6 +208,10 @@ def pytest_generate_tests(metafunc):
     elif set(["modulo", "addend1", "addend2", "result"]) == set(funcargs):
         for d in addition_data:
             metafunc.addcall(funcargs=d)
+            if d["addend1"] != d["addend2"]:
+                d1 = d.copy()
+                d1["addend1"], d1["addend2"] = d1["addend2"], d1["addend1"]
+                metafunc.addcall(funcargs=d1)
     elif set(["modulo", "factor1", "factor2", "result"]) == set(funcargs):
         for d in multiplication_data:
             d0, d1, d2, d3 = d.copy(), d.copy(), d.copy(), d.copy()
@@ -340,7 +344,6 @@ def test_integermod_inequality(whole, modulo, residue):
 def test_integermod_addition(modulo, addend1, addend2, result):
     cls = TL.integers_mod(modulo)
     assert (cls(addend1) + cls(addend2)).residue == result
-    assert (cls(addend2) + cls(addend1)).residue == result
     assert (cls(addend1) + addend2).residue == result
     assert (addend1 + cls(addend2)).residue == result
 
