@@ -126,28 +126,58 @@ def gcd(a, b):
 
 class IntegerMod(object):
     """A class representing integers (modulo n), for an unspecified modulo.
-    Not meant to be used directly; you should use it by subclassing:
+    Not meant to be used directly; you should use it by subclassing.
+
+    A basic example:
       >>> class IntegerMod15(IntegerMod):
       ...    modulo = 15
-      >>> # A nice trick to have all integers (modulo 15) at hand
+      >>> # They print nicely, and can be initialized from any integer.
+      >>> print IntegerMod15(11)
+      11 (mod 15)
+      >>> print IntegerMod15(17)
+      2 (mod 15)
+      >>> print IntegerMod15(-1)
+      14 (mod 15)
+      >>> print IntegerMod15(150000000000000000000000000000000L + 1)
+      1 (mod 15)
+      >>> # A nice trick to have all integers (modulo 15) at hand.
       >>> mod15 = []
       >>> for i in range(0,15):
       ...   mod15.append(IntegerMod15(i))
+      >>> # Four operations are supported, with natural association
+      >>> # and precedence rules.
       >>> print (mod15[1] + mod15[3] + mod15[11])
       0 (mod 15)
       >>> print (mod15[1] - mod15[3])
       13 (mod 15)
-      >>> print (mod15[11] * mod15[5])
-      10 (mod 15)
+      >>> print (mod15[1] - mod15[3] + mod15[5])
+      3 (mod 15)
+      >>> print (mod15[11] * mod15[5] - mod15[4])
+      6 (mod 15)
       >>> print (mod15[11] / mod15[4])
       14 (mod 15)
-      >>> # They can be multiplied and divided for regualr integers too!
+      >>> # Inversion is supported too.
+      >>> print (-mod15[7])
+      8 (mod 15)
+      >>> print (mod15[7] + (- mod15[10]))
+      12 (mod 15)
+      >>> # Exponentiation works too.
+      >>> print (mod15[2]**4)
+      1 (mod 15)
+      >>> print (mod15[7]**2)
+      4 (mod 15)
+      >>> print (mod15[13]**(-3))
+      13 (mod 15)
+      >>> # Integers modulo something can also be combined with
+      >>> # regular integers!
       >>> print (1 / mod15[2])
       8 (mod 15)
       >>> print (5 * mod15[3])
       0 (mod 15)
       >>> print ((2 + 15 * 10**100) * mod15[2])
       4 (mod 15)
+      >>> print (mod15[11] / mod15[8] * 3 + 1)
+      7 (mod 15)
     """
 
     """The modulo the integers are reduced with.  Must be overridden
