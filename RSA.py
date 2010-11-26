@@ -207,23 +207,26 @@ class IntegerMod(object):
     def __ne__(self, other):
         return (not (self == other))
 
+    def __neg__(self):
+        return (-1) * self
+
     @_operation_modulo_integer
     def __add__(self, other):
         return self.residue + other.residue
+
+    def __radd__(self, other):
+        return self + other
 
     @_operation_modulo_integer
     def __sub__(self, other):
         return self.residue - other.residue
 
+    def __rsub__(self, other):
+        return (-1) * (self - other)
+
     @_operation_modulo_integer
     def __mul__(self, other):
         return self.residue * other.residue
-
-    def __radd__(self, other):
-        return self + other
-
-    def __rsub__(self, other):
-        return (-1) * (self - other)
 
     def __rmul__(self, other):
         return self * other
@@ -241,39 +244,6 @@ class IntegerMod(object):
         if isinstance(other, (int, long)):
             other = self.__class__(other)
         return (self**(-1))*other
-
-    def __neg__(self):
-        return (-1) * self
-
-# FIXME: more this in e.g. a function or something like that?
-#    def __div__(self, other):
-#        # With this point, we'll need r = a / b (mod m), i.e. an integer
-#        # r such that b * r = a (mod m)
-#        m = self.modulo
-#        a = self.residue
-#        b = other.residue
-#        # With this, we'll have  d = b*x + m*y  and  d | b  &  d | m
-#        d, x, y = extended_gcd(b, m)
-#        # If d | a ...
-#        if a % d == 0:
-#            # ... then, letting t := a / d, we have :
-#            #   a = d * t = (b*x + m*y) * t = b * (t*x) (mod m)
-#            # so that a / b = t*x (mod m), and we're done.
-#            return ((a / d) * x)
-#        # Else, if d does not divide a, the equation b * r = a (mod m) has
-#        # no solution; for if it had one, we'd have:
-#        #   a = b*r + m*s  for some integer s
-#        # which, since d | m and d | b, would imply d | a, false.
-#        raise IMValueError('cannot divide "%s" for "%s"' % (self, other))
-
-    def _get_reciprocal(self):
-        d, x, y = extended_gcd(self.modulo, self.residue)
-        if d != 1:
-            raise IMValueError("%d is not prime with %d" %
-                               (self.modulo, self.residue))
-        # Now we have self.modulo * x + self.residue * y = 1, so
-        # self.residue * y = 1 (mod self.modulo), so...
-        return self.__class__(y)
 
     def __pow__(self, exponent):
         # TODO: assert exponent is integer
@@ -299,6 +269,37 @@ class IntegerMod(object):
                 if exponent == 1:
                     break
         return partial1 * partial2
+
+    def _get_reciprocal(self):
+        d, x, y = extended_gcd(self.modulo, self.residue)
+        if d != 1:
+            raise IMValueError("%d is not prime with %d" %
+                               (self.modulo, self.residue))
+        # Now we have self.modulo * x + self.residue * y = 1, so
+        # self.residue * y = 1 (mod self.modulo), so...
+        return self.__class__(y)
+
+# FIXME: more this in e.g. a function or something like that?
+#    def __div__(self, other):
+#        # With this point, we'll need r = a / b (mod m), i.e. an integer
+#        # r such that b * r = a (mod m)
+#        m = self.modulo
+#        a = self.residue
+#        b = other.residue
+#        # With this, we'll have  d = b*x + m*y  and  d | b  &  d | m
+#        d, x, y = extended_gcd(b, m)
+#        # If d | a ...
+#        if a % d == 0:
+#            # ... then, letting t := a / d, we have :
+#            #   a = d * t = (b*x + m*y) * t = b * (t*x) (mod m)
+#            # so that a / b = t*x (mod m), and we're done.
+#            return ((a / d) * x)
+#        # Else, if d does not divide a, the equation b * r = a (mod m) has
+#        # no solution; for if it had one, we'd have:
+#        #   a = b*r + m*s  for some integer s
+#        # which, since d | m and d | b, would imply d | a, false.
+#        raise IMValueError('cannot divide "%s" for "%s"' % (self, other))
+
 
 #--------------------------------------------------------------------------
 
