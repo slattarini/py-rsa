@@ -82,7 +82,7 @@ multiplication_data = [
          result=4756614),
 ]
 
-inverse_data = [
+additive_inversion_data = [
     dict(modulo=2,   residue=0,   inverse=0),
     dict(modulo=2,   residue=1,   inverse=1),
     dict(modulo=3,   residue=0,   inverse=0),
@@ -95,7 +95,7 @@ inverse_data = [
          inverse=4779104421285805478),
 ]
 
-reciprocal_data = [
+multiplicative_inversion_data = [
     dict(modulo=2,  residue=1,   reciprocal=1),
     dict(modulo=3,  residue=2,   reciprocal=2),
     dict(modulo=5,  residue=2,   reciprocal=3),
@@ -198,7 +198,7 @@ def pytest_generate_tests(metafunc):
         for d in init_known_values:
             metafunc.addcall(funcargs=d)
     elif set(["modulo", "residue", "inverse"]) == set(funcargs):
-        for d in inverse_data:
+        for d in additive_inversion_data:
             metafunc.addcall(funcargs=d)
             if d["inverse"] != d["residue"]:
                 d1 = dict(modulo=d["modulo"],
@@ -225,7 +225,7 @@ def pytest_generate_tests(metafunc):
         for d in division_data:
             metafunc.addcall(funcargs=d)
     elif set(["modulo", "residue", "reciprocal"]) == set(funcargs):
-        for d in reciprocal_data:
+        for d in multiplicative_inversion_data:
             d0, d1, d2 = d.copy(), d.copy(), d.copy()
             d1["residue"] *= -1
             d1["reciprocal"] = d1["modulo"] - d1["reciprocal"]
