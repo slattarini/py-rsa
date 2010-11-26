@@ -237,15 +237,13 @@ class IntegerMod(object):
     # since otherwise the operation is impossible (has no solutions)
     # or indefinite (has multiple possible results).
 
+    @_operation_modulo_integer
     def __div__(self, other):
-        if isinstance(other, (int, long)):
-            other = self.__class__(other)
-        return self*(other**(-1))
+        return self.residue * (other**(-1)).residue
 
+    @_operation_modulo_integer
     def __rdiv__(self, other):
-        if isinstance(other, (int, long)):
-            other = self.__class__(other)
-        return (self**(-1))*other
+        return (self**(-1)).residue * other.residue
 
     def __pow__(self, exponent):
         # TODO: assert exponent is integer
