@@ -275,6 +275,25 @@ def test_make_int_modulo_int(whole, modulo, residue):
     assert residue == got, \
            "%u = %u != %u (mod %u)" % (whole, got, residue, modulo)
 
+# Test that an IntegerMods can be converte to itself.
+def test_int_modulo_int_to_itself(whole, modulo, residue):
+    class integermod_subclass(RSA.IntegerMod):
+        pass
+    integermod_subclass.modulo = modulo
+    integermod_instance1 = integermod_subclass(whole)
+    integermod_instance2 = integermod_subclass(integermod_instance1)
+    assert integermod_instance1 == integermod_instance2
+
+# Test that an IntegerMod converte to itself return a copy, not
+# a reference to self.
+def test_int_modulo_int_to_itself_copy_not_ref():
+    class integermod_subclass(RSA.IntegerMod):
+        modulo = 5
+    integermod_instance1 = integermod_subclass(1)
+    integermod_instance2 = integermod_subclass(integermod_instance1)
+    assert integermod_instance1 is not integermod_instance2
+
+
 def test_stringify(whole, modulo, string):
     class integermod_subclass(RSA.IntegerMod):
         pass

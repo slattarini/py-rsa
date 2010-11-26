@@ -188,6 +188,8 @@ class IntegerMod(object):
         if self.modulo is None:
             # Sanity check: `modulo' should be overridden by subclasses.
             raise IMRuntimeError("modulo not overridden (is still None)")
+        if isinstance(whole, self.__class__):
+            whole = whole.residue
         self.residue = whole % self.modulo
 
     def __repr__(self):
