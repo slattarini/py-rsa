@@ -212,6 +212,13 @@ def pytest_generate_tests(metafunc):
                 d1 = d.copy()
                 d1["addend1"], d1["addend2"] = d1["addend2"], d1["addend1"]
                 metafunc.addcall(funcargs=d1)
+    elif set(["modulo", "minuend", "subtrahend", "result"]) == set(funcargs):
+        for d in addition_data:
+            d1 = dict(modulo=d["modulo"],
+                      result=d["result"],
+                      minuend=d["addend1"],
+                      subtrahend=-d["addend2"])
+            metafunc.addcall(funcargs=d1)
     elif set(["modulo", "factor1", "factor2", "result"]) == set(funcargs):
         for d in multiplication_data:
             d0, d1, d2, d3 = d.copy(), d.copy(), d.copy(), d.copy()
@@ -365,22 +372,16 @@ def test_integermod_radd(modulo, addend1, addend2, result):
     assert (addend1 + cls(addend2)).residue == result
 
 
-def test_integermod_sub(modulo, addend1, addend2, result):
+def test_integermod_sub(modulo, minuend, subtrahend, result):
     cls = TL.integers_mod(modulo)
-    minuend = addend1
-    subtrahend = - addend2
     assert (cls(minuend) - cls(subtrahend)).residue == result
 
-def test_integermod_lsub(modulo, addend1, addend2, result):
+def test_integermod_lsub(modulo, minuend, subtrahend, result):
     cls = TL.integers_mod(modulo)
-    minuend = addend1
-    subtrahend = - addend2
     assert (cls(minuend) - subtrahend).residue == result
 
-def test_integermod_rsub(modulo, addend1, addend2, result):
+def test_integermod_rsub(modulo, minuend, subtrahend, result):
     cls = TL.integers_mod(modulo)
-    minuend = addend1
-    subtrahend = - addend2
     assert (minuend - cls(subtrahend)).residue == result
 
 
