@@ -241,11 +241,11 @@ class IntegerMod(object):
 
     @_operation_modulo_integer
     def __div__(self, other):
-        return self.residue * (other**(-1)).residue
+        return self * other**(-1)
 
     @_operation_modulo_integer
     def __rdiv__(self, other):
-        return (self**(-1)).residue * other.residue
+        return self**(-1) * other
 
     def __pow__(self, exponent):
         # TODO: assert exponent is integer
