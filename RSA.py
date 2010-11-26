@@ -198,13 +198,15 @@ class IntegerMod(object):
         return "%u (mod %u)" % (self.residue, self.modulo)
 
     def __eq__(self, other):
+        """Two integers (mod m) are equal iff their modulo, residue
+        and class are equal."""
         return (type(self) == type(other)
                 and self.modulo == other.modulo
                 and self.residue == other.residue)
 
-    # python docs suggest to define this method, explicitly also
-    # when __eq__ is defined
     def __ne__(self, other):
+        """Python docs suggest to define this method explicitly also
+        when __eq__ is defined"""
         return (not (self == other))
 
     def __neg__(self):
