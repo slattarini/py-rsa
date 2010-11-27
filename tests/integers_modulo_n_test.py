@@ -133,6 +133,11 @@ multiplicative_inversion_data = [
     dict(modulo=97, residue=12,  reciprocal=89),
     dict(modulo=97, residue=-1,  reciprocal=96),
     dict(modulo=97, residue=-6,  reciprocal=16),
+    # try with big values (result found with GAP)
+    dict(modulo     = 31**41,
+         residue    = 23**23 + 1,
+         reciprocal = 12314522799775017007991696109927229269151916254315470214920129
+    ),
 ]
 
 division_data = [
