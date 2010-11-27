@@ -479,11 +479,28 @@ def test_integermod_exponentiation(modulo, base, exponent, result):
     cls = TL.integers_mod(modulo)
     assert ((cls(base) ** exponent).residue == result)
 
+
 def test_fermat_little_theorem(prime_modulo):
     cls = TL.integers_mod(prime_modulo)
     for d in (2, 3, 10):
         x = max(1, prime_modulo/d)
         assert cls(x)**(prime_modulo - 1) == cls(1)
 
+def test_integermod_reciprocal_power_of_prime(prime_modulo):
+    # It can be proved that if p is prime and:
+    #  a^-1 = b (mod p^n)
+    # then:
+    #  a^-1 = 2 * b - a * b^2 (mod p^(n+1))
+    p = prime_modulo
+    modp100 = TL.integers_mod(p**120)
+    modp101 = TL.integers_mod(p**121)
+    if p == 5:
+        a = 3**113
+    else:
+        a = 5**113
+    b = (modp100(a)**(-1)).residue
+    b_exp = modp101(2 * b - a * b**2)
+    b_got = 1 / modp101(a)
+    assert b_exp == b_got
 
 # vim: et sw=4 ts=4 ft=python
