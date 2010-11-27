@@ -63,6 +63,18 @@ addition_data = [
     dict(modulo=97,  addend1=50,  addend2=50,  result=3),
     dict(modulo=100, addend1=99,  addend2=23,  result=22),
     dict(modulo=100, addend1=8,   addend2=-44, result=64),
+    # try with big values
+    dict(modulo  = 2**500 + 47**100,
+         addend1 = 2**500 - 23,
+         addend2 = 47**100 + 45,
+         result  = 22
+    ),
+    # try with huge values
+    dict(modulo  = 31**500 + 55**300,
+         addend1 = 31**500 - 10**54,
+         addend2 = 55**300 + 11**52,
+         result  = 420429319844313329730664601483335671261683881745483121
+    ),
 ]
 
 multiplication_data = [
@@ -80,6 +92,18 @@ multiplication_data = [
     dict(modulo=73,  factor1=-1,  factor2=68,   result=5),
     dict(modulo=6275631, factor1=732523416, factor2=1553146,
          result=4756614),
+    # try with big values
+    dict(modulo  = 2**50 * 47**100,
+         factor1 = 2**50 + 1,
+         factor2 = 47**100 - 1,
+         result  = 47**100 - 2**50 - 1,
+    ),
+    # try with huge values
+    dict(modulo  = 71**513 * 47**911,
+         factor1 = 47 * (71**512 + 1),
+         factor2 = 71 * (47**910 + 1),
+         result  = 47 * 71**513 + 71 * 47**911 + 47 * 71,
+    ),
 ]
 
 additive_inversion_data = [
