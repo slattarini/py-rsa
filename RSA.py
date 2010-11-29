@@ -281,28 +281,6 @@ class IntegerMod(object):
         # self.residue * y = 1 (mod self.modulo), so...
         return self.__class__(y)
 
-# FIXME: more this in e.g. a function or something like that?
-#    def __div__(self, other):
-#        # With this point, we'll need r = a / b (mod m), i.e. an integer
-#        # r such that b * r = a (mod m)
-#        m = self.modulo
-#        a = self.residue
-#        b = other.residue
-#        # With this, we'll have  d = b*x + m*y  and  d | b  &  d | m
-#        d, x, y = extended_gcd(b, m)
-#        # If d | a ...
-#        if a % d == 0:
-#            # ... then, letting t := a / d, we have :
-#            #   a = d * t = (b*x + m*y) * t = b * (t*x) (mod m)
-#            # so that a / b = t*x (mod m), and we're done.
-#            return ((a / d) * x)
-#        # Else, if d does not divide a, the equation b * r = a (mod m) has
-#        # no solution; for if it had one, we'd have:
-#        #   a = b*r + m*s  for some integer s
-#        # which, since d | m and d | b, would imply d | a, false.
-#        raise IMValueError('cannot divide "%s" for "%s"' % (self, other))
-
-
 #--------------------------------------------------------------------------
 
 
