@@ -14,28 +14,6 @@ large_primes  = [ 373, 397, 401, 433, 499, 523, 541, 571, 641, 659,
                   661, 701, 773, 811, 821, 853, 929, 953, 967, 997, ]
 primes = small_primes + medium_primes + large_primes
 
-composite_nosquarefree_modulos = [4, 8, 9, 12, 16, 18, 20, 25, 90, 96, 100]
-composite_squarefree_modulos = [6, 10, 14, 15, 21, 22, 46, 77, 95]
-
-# given by their factorization into primes
-
-composite_modulos = [
-    (17, 131, 997,),
-    (131, 157, 181, 269, 307, 373, 397,),
-]
-
-composite_big_modulo = [
-    (2, 5), (3, 1), (5, 3), (7, 6), (11, 1), (13, 1), (17, 1), (19, 1),
-]
-composite_powerfull_big_modulo = [
-    (2, 5), (3, 2), (5, 3), (7, 6), (11, 2), (13, 3),
-]
-composite_squarefree_big_modulo = [
-    (3, 1), (5, 1), (7, 1), (13, 1), (19, 1), (23, 1), (269, 1),
-]
-
-misc_modulos = [2, 3, 4, 5, 20, 77, 100, 120, 335, 2047, 2**100, 3*1000]
-
 init_known_values = [
     dict(whole=0,   modulo=1, residue=0),
     dict(whole=1,   modulo=1, residue=0),
