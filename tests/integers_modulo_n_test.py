@@ -125,6 +125,15 @@ division_data = [
     dict(modulo=3,   dividend=1,  divisor=1,  result=1),
     dict(modulo=3,   dividend=2,  divisor=1,  result=2),
     dict(modulo=3,   dividend=1,  divisor=2,  result=2),
+    dict(modulo=55,  dividend=45, divisor=9,  result=5),
+    dict(modulo=49,  dividend=44, divisor=39, result=25),
+    dict(modulo=101, dividend=2,  divisor=51, result=4),
+    # found with GAP
+    dict(modulo   = 7264563962592586452347,
+         dividend = 62354131224573468,
+         divisor  = 1235413624573468,
+         result   = 6792538694198912916609),
+
 ]
 
 exponentiation_data = [
