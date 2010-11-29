@@ -283,14 +283,11 @@ def pytest_generate_tests(metafunc):
 
 
 def test_integermod_named_params():
-    # Use of IntegerMod with named parameters.
-    class IntegerMod2(RSA.IntegerMod):
-        modulo = 2
+    IntegerMod2 = TL.integers_mod(2)
     assert IntegerMod2(whole=1) == IntegerMod2(1)
 
 
 def test_integermod_direct_instantiation_exception():
-    # check that direct instantiation of IntegerMod fails properly
     py.test.raises(RSA.IMRuntimeError, "RSA.IntegerMod(1)")
 
 def test_integermod_subclass_no_modulo_instantiation_exception():
@@ -302,19 +299,15 @@ def test_integermod_subclass_no_modulo_instantiation_exception():
 
 # Test that 'whole % modulo == residue' (subclassing IntegerMod)
 def test_make_int_modulo_int(whole, modulo, residue):
-    class integermod_subclass(RSA.IntegerMod):
-        pass
-    integermod_subclass.modulo = modulo
-    got = integermod_subclass(whole).residue
+    cls = TL.integers_mod(modulo)
+    got = cls(whole).residue
     assert residue == got, \
            "%u = %u != %u (mod %u)" % (whole, got, residue, modulo)
 
 
 # Test that an IntegerMods can be converte to itself.
 def test_int_modulo_int_to_itself(whole, modulo, residue):
-    class integermod_subclass(RSA.IntegerMod):
-        pass
-    integermod_subclass.modulo = modulo
+    integermod_subclass = TL.integers_mod(modulo)
     integermod_instance1 = integermod_subclass(whole)
     integermod_instance2 = integermod_subclass(integermod_instance1)
     assert integermod_instance1 == integermod_instance2
@@ -322,25 +315,20 @@ def test_int_modulo_int_to_itself(whole, modulo, residue):
 # Test that an IntegerMod converte to itself return a copy, not
 # a reference to self.
 def test_int_modulo_int_to_itself_copy_not_ref():
-    class integermod_subclass(RSA.IntegerMod):
-        modulo = 5
+    integermod_subclass = TL.integers_mod(5)
     integermod_instance1 = integermod_subclass(1)
     integermod_instance2 = integermod_subclass(integermod_instance1)
     assert integermod_instance1 is not integermod_instance2
 
 
 def test_stringify(whole, modulo, string):
-    class integermod_subclass(RSA.IntegerMod):
-        pass
-    integermod_subclass.modulo = modulo
+    integermod_subclass = TL.integers_mod(modulo)
     assert str(integermod_subclass(whole)) == string
 
 
 def test_integermod_different_subclasses_not_equal():
-    class integermod_subclass_1(RSA.IntegerMod):
-        modulo = 2
-    class integermod_subclass_2(RSA.IntegerMod):
-        modulo = 2
+    integermod_subclass_1 = TL.integers_mod(2)
+    integermod_subclass_2 = TL.integers_mod(2)
     instance_subclass_1 = integermod_subclass_1(1)
     instance_subclass_2 = integermod_subclass_2(1)
     # In case both __eq__ and __neq__ are defined
