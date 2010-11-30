@@ -14,6 +14,28 @@ large_primes  = [ 373, 397, 401, 433, 499, 523, 541, 571, 641, 659,
                   661, 701, 773, 811, 821, 853, 929, 953, 967, 997, ]
 primes = small_primes + medium_primes + large_primes
 
+
+class TestDataGenerator:
+    def __init__(self):
+        self._tests_data = {}
+    # Here, `args' is expected to be a list of funcarg names.
+    def add(self, test_generator, args):
+        from copy import copy
+        if callable(test_generator):
+            tests_data = test_generator()
+        else:
+            tests_data =  [ copy(x) for x in test_generator ]
+        self._tests_data[frozenset(args)] = tests_data
+    def has(self, args):
+        return self._tests_data.has_key(frozenset(args))
+    def get(self, args):
+        return self._tests_data[frozenset(args)]
+    def remove(self, args):
+        del self._tests_data[frozenset(args)]
+
+test_data_generator = TestDataGenerator()
+
+
 init_known_values = [
     dict(whole=0,   modulo=1, residue=0),
     dict(whole=1,   modulo=1, residue=0),
@@ -33,6 +55,9 @@ init_known_values = [
          modulo=11**27,
          residue=703780454821668921429157503L)
 ]
+
+test_data_generator.add(init_known_values,
+                        ["whole", "modulo", "residue"])
 
 addition_data = [
     dict(modulo=2,   addend1=1,   addend2=1,   result=0),
@@ -224,6 +249,9 @@ def pytest_generate_tests(metafunc):
     funcargs = metafunc.funcargnames
     if not funcargs:
         pass # test function without arguments
+    elif test_data_generator.has(funcargs):
+        for x in test_data_generator.get(funcargs):
+            metafunc.addcall(x)
     elif set(["prime_modulo"]) == set(funcargs):
         for p in primes:
             metafunc.addcall(funcargs={'prime_modulo': p})
@@ -231,9 +259,6 @@ def pytest_generate_tests(metafunc):
         for d in noncoprime_modulo_and_residue_data:
             metafunc.addcall(dict(noncoprime_residue=d['residue'],
                                   modulo=d['modulo']))
-    elif set(["whole", "modulo", "residue"]) == set(funcargs):
-        for d in init_known_values:
-            metafunc.addcall(funcargs=d)
     elif set(["modulo", "residue", "inverse"]) == set(funcargs):
         for d in additive_inversion_data:
             metafunc.addcall(funcargs=d)
