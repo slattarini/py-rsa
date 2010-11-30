@@ -7,15 +7,17 @@ import py.test
 import tests.pyrsa_testlib as TL
 import RSA
 
+
+# Used to generate parametrized tests.
+test_data_generator = TL.TestDataGenerator()
+
+
 # obtained with GAP, but could also be looked upon a simple table
 small_primes  = [ 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 97, ]
 medium_primes = [ 131, 151, 157, 181, 241, 269, 271, 307, ]
 large_primes  = [ 373, 397, 401, 433, 499, 523, 541, 571, 641, 659,
                   661, 701, 773, 811, 821, 853, 929, 953, 967, 997, ]
 primes = small_primes + medium_primes + large_primes
-
-
-test_data_generator = TL.TestDataGenerator()
 
 
 init_known_values = [
