@@ -41,6 +41,7 @@ init_known_values = [
 test_data_generator.update(init_known_values,
                            ["whole", "modulo", "residue"])
 
+
 plain_addition_data = [
     dict(modulo=2,   addend1=1,   addend2=1,   result=0),
     dict(modulo=3,   addend1=1,   addend2=2,   result=0),
