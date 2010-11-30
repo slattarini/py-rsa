@@ -59,7 +59,7 @@ init_known_values = [
 test_data_generator.add(init_known_values,
                         ["whole", "modulo", "residue"])
 
-addition_data = [
+plain_addition_data = [
     dict(modulo=2,   addend1=1,   addend2=1,   result=0),
     dict(modulo=3,   addend1=1,   addend2=2,   result=0),
     dict(modulo=49,  addend1=1,   addend2=-16, result=34),
@@ -70,7 +70,7 @@ addition_data = [
     dict(modulo  = 2**500 + 47**100,
          addend1 = 2**500 - 23,
          addend2 = 47**100 + 45,
-         result  = 22
+         result  = 22,
     ),
     # try with huge values
     dict(modulo  = 31**500 + 55**300,
@@ -80,6 +80,28 @@ addition_data = [
          result  = 420429319844313329730664601483335671261683881745483121,
     ),
 ]
+
+def get_addition_data():
+    data = []
+    for d in plain_addition_data:
+        d0, d1 = d.copy(), d.copy()
+        d1["addend1"], d1["addend2"] = d1["addend2"], d1["addend1"]
+        data.extend([d0, d1])
+    return data
+test_data_generator.add(get_addition_data,
+                        ["modulo", "addend1", "addend2", "result"])
+
+def get_subtraction_data():
+    data = []
+    for d in get_addition_data():
+        data.append(dict(modulo=d["modulo"],
+                         result=d["result"],
+                         minuend=d["addend1"],
+                         subtrahend=-d["addend2"]))
+    return data
+test_data_generator.add(get_subtraction_data,
+                        ["modulo", "minuend", "subtrahend", "result"])
+
 
 multiplication_data = [
     dict(modulo=2,   factor1=1,   factor2=1,    result=1),
@@ -267,20 +289,6 @@ def pytest_generate_tests(metafunc):
                           residue=d["inverse"],
                           inverse=d["residue"])
                 metafunc.addcall(funcargs=d1)
-    elif set(["modulo", "addend1", "addend2", "result"]) == set(funcargs):
-        for d in addition_data:
-            metafunc.addcall(funcargs=d)
-            if d["addend1"] != d["addend2"]:
-                d1 = d.copy()
-                d1["addend1"], d1["addend2"] = d1["addend2"], d1["addend1"]
-                metafunc.addcall(funcargs=d1)
-    elif set(["modulo", "minuend", "subtrahend", "result"]) == set(funcargs):
-        for d in addition_data:
-            d1 = dict(modulo=d["modulo"],
-                      result=d["result"],
-                      minuend=d["addend1"],
-                      subtrahend=-d["addend2"])
-            metafunc.addcall(funcargs=d1)
     elif set(["modulo", "factor1", "factor2", "result"]) == set(funcargs):
         for d in multiplication_data:
             d0, d1, d2, d3 = d.copy(), d.copy(), d.copy(), d.copy()
