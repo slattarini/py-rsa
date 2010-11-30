@@ -257,9 +257,9 @@ def pytest_generate_tests(metafunc):
     elif test_data_generator.has(funcargs):
         for x in test_data_generator.get(funcargs):
             metafunc.addcall(x)
-    elif set(["prime_modulo"]) == set(funcargs):
+    elif set(["prime"]) == set(funcargs):
         for p in primes:
-            metafunc.addcall(funcargs={'prime_modulo': p})
+            metafunc.addcall(funcargs={'prime': p})
     elif set(["noncoprime_residue", "modulo"]) == set(funcargs):
         for d in noncoprime_modulo_and_residue_data:
             metafunc.addcall(dict(noncoprime_residue=d['residue'],
@@ -483,13 +483,13 @@ def test_integermod_invalid_reciprocal_ldiv(modulo, noncoprime_residue):
     py.test.raises(RSA.IMValueError, "1/cls(%d)" % noncoprime_residue)
 
 
-def test_prime_integermod_reciprocal(prime_modulo):
-    cls = TL.integers_mod(prime_modulo)
-    if prime_modulo == 2:
+def test_prime_integermod_reciprocal(prime):
+    cls = TL.integers_mod(prime)
+    if prime == 2:
         x = y = 1
     else:
-        x = (prime_modulo - 1) / 2
-        y = prime_modulo - 2
+        x = (prime - 1) / 2
+        y = prime - 2
     assert (cls(x)**(-1)) == cls(y)
 
 
@@ -498,18 +498,18 @@ def test_integermod_exponentiation(modulo, base, exponent, result):
     assert ((cls(base) ** exponent).residue == result)
 
 
-def test_fermat_little_theorem(prime_modulo):
-    cls = TL.integers_mod(prime_modulo)
+def test_fermat_little_theorem(prime):
+    cls = TL.integers_mod(prime)
     for d in (2, 3, 10):
-        x = max(1, prime_modulo/d)
-        assert cls(x)**(prime_modulo - 1) == cls(1)
+        x = max(1, prime/d)
+        assert cls(x)**(prime - 1) == cls(1)
 
-def test_integermod_reciprocal_power_of_prime(prime_modulo):
+def test_integermod_reciprocal_power_of_prime(prime):
     # It can be proved that if p is prime and:
     #  a^-1 = b (mod p^n)
     # then:
     #  a^-1 = 2 * b - a * b^2 (mod p^(n+1))
-    p = prime_modulo
+    p = prime
     modp100 = TL.integers_mod(p**120)
     modp101 = TL.integers_mod(p**121)
     if p == 5:
