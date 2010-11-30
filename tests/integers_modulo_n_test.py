@@ -19,7 +19,7 @@ class TestDataGenerator:
     def __init__(self):
         self._tests_data = {}
     # Here, `args' is expected to be a list of funcarg names.
-    def add(self, test_generator, args):
+    def update(self, test_generator, args):
         from copy import copy
         if callable(test_generator):
             tests_data = test_generator()
@@ -56,8 +56,8 @@ init_known_values = [
          residue=703780454821668921429157503L)
 ]
 
-test_data_generator.add(init_known_values,
-                        ["whole", "modulo", "residue"])
+test_data_generator.update(init_known_values,
+                           ["whole", "modulo", "residue"])
 
 plain_addition_data = [
     dict(modulo=2,   addend1=1,   addend2=1,   result=0),
@@ -88,8 +88,8 @@ def get_addition_data():
         d1["addend1"], d1["addend2"] = d1["addend2"], d1["addend1"]
         data.extend([d0, d1])
     return data
-test_data_generator.add(get_addition_data,
-                        ["modulo", "addend1", "addend2", "result"])
+test_data_generator.update(get_addition_data,
+                           ["modulo", "addend1", "addend2", "result"])
 
 def get_subtraction_data():
     data = []
@@ -99,8 +99,8 @@ def get_subtraction_data():
                          minuend=d["addend1"],
                          subtrahend=-d["addend2"]))
     return data
-test_data_generator.add(get_subtraction_data,
-                        ["modulo", "minuend", "subtrahend", "result"])
+test_data_generator.update(get_subtraction_data,
+                           ["modulo", "minuend", "subtrahend", "result"])
 
 
 multiplication_data = [
