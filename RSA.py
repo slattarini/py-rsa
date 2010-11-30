@@ -178,6 +178,22 @@ class IntegerMod(object):
       4 (mod 15)
       >>> print (mod15[11] / mod15[8] * 3 + 1)
       7 (mod 15)
+      >>> # Proper exceptions should be raised for impossible operations
+      >>> mod15[10]**(-1)
+      Traceback (most recent call last):
+       ...
+      IMValueError: 15 is not prime with 10
+      >>> 1 / mod15[9]
+      Traceback (most recent call last):
+       ...
+      IMValueError: 15 is not prime with 9
+      >>> # To calculate a/b (mod m), we require that gcd(b, m) = 1,
+      >>> # since otherwise the operation is impossible (has no solutions)
+      >>> # or indefinite (has multiple possible results).
+      >>> mod15[12] / mod15[3]
+      Traceback (most recent call last):
+       ...
+      IMValueError: 15 is not prime with 3
     """
 
     """The modulo the integers are reduced with.  Must be overridden
