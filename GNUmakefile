@@ -17,9 +17,7 @@ XARGS := xargs
 FIND := $(shell test -d .git && echo wcfind || echo find)
 PYTHON := python
 
-RUNTESTFLAGS =
-
-DIST_FILES := README $(MAKEFILE) $(DISTNAME).py runtest.py tests/*.py
+DIST_FILES := README $(MAKEFILE) $(DISTNAME).py tests/*.py
 
 default: all
 all: # nothing yet
@@ -64,7 +62,7 @@ clean:
 .PHONY: clean
 
 test check:
-	$(PYTHON) runtest.py $(RUNTESTFLAGS)
+	py.test $(PYTESTFLAGS)
 .PHONY: test check
 
 # vim: ft=make ts=4 sw=4 noet
