@@ -290,7 +290,7 @@ class IntegerMod(object):
 
 if __name__ == "__main__":
     # If running as a script, run all the doctests defined in this module.
-     import sys
+     import sys, doctest
      sys.exit(doctest.testmod()[0] > 0)
 
 #--------------------------------------------------------------------------
