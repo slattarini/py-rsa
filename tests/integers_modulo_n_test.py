@@ -15,6 +15,15 @@ large_primes  = [ 373, 397, 401, 433, 499, 523, 541, 571, 641, 659,
 primes = small_primes + medium_primes + large_primes
 
 
+# Order-preserving sequence uniquification.
+def uniquify(seq):
+    uniq = []
+    for x in seq:
+        if x not in uniq:
+            uniq.append(x)
+    return seq.__class__(uniq)
+
+
 class TestDataGenerator:
     def __init__(self):
         self._tests_data = {}
@@ -27,7 +36,7 @@ class TestDataGenerator:
             tests_data = test_generator()
         else:
             tests_data =  [ copy(x) for x in test_generator ]
-        self._tests_data[frozenset(args)] = tests_data
+        self._tests_data[frozenset(args)] = uniquify(tests_data)
     def has(self, args):
         return self._tests_data.has_key(frozenset(args))
     def get(self, args):
