@@ -19,6 +19,8 @@ class TestDataGenerator:
     def __init__(self):
         self._tests_data = {}
     # Here, `args' is expected to be a list of funcarg names.
+    # NOTE: This will override previous data with the same `args'
+    #       key.
     def update(self, test_generator, args):
         from copy import copy
         if callable(test_generator):
