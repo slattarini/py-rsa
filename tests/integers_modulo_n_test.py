@@ -19,6 +19,8 @@ large_primes  = [ 373, 397, 401, 433, 499, 523, 541, 571, 641, 659,
                   661, 701, 773, 811, 821, 853, 929, 953, 967, 997, ]
 primes = small_primes + medium_primes + large_primes
 
+test_data_generator.update([dict(prime=p) for p in primes], ["prime"])
+
 
 init_known_values = [
     dict(whole=0,   modulo=1, residue=0),
@@ -259,9 +261,6 @@ def pytest_generate_tests(metafunc):
     elif test_data_generator.has(funcargs):
         for x in test_data_generator.get(funcargs):
             metafunc.addcall(x)
-    elif set(["prime"]) == set(funcargs):
-        for p in primes:
-            metafunc.addcall(funcargs={'prime': p})
     elif set(["noncoprime_residue", "modulo"]) == set(funcargs):
         for d in noncoprime_modulo_and_residue_data:
             metafunc.addcall(dict(noncoprime_residue=d['residue'],
