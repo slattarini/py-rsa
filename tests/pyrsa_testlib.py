@@ -2,13 +2,14 @@
 # -*- coding: iso-8859-1 -*-
 # This file is part of RSA.py testsuite.
 
-"""Helper subroutines the RSA.py's testsuite"""
-
-import RSA
+"""Helper subroutines and classes for the RSA.py's testsuite"""
 
 class TestError(Exception):
     pass
 
+# Build a proper subclass of RSA.IntegerMod, with the given
+# modulo; the class name is set to a sane default if not given
+# explicitly.
 def integers_mod(n, class_name=None):
     import RSA
     if not isinstance(n, (int, long)) or n <= 0:
@@ -47,6 +48,5 @@ class TestDataGenerator:
         return self._tests_data[frozenset(args)]
     def remove(self, args):
         del self._tests_data[frozenset(args)]
-
 
 # vim: et sw=4 ts=4 ft=python
