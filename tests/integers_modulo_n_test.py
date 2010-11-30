@@ -203,6 +203,22 @@ stringify_data = [
          string="152921409798503 (mod 825461974345357)"),
 ]
 
+noncoprime_modulo_and_residue_data = [
+    dict(modulo=2,  residue=0),
+    dict(modulo=12, residue=2),
+    dict(modulo=12, residue=3),
+    dict(modulo=12, residue=4),
+    dict(modulo=12, residue=6),
+    dict(modulo=12, residue=9),
+    dict(modulo=55, residue=0),
+    dict(modulo=55, residue=5),
+    dict(modulo=55, residue=11),
+    dict(modulo=55, residue=44),
+    # try also with big modules
+    dict(modulo=2**10000,          residue=2**4000),
+    dict(modulo=3**10000*47**1000, residue=3**12000*37**1000),
+]
+
 # py.test special hook function to generate test input.
 def pytest_generate_tests(metafunc):
     funcargs = metafunc.funcargnames
@@ -211,6 +227,10 @@ def pytest_generate_tests(metafunc):
     elif set(["prime_modulo"]) == set(funcargs):
         for p in primes:
             metafunc.addcall(funcargs={'prime_modulo': p})
+    elif set(["noncoprime_residue", "modulo"]) == set(funcargs):
+        for d in noncoprime_modulo_and_residue_data:
+            metafunc.addcall(dict(noncoprime_residue=d['residue'],
+                                  modulo=d['modulo']))
     elif set(["whole", "modulo", "residue"]) == set(funcargs):
         for d in init_known_values:
             metafunc.addcall(funcargs=d)
@@ -433,13 +453,19 @@ def test_integermod_reciprocal_ldiv(modulo, residue, reciprocal):
     cls = TL.integers_mod(modulo)
     assert ((1/cls(residue)).residue == reciprocal)
 
-def test_integermod_invalid_reciprocal():
-    cls = TL.integers_mod(55)
-    py.test.raises(RSA.IMValueError, "cls(0)**(-1)")
-    py.test.raises(RSA.IMValueError, "cls(5)**(-1)")
-    py.test.raises(RSA.IMValueError, "cls(11)**(-1)")
-    py.test.raises(RSA.IMValueError, "cls(44)**(-1)")
-    py.test.raises(RSA.IMValueError, "cls(55)**(-1)")
+
+def test_integermod_invalid_reciprocal_pow(modulo, noncoprime_residue):
+    cls = TL.integers_mod(modulo)
+    py.test.raises(RSA.IMValueError, "cls(%d)**(-1)" % noncoprime_residue)
+
+def test_integermod_invalid_reciprocal_rdiv(modulo, noncoprime_residue):
+    cls = TL.integers_mod(modulo)
+    py.test.raises(RSA.IMValueError, "cls(1)/%d" % noncoprime_residue)
+
+def test_integermod_invalid_reciprocal_ldiv(modulo, noncoprime_residue):
+    cls = TL.integers_mod(modulo)
+    py.test.raises(RSA.IMValueError, "1/cls(%d)" % noncoprime_residue)
+
 
 def test_prime_integermod_reciprocal(prime_modulo):
     cls = TL.integers_mod(prime_modulo)
