@@ -119,6 +119,29 @@ multiplication_data = [
     ),
 ]
 
+def get_multiplication_data():
+    data = []
+    for d in multiplication_data:
+        d0, d1, d2, d3 = d.copy(), d.copy(), d.copy(), d.copy()
+        d1["factor1"] *= -1
+        if d1["result"] != 0:
+            d1["result"] = d1["modulo"] - d1["result"]
+        d2["factor2"] *= -1
+        if d2["result"] != 0:
+            d2["result"] = d2["modulo"] - d2["result"]
+        d3["factor1"] *= -1
+        d3["factor2"] *= -1
+        for x in (d0, d1, d2, d3):
+            data.append(x)
+            x1 = x.copy()
+            x1["factor1"], x1["factor2"] = x1["factor2"], x1["factor1"]
+            data.append(x1)
+    return data
+
+test_data_generator.update(get_multiplication_data,
+                           ["modulo", "factor1", "factor2", "result"])
+
+
 additive_inversion_data = [
     dict(modulo=2,   residue=0,   inverse=0),
     dict(modulo=2,   residue=1,   inverse=1),
@@ -131,6 +154,7 @@ additive_inversion_data = [
          residue=9734356935945946979,
          inverse=4779104421285805478),
 ]
+
 
 multiplicative_inversion_data = [
     dict(modulo=2,  residue=1,   reciprocal=1),
@@ -273,22 +297,6 @@ def pytest_generate_tests(metafunc):
                           residue=d["inverse"],
                           inverse=d["residue"])
                 metafunc.addcall(funcargs=d1)
-    elif set(["modulo", "factor1", "factor2", "result"]) == set(funcargs):
-        for d in multiplication_data:
-            d0, d1, d2, d3 = d.copy(), d.copy(), d.copy(), d.copy()
-            d1["factor1"] *= -1
-            if d1["result"] != 0:
-                d1["result"] = d1["modulo"] - d1["result"]
-            d2["factor2"] *= -1
-            if d2["result"] != 0:
-                d2["result"] = d2["modulo"] - d2["result"]
-            d3["factor1"] *= -1
-            d3["factor2"] *= -1
-            for x in (d0, d1, d2, d3):
-                metafunc.addcall(funcargs=x)
-                x1 = x.copy()
-                x1["factor1"], x1["factor2"] = x1["factor2"], x1["factor1"]
-                metafunc.addcall(funcargs=x1)
     elif set(["modulo", "dividend", "divisor", "result"]) == set(funcargs):
         for d in division_data:
             metafunc.addcall(funcargs=d)
