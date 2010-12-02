@@ -155,6 +155,16 @@ additive_inversion_data = [
          inverse=4779104421285805478),
 ]
 
+def get_additive_inversion_data():
+    data = []
+    for d in additive_inversion_data:
+        d0, d1 = d.copy(), d.copy()
+        d1["inverse"], d1["residue"] = d1["residue"], d1["inverse"]
+        data.extend([d0, d1])
+    return data
+
+test_data_generator.update(get_additive_inversion_data,
+                           ["modulo", "residue", "inverse"])
 
 multiplicative_inversion_data = [
     dict(modulo=2,  residue=1,   reciprocal=1),
@@ -176,6 +186,20 @@ multiplicative_inversion_data = [
          reciprocal = 12314522799775017007991696109927229269151916254315470214920129
     ),
 ]
+
+def get_multiplicative_inversion_data():
+    data = []
+    for d in multiplicative_inversion_data:
+        d0, d1, d2 = d.copy(), d.copy(), d.copy()
+        d1["residue"] *= -1
+        d1["reciprocal"] = d1["modulo"] - d1["reciprocal"]
+        d2["residue"] = d2["modulo"] - d2["residue"]
+        d2["reciprocal"] = d2["modulo"] - d2["reciprocal"]
+        data.extend([d0, d1, d2])
+    return data
+test_data_generator.update(get_multiplicative_inversion_data,
+                           ["modulo", "residue", "reciprocal"])
+
 
 division_data = [
     dict(modulo=2,   dividend=0,  divisor=1,  result=0),
@@ -289,26 +313,9 @@ def pytest_generate_tests(metafunc):
         for d in noncoprime_modulo_and_residue_data:
             metafunc.addcall(dict(noncoprime_residue=d['residue'],
                                   modulo=d['modulo']))
-    elif set(["modulo", "residue", "inverse"]) == set(funcargs):
-        for d in additive_inversion_data:
-            metafunc.addcall(funcargs=d)
-            if d["inverse"] != d["residue"]:
-                d1 = dict(modulo=d["modulo"],
-                          residue=d["inverse"],
-                          inverse=d["residue"])
-                metafunc.addcall(funcargs=d1)
     elif set(["modulo", "dividend", "divisor", "result"]) == set(funcargs):
         for d in division_data:
             metafunc.addcall(funcargs=d)
-    elif set(["modulo", "residue", "reciprocal"]) == set(funcargs):
-        for d in multiplicative_inversion_data:
-            d0, d1, d2 = d.copy(), d.copy(), d.copy()
-            d1["residue"] *= -1
-            d1["reciprocal"] = d1["modulo"] - d1["reciprocal"]
-            d2["residue"] = d2["modulo"] - d2["residue"]
-            d2["reciprocal"] = d2["modulo"] - d2["reciprocal"]
-            for x in (d0, d1, d2):
-                metafunc.addcall(funcargs=x)
     elif set (["modulo", "base", "exponent", "result"]) == set(funcargs):
         for d in exponentiation_data:
             metafunc.addcall(funcargs=d)
