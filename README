@@ -7,8 +7,9 @@ Existing documentation is in the docstrings of RSA.py.
 
 There is no installation procedure.
 
-The RSA.py testsuite uses pytest.  You can run it by issuing the command
-"py.test" from the top-level directory.
+The RSA.py testsuite requires pytest >= 2.0.  You can run the whole
+testsuite with the command "py.test" issued from the top directory
+of the source tree.
 
 The Makefile provide a 'check' target to run the testsuite, a 'dist'
 target to repackage the module in a tarball, plus an obvious 'clean'
