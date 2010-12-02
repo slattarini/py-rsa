@@ -10,6 +10,10 @@ import RSA
 with_params = TL.with_params
 pytest_generate_tests = TL.pytest_generate_tests
 
+
+###  DATA
+
+
 # obtained with GAP, but could also be looked upon a simple table
 small_primes  = [ 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 97, ]
 medium_primes = [ 131, 151, 157, 181, 241, 269, 271, 307, ]
