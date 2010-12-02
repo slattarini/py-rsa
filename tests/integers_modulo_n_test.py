@@ -65,7 +65,7 @@ def define_addition_data():
         ),
     ]:
         d0, d1 = d.copy(), d.copy()
-        # swap the two addends.
+        # swap the two addends
         d1["addend1"], d1["addend2"] = d1["addend2"], d1["addend1"]
         data.extend([d0, d1])
     return TL.uniquify(data)
@@ -77,6 +77,14 @@ def define_subtraction_data():
                          result=d["result"],
                          minuend=d["addend1"],
                          subtrahend=-d["addend2"]))
+        if d["result"] == 0:
+            result = 0
+        else:
+            result = d["modulo"] - d["result"]
+        data.append(dict(modulo=d["modulo"],
+                         result=result,
+                         minuend=-d["addend1"],
+                         subtrahend=d["addend2"]))
     return TL.uniquify(data)
 
 addition_data = define_addition_data()
