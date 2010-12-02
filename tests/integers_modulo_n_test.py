@@ -297,10 +297,7 @@ noncoprime_modulo_and_residue_data = [
 # py.test special hook function to generate test input.
 def pytest_generate_tests(metafunc):
     funcargs = metafunc.funcargnames
-    if set(["modulo", "dividend", "divisor", "result"]) == set(funcargs):
-        for d in division_data:
-            metafunc.addcall(funcargs=d)
-    elif set (["modulo", "base", "exponent", "result"]) == set(funcargs):
+    if set (["modulo", "base", "exponent", "result"]) == set(funcargs):
         for d in exponentiation_data:
             metafunc.addcall(funcargs=d)
             d1 = d.copy()
@@ -340,7 +337,7 @@ def test_make_int_modulo_int(whole, modulo, residue):
            "%u = %u != %u (mod %u)" % (whole, got, residue, modulo)
 
 
-# Test that an IntegerMods can be converte to itself.
+# Test that an IntegerMods can be converted to itself.
 @with_params(init_known_values)
 def test_int_modulo_int_to_itself(whole, modulo, residue):
     integermod_subclass = TL.integers_mod(modulo)
@@ -356,13 +353,6 @@ def test_int_modulo_int_to_itself_copy_not_ref():
     integermod_instance2 = integermod_subclass(integermod_instance1)
     assert integermod_instance1 is not integermod_instance2
 
-
-@with_params(stringify_data)
-def test_stringify(whole, modulo, string):
-    integermod_subclass = TL.integers_mod(modulo)
-    assert str(integermod_subclass(whole)) == string
-
-
 def test_integermod_different_subclasses_not_equal():
     integermod_subclass_1 = TL.integers_mod(2)
     integermod_subclass_2 = TL.integers_mod(2)
@@ -371,6 +361,13 @@ def test_integermod_different_subclasses_not_equal():
     # In case both __eq__ and __neq__ are defined
     assert ((instance_subclass_1 != instance_subclass_2)
             and not (instance_subclass_1 == instance_subclass_2))
+
+
+
+@with_params(stringify_data)
+def test_stringify(whole, modulo, string):
+    integermod_subclass = TL.integers_mod(modulo)
+    assert str(integermod_subclass(whole)) == string
 
 
 @with_params(init_known_values)
@@ -452,14 +449,17 @@ def test_integermod_rmul(modulo, factor1, factor2, result):
     assert (factor1 * cls(factor2)).residue == result
 
 
+@with_params(division_data)
 def test_integermod_div(modulo, dividend, divisor, result):
     cls = TL.integers_mod(modulo)
     assert (cls(dividend) / cls(divisor)).residue == result
 
+@with_params(division_data)
 def test_integermod_ldiv(modulo, dividend, divisor, result):
     cls = TL.integers_mod(modulo)
     assert (cls(dividend) / divisor).residue == result
 
+@with_params(division_data)
 def test_integermod_rdiv(modulo, dividend, divisor, result):
     cls = TL.integers_mod(modulo)
     assert (dividend / cls(divisor)).residue == result
