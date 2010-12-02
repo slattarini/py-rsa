@@ -254,10 +254,10 @@ def define_exponentiation_data():
         dict(modulo=97**300-1, base=97, exponent=322, result=97**22),
 
         # tests for QoI w.r.t. speed
-        dict(modulo=5**20,   base=7**10,  exponent=4*(5**19),    result=1),
-        dict(modulo=5**100,  base=3**100, exponent=4*(5**99),    result=1),
-        dict(modulo=47**60,  base=45*20,  exponent=46*(47**59),  result=1),
-        dict(modulo=97**200, base=53*120, exponent=96*(97**199), result=1),
+        dict(modulo=5**20,   base=7**10,  exponent=4*(5**19),     result=1),
+        dict(modulo=5**100,  base=3**100, exponent=4*(5**99),     result=1),
+        dict(modulo=47**60,  base=45**20,  exponent=46*(47**59),  result=1),
+        dict(modulo=97**200, base=53**120, exponent=96*(97**199), result=1),
 
         # stress tests for QoI w.r.t. speed
         dict(modulo=11**2001,  base=2, exponent=10*(11**2000), result=1),
