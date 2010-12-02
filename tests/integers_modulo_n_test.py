@@ -303,12 +303,6 @@ multiplicative_inversion_data = define_multiplicative_inversion_data()
 exponentiation_data = define_exponentiation_data()
 
 
-# py.test special hook function to generate test input.
-def pytest_generate_tests(metafunc):
-    funcargs = metafunc.funcargnames
-    TL.pytest_generate_tests(metafunc)
-
-
 ### TESTS
 
 
