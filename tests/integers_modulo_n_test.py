@@ -43,48 +43,45 @@ init_known_values = [
          residue=703780454821668921429157503L)
 ]
 
-plain_addition_data = [
-    dict(modulo=2,   addend1=1,   addend2=1,   result=0),
-    dict(modulo=3,   addend1=1,   addend2=2,   result=0),
-    dict(modulo=49,  addend1=1,   addend2=-16, result=34),
-    dict(modulo=97,  addend1=50,  addend2=50,  result=3),
-    dict(modulo=100, addend1=99,  addend2=23,  result=22),
-    dict(modulo=100, addend1=8,   addend2=-44, result=64),
-    # try with big values
-    dict(modulo  = 2**500 + 47**100,
-         addend1 = 2**500 - 23,
-         addend2 = 47**100 + 45,
-         result  = 22,
-    ),
-    # try with huge values
-    dict(modulo  = 31**500 + 55**300,
-         addend1 = 31**500 - 10**54,
-         addend2 = 55**300 + 11**52,
-         # this is simply (11**52 - 10**54), calculated with GAP.
-         result  = 420429319844313329730664601483335671261683881745483121,
-    ),
-]
-
-def get_addition_data():
+def define_addition_data():
     data = []
-    for d in plain_addition_data:
+    for d in [
+        dict(modulo=2,   addend1=1,   addend2=1,   result=0),
+        dict(modulo=3,   addend1=1,   addend2=2,   result=0),
+        dict(modulo=49,  addend1=1,   addend2=-16, result=34),
+        dict(modulo=97,  addend1=50,  addend2=50,  result=3),
+        dict(modulo=100, addend1=99,  addend2=23,  result=22),
+        dict(modulo=100, addend1=8,   addend2=-44, result=64),
+        # try with big values
+        dict(modulo  = 2**500 + 47**100,
+             addend1 = 2**500 - 23,
+             addend2 = 47**100 + 45,
+             result  = 22),
+        # try with huge values
+        dict(modulo  = 31**500 + 55**300,
+             addend1 = 31**500 - 10**54,
+             addend2 = 55**300 + 11**52,
+             # this is simply (11**52 - 10**54), calculated with GAP.
+             result  = 420429319844313329730664601483335671261683881745483121,
+        ),
+    ]:
         d0, d1 = d.copy(), d.copy()
+        # swap the two addends.
         d1["addend1"], d1["addend2"] = d1["addend2"], d1["addend1"]
         data.extend([d0, d1])
-    return data
-test_data_generator.update(get_addition_data,
-                           ["modulo", "addend1", "addend2", "result"])
+    return TL.uniquify(data)
 
-def get_subtraction_data():
+def define_subtraction_data():
     data = []
-    for d in get_addition_data():
+    for d in addition_data:
         data.append(dict(modulo=d["modulo"],
                          result=d["result"],
                          minuend=d["addend1"],
                          subtrahend=-d["addend2"]))
-    return data
-test_data_generator.update(get_subtraction_data,
-                           ["modulo", "minuend", "subtrahend", "result"])
+    return TL.uniquify(data)
+
+addition_data = define_addition_data()
+subtraction_data = define_subtraction_data()
 
 
 multiplication_data = [
@@ -419,27 +416,33 @@ def test_integermod_inequality(whole, modulo, residue):
                 cls(whole+1) != cls(residue))
 
 
+@with_params(addition_data)
 def test_integermod_add(modulo, addend1, addend2, result):
     cls = TL.integers_mod(modulo)
     assert (cls(addend1) + cls(addend2)).residue == result
 
+@with_params(addition_data)
 def test_integermod_ladd(modulo, addend1, addend2, result):
     cls = TL.integers_mod(modulo)
     assert (cls(addend1) + addend2).residue == result
 
+@with_params(addition_data)
 def test_integermod_radd(modulo, addend1, addend2, result):
     cls = TL.integers_mod(modulo)
     assert (addend1 + cls(addend2)).residue == result
 
 
+@with_params(subtraction_data)
 def test_integermod_sub(modulo, minuend, subtrahend, result):
     cls = TL.integers_mod(modulo)
     assert (cls(minuend) - cls(subtrahend)).residue == result
 
+@with_params(subtraction_data)
 def test_integermod_lsub(modulo, minuend, subtrahend, result):
     cls = TL.integers_mod(modulo)
     assert (cls(minuend) - subtrahend).residue == result
 
+@with_params(subtraction_data)
 def test_integermod_rsub(modulo, minuend, subtrahend, result):
     cls = TL.integers_mod(modulo)
     assert (minuend - cls(subtrahend)).residue == result
