@@ -29,26 +29,6 @@ def uniquify(seq):
             uniq.append(x)
     return seq.__class__(uniq)
 
-class TestDataGenerator:
-    def __init__(self):
-        self._tests_data = {}
-    # Here, `args' is expected to be a list of funcarg names.
-    # NOTE: This will override previous data with the same `args'
-    #       key.
-    def update(self, test_generator, args):
-        from copy import copy
-        if callable(test_generator):
-            tests_data = test_generator()
-        else:
-            tests_data =  [ copy(x) for x in test_generator ]
-        self._tests_data[frozenset(args)] = uniquify(tests_data)
-    def has(self, args):
-        return self._tests_data.has_key(frozenset(args))
-    def get(self, args):
-        return self._tests_data[frozenset(args)]
-    def remove(self, args):
-        del self._tests_data[frozenset(args)]
-
 # Decorators that generate a list parameters for a test function.
 # Examples of usage:
 #   @with_params([dict(a=2, b=2L), dict(a=0, b=0.0)])

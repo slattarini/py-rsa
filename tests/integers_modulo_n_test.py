@@ -10,10 +10,6 @@ import RSA
 with_params = TL.with_params
 pytest_generate_tests = TL.pytest_generate_tests
 
-# Used to generate parametrized tests.
-test_data_generator = TL.TestDataGenerator()
-
-
 # obtained with GAP, but could also be looked upon a simple table
 small_primes  = [ 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 97, ]
 medium_primes = [ 131, 151, 157, 181, 241, 269, 271, 307, ]
@@ -301,12 +297,7 @@ noncoprime_modulo_and_residue_data = [
 # py.test special hook function to generate test input.
 def pytest_generate_tests(metafunc):
     funcargs = metafunc.funcargnames
-    if not funcargs:
-        pass # test function without arguments
-    elif test_data_generator.has(funcargs):
-        for x in test_data_generator.get(funcargs):
-            metafunc.addcall(x)
-    elif set(["noncoprime_residue", "modulo"]) == set(funcargs):
+    if set(["noncoprime_residue", "modulo"]) == set(funcargs):
         for d in noncoprime_modulo_and_residue_data:
             metafunc.addcall(dict(noncoprime_residue=d['residue'],
                                   modulo=d['modulo']))
