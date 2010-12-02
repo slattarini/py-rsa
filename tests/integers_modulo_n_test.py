@@ -13,14 +13,13 @@ pytest_generate_tests = TL.pytest_generate_tests
 # Used to generate parametrized tests.
 test_data_generator = TL.TestDataGenerator()
 
+
 # obtained with GAP, but could also be looked upon a simple table
 small_primes  = [ 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 97, ]
 medium_primes = [ 131, 151, 157, 181, 241, 269, 271, 307, ]
 large_primes  = [ 373, 397, 401, 433, 499, 523, 541, 571, 641, 659,
                   661, 701, 773, 811, 821, 853, 929, 953, 967, 997, ]
 primes = small_primes + medium_primes + large_primes
-
-test_data_generator.update([dict(prime=p) for p in primes], ["prime"])
 
 
 init_known_values = [
@@ -505,6 +504,12 @@ def test_integermod_invalid_reciprocal_ldiv(modulo, noncoprime_residue):
     py.test.raises(RSA.IMValueError, "1/cls(%d)" % noncoprime_residue)
 
 
+def test_integermod_exponentiation(modulo, base, exponent, result):
+    cls = TL.integers_mod(modulo)
+    assert ((cls(base) ** exponent).residue == result)
+
+
+@with_params([dict('prime', p) for p in primes])
 def test_prime_integermod_reciprocal(prime):
     cls = TL.integers_mod(prime)
     if prime == 2:
@@ -515,17 +520,14 @@ def test_prime_integermod_reciprocal(prime):
     assert (cls(x)**(-1)) == cls(y)
 
 
-def test_integermod_exponentiation(modulo, base, exponent, result):
-    cls = TL.integers_mod(modulo)
-    assert ((cls(base) ** exponent).residue == result)
-
-
+@with_params([dict('prime', p) for p in primes])
 def test_fermat_little_theorem(prime):
     cls = TL.integers_mod(prime)
     for d in (2, 3, 10):
         x = max(1, prime/d)
         assert cls(x)**(prime - 1) == cls(1)
 
+@with_params([dict('prime', p) for p in primes])
 def test_integermod_reciprocal_power_of_prime(prime):
     # It can be proved that if p is prime and:
     #  a^-1 = b (mod p^n)
