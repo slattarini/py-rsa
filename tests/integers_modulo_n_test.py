@@ -282,13 +282,14 @@ def define_exponentiation_data():
         dict(modulo=2047**365, base=1111*273, exponent=11*88*(2047**364),
             result=1),
     ]:
-        d0, d1 = d.copy(), d.copy()
-        # Given a^n, we want to try also (-a)^n
-        if d0['exponent'] % 2 == 1:
-            if d0['result'] != 0:
-                d1['result'] = d0['modulo'] - d0['result']
-            d1['base'] = d0['modulo'] - d0['base']
-        data.extend([d0, d1])
+        # Given a^n, we want to try also (-a)^n, in two different
+        # "flavors".
+        d0, d1, d2 = d.copy(), d.copy(), d.copy()
+        d1['base'] = - d0['base']
+        d2['base'] = d0['modulo'] - d0['base']
+        if d0['exponent'] % 2 == 1 and d0['result'] != 0:
+            d2['result'] = d1['result'] = d0['modulo'] - d0['result']
+        data.extend([d0, d1, d2])
     return TL.uniquify(data)
 
 def define_noncoprime_modulo_and_residue_data():
