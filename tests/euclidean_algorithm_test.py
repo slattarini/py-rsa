@@ -122,7 +122,7 @@ handcrafted_known_values = [
 ]
 known_values.extend(handcrafted_known_values)
 
-# py.test special hook function to generate test input.
+# pytest special hook function to generate test input.
 def pytest_generate_tests(metafunc):
     funcargs = metafunc.funcargnames
     # gcd_io: "GCD Input and Output"

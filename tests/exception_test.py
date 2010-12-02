@@ -4,7 +4,7 @@
 
 """Unit tests for custom exceptions used by the RSA.py"""
 
-import py.test
+import pytest
 import RSA
 
 ### DATA
@@ -24,7 +24,7 @@ exceptions_info = {
     },
 }
 
-# py.test special hook function to generate test input.
+# pytest special hook function to generate test input.
 def pytest_generate_tests(metafunc):
     funcargs = metafunc.funcargnames
     addcall = lambda **d: metafunc.addcall(funcargs=d)
@@ -51,10 +51,10 @@ def test_exc_subclass(exc, su_exc):
 
 def test_exc_subexception(exc, su_exc):
     exc, su_exc = map(fix_exception, (exc, su_exc))
-    py.test.raises(su_exc, "raise exc")
+    pytest.raises(su_exc, "raise exc")
 
 def test_exc_raisable(exc):
     exc = fix_exception(exc)
-    py.test.raises(exc, "raise exc")
+    pytest.raises(exc, "raise exc")
 
 # vim: et sw=4 ts=4 ft=python

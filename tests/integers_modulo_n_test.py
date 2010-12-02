@@ -3,7 +3,7 @@
 # This file is part of RSA.py testsuite.
 
 """Tests for the RSA.py's implementation of integers (mod n)"""
-import py.test
+import pytest
 import RSA
 from tests.pyrsa_testlib import with_params, without_duplicates, \
                                 integers_mod, pytest_generate_tests
@@ -375,13 +375,13 @@ def test_integermod_named_params():
 
 
 def test_integermod_direct_instantiation_exception():
-    py.test.raises(RSA.IMRuntimeError, "RSA.IntegerMod(1)")
+    pytest.raises(RSA.IMRuntimeError, "RSA.IntegerMod(1)")
 
 def test_integermod_subclass_no_modulo_instantiation_exception():
     # check that instantiation of an IntegerMod subclass fails if
     # `modulo' class attribute is not overridden
     class integermod_subclass(RSA.IntegerMod): pass
-    py.test.raises(RSA.IMRuntimeError, "integermod_subclass(1)")
+    pytest.raises(RSA.IMRuntimeError, "integermod_subclass(1)")
 
 
 # Test that 'whole % modulo == residue' (subclassing IntegerMod)
@@ -545,17 +545,17 @@ def test_integermod_reciprocal_ldiv(modulo, residue, reciprocal):
 @with_params(noncoprime_modulo_and_residue_data)
 def test_integermod_invalid_reciprocal_pow(modulo, residue):
     cls = integers_mod(modulo)
-    py.test.raises(RSA.IMValueError, "cls(%d)**(-1)" % residue)
+    pytest.raises(RSA.IMValueError, "cls(%d)**(-1)" % residue)
 
 @with_params(noncoprime_modulo_and_residue_data)
 def test_integermod_invalid_reciprocal_rdiv(modulo, residue):
     cls = integers_mod(modulo)
-    py.test.raises(RSA.IMValueError, "cls(1)/%d" % residue)
+    pytest.raises(RSA.IMValueError, "cls(1)/%d" % residue)
 
 @with_params(noncoprime_modulo_and_residue_data)
 def test_integermod_invalid_reciprocal_ldiv(modulo, residue):
     cls = integers_mod(modulo)
-    py.test.raises(RSA.IMValueError, "1/cls(%d)" % residue)
+    pytest.raises(RSA.IMValueError, "1/cls(%d)" % residue)
 
 
 @with_params(exponentiation_data)
