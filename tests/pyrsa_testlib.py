@@ -49,4 +49,20 @@ class TestDataGenerator:
     def remove(self, args):
         del self._tests_data[frozenset(args)]
 
+# Decorator that generate parameters for a test function.
+# Example of usage:
+#   @with_params([dict(a=1, b=2), dict(a=3, b=3)])
+#   def test_equals(a, b):
+#       assert a == b
+def with_params(funcarglist):
+    def decorator(function):
+        function.pytest_funcarglist = funcarglist
+        return function
+    return decorator
+
+# Generic decorators-based test parameters generator.
+def pytest_generate_tests(metafunc):
+    for funcargs in getattr(metafunc.function, 'pytest_funcarglist', ()):
+        metafunc.addcall(funcargs=funcargs)
+
 # vim: et sw=4 ts=4 ft=python

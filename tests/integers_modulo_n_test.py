@@ -7,10 +7,11 @@ import py.test
 import tests.pyrsa_testlib as TL
 import RSA
 
+with_params = TL.with_params
+pytest_generate_tests = TL.pytest_generate_tests
 
 # Used to generate parametrized tests.
 test_data_generator = TL.TestDataGenerator()
-
 
 # obtained with GAP, but could also be looked upon a simple table
 small_primes  = [ 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 97, ]
@@ -41,10 +42,6 @@ init_known_values = [
          modulo=11**27,
          residue=703780454821668921429157503L)
 ]
-
-test_data_generator.update(init_known_values,
-                           ["whole", "modulo", "residue"])
-
 
 plain_addition_data = [
     dict(modulo=2,   addend1=1,   addend2=1,   result=0),
@@ -328,8 +325,8 @@ def pytest_generate_tests(metafunc):
     elif set(["whole", "modulo", "string"]) == set(funcargs):
         for d in stringify_data:
             metafunc.addcall(funcargs=d)
-    else: # sanity check
-        raise RuntimeError("bad funcargsnames list: %r" % funcargs)
+    else:
+        TL.pytest_generate_tests(metafunc)
 
 
 ### TESTS
@@ -351,6 +348,7 @@ def test_integermod_subclass_no_modulo_instantiation_exception():
 
 
 # Test that 'whole % modulo == residue' (subclassing IntegerMod)
+@with_params(init_known_values)
 def test_make_int_modulo_int(whole, modulo, residue):
     cls = TL.integers_mod(modulo)
     got = cls(whole).residue
@@ -359,6 +357,7 @@ def test_make_int_modulo_int(whole, modulo, residue):
 
 
 # Test that an IntegerMods can be converte to itself.
+@with_params(init_known_values)
 def test_int_modulo_int_to_itself(whole, modulo, residue):
     integermod_subclass = TL.integers_mod(modulo)
     integermod_instance1 = integermod_subclass(whole)
@@ -389,12 +388,14 @@ def test_integermod_different_subclasses_not_equal():
             and not (instance_subclass_1 == instance_subclass_2))
 
 
+@with_params(init_known_values)
 def test_integermod_equality(whole, modulo, residue):
     cls = TL.integers_mod(modulo)
     assert (cls(whole) == cls(whole) and
             cls(whole) == cls(residue) and
             cls(residue) == cls(whole))
 
+@with_params(init_known_values)
 def test_integermod_equality_negated(whole, modulo, residue):
     cls = TL.integers_mod(modulo)
     if modulo != 1:
@@ -402,12 +403,14 @@ def test_integermod_equality_negated(whole, modulo, residue):
                 not (cls(whole) == cls(residue+1)) and
                 not (cls(whole+1) == cls(residue)))
 
+@with_params(init_known_values)
 def test_integermod_inequality_negated(whole, modulo, residue):
     cls = TL.integers_mod(modulo)
     assert (not (cls(whole) != cls(whole)) and
             not (cls(whole) != cls(residue)) and
             not (cls(residue) != cls(whole)))
 
+@with_params(init_known_values)
 def test_integermod_inequality(whole, modulo, residue):
     cls = TL.integers_mod(modulo)
     if modulo != 1:
