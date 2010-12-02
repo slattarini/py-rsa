@@ -375,7 +375,6 @@ def test_integermod_different_subclasses_not_equal():
             and not (instance_subclass_1 == instance_subclass_2))
 
 
-
 @with_params(stringify_data)
 def test_stringify(whole, modulo, string):
     integermod_subclass = TL.integers_mod(modulo)
