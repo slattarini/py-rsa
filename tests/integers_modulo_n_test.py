@@ -309,9 +309,6 @@ def pytest_generate_tests(metafunc):
                     d1['result'] = d['modulo'] - d['result']
             d1['base'] = d['modulo'] - d['base']
             metafunc.addcall(funcargs=d1)
-    elif set(["whole", "modulo", "string"]) == set(funcargs):
-        for d in stringify_data:
-            metafunc.addcall(funcargs=d)
     else:
         TL.pytest_generate_tests(metafunc)
 
@@ -360,6 +357,7 @@ def test_int_modulo_int_to_itself_copy_not_ref():
     assert integermod_instance1 is not integermod_instance2
 
 
+@with_params(stringify_data)
 def test_stringify(whole, modulo, string):
     integermod_subclass = TL.integers_mod(modulo)
     assert str(integermod_subclass(whole)) == string
