@@ -317,8 +317,11 @@ def define_exponentiation_data():
     return TL.uniquify(data)
 
 def define_noncoprime_modulo_and_residue_data():
-    return [
+    data = []
+    for d in [
         dict(modulo=2,  residue=0),
+        dict(modulo=5,  residue=0),
+        dict(modulo=6,  residue=3),
         dict(modulo=12, residue=2),
         dict(modulo=12, residue=3),
         dict(modulo=12, residue=4),
@@ -328,10 +331,19 @@ def define_noncoprime_modulo_and_residue_data():
         dict(modulo=55, residue=5),
         dict(modulo=55, residue=11),
         dict(modulo=55, residue=44),
+        dict(modulo=100000, residue=222),
+        dict(modulo=(3 ** 5 * 17**2 * 23**3), residue=(3 * 11)),
+        dict(modulo=(3 ** 5 * 17**2 * 23**3), residue=(2**8 * 17**3)),
         # try also with big modules
         dict(modulo=2**10000,          residue=2**4000),
         dict(modulo=3**10000*47**1000, residue=3**12000*37**1000),
-    ]
+    ]:
+        # g.c.d. (a, n) = 1 iff g.c.d. (-a, n) = 1
+        # "flavors".
+        d0, d1 = d.copy(), d.copy()
+        d1['residue'] *= -1
+        data.extend([d0, d1])
+    return TL.uniquify(data)
 
 
 init_known_values = define_init_known_values()
