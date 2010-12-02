@@ -87,42 +87,40 @@ def define_subtraction_data():
                          subtrahend=d["addend2"]))
     return TL.uniquify(data)
 
-addition_data = define_addition_data()
-subtraction_data = define_subtraction_data()
-
-
-multiplication_data = [
-    dict(modulo=2,   factor1=1,   factor2=1,    result=1),
-    dict(modulo=3,   factor1=1,   factor2=2,    result=2),
-    dict(modulo=3,   factor1=2,   factor2=2,    result=1),
-    dict(modulo=15,  factor1=10,  factor2=3,    result=0),
-    dict(modulo=49,  factor1=7,   factor2=7,    result=0),
-    dict(modulo=97,  factor1=96,  factor2=96,   result=1),
-    dict(modulo=97,  factor1=-98, factor2=193,  result=1),
-    dict(modulo=100, factor1=11,  factor2=21,   result=31),
-    dict(modulo=100, factor1=23,  factor2=55,   result=65),
-    dict(modulo=100, factor1=223, factor2=1055, result=65),
-    dict(modulo=73,  factor1=71,  factor2=68,   result=10),
-    dict(modulo=73,  factor1=-1,  factor2=68,   result=5),
-    dict(modulo=6275631, factor1=732523416, factor2=1553146,
-         result=4756614),
-    # try with big values
-    dict(modulo  = 2**50 * 47**100,
-         factor1 = 2**50 + 1,
-         factor2 = 47**100 - 1,
-         result  = 47**100 - 2**50 - 1,
-    ),
-    # try with huge values
-    dict(modulo  = 71**513 * 47**911,
-         factor1 = 47 * (71**512 + 1),
-         factor2 = 71 * (47**910 + 1),
-         result  = 47 * 71**513 + 71 * 47**911 + 47 * 71,
-    ),
-]
-
-def get_multiplication_data():
+def define_multiplication_data():
     data = []
-    for d in multiplication_data:
+    for d in [
+        dict(modulo=2,   factor1=1,   factor2=1,    result=1),
+        dict(modulo=3,   factor1=1,   factor2=2,    result=2),
+        dict(modulo=3,   factor1=2,   factor2=2,    result=1),
+        dict(modulo=15,  factor1=10,  factor2=3,    result=0),
+        dict(modulo=49,  factor1=7,   factor2=7,    result=0),
+        dict(modulo=97,  factor1=96,  factor2=96,   result=1),
+        dict(modulo=97,  factor1=-98, factor2=193,  result=1),
+        dict(modulo=100, factor1=11,  factor2=21,   result=31),
+        dict(modulo=100, factor1=23,  factor2=55,   result=65),
+        dict(modulo=100, factor1=223, factor2=1055, result=65),
+        dict(modulo=73,  factor1=71,  factor2=68,   result=10),
+        dict(modulo=73,  factor1=-1,  factor2=68,   result=5),
+        # try with "medium" value
+        dict(modulo=6275631,
+             factor1=732523416,
+             factor2=1553146,
+             result=4756614),
+        # try with big values
+        dict(modulo  = 2**50 * 47**100,
+             factor1 = 2**50 + 1,
+             factor2 = 47**100 - 1,
+             result  = 47**100 - 2**50 - 1,
+        ),
+        # try with huge values
+        dict(modulo  = 71**513 * 47**911,
+             factor1 = 47 * (71**512 + 1),
+             factor2 = 71 * (47**910 + 1),
+             result  = 47 * 71**513 + 71 * 47**911 + 47 * 71,
+        ),
+    ]:
+        # Given a*b, we want to try also a*(-b), (-a)*b, (-a)*(-b).
         d0, d1, d2, d3 = d.copy(), d.copy(), d.copy(), d.copy()
         d1["factor1"] *= -1
         if d1["result"] != 0:
@@ -132,16 +130,17 @@ def get_multiplication_data():
             d2["result"] = d2["modulo"] - d2["result"]
         d3["factor1"] *= -1
         d3["factor2"] *= -1
+        data.extend([d0, d1, d2, d3])
+        # Given a*b, we want to try also b*a.
         for x in (d0, d1, d2, d3):
+            x = x.copy()
+            x["factor1"], x["factor2"] = x["factor2"], x["factor1"]
             data.append(x)
-            x1 = x.copy()
-            x1["factor1"], x1["factor2"] = x1["factor2"], x1["factor1"]
-            data.append(x1)
-    return data
+    return TL.uniquify(data)
 
-test_data_generator.update(get_multiplication_data,
-                           ["modulo", "factor1", "factor2", "result"])
-
+addition_data = define_addition_data()
+subtraction_data = define_subtraction_data()
+multiplication_data = define_multiplication_data()
 
 additive_inversion_data = [
     dict(modulo=2,   residue=0,   inverse=0),
@@ -455,14 +454,17 @@ def test_integermod_rsub(modulo, minuend, subtrahend, result):
     assert (minuend - cls(subtrahend)).residue == result
 
 
+@with_params(multiplication_data)
 def test_integermod_mul(modulo, factor1, factor2, result):
     cls = TL.integers_mod(modulo)
     assert (cls(factor2) * cls(factor1)).residue == result
 
+@with_params(multiplication_data)
 def test_integermod_lmul(modulo, factor1, factor2, result):
     cls = TL.integers_mod(modulo)
     assert (cls(factor1) * factor2).residue == result
 
+@with_params(multiplication_data)
 def test_integermod_rmul(modulo, factor1, factor2, result):
     cls = TL.integers_mod(modulo)
     assert (factor1 * cls(factor2)).residue == result
