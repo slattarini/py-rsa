@@ -217,7 +217,8 @@ def define_multiplicative_inversion_data():
     return TL.uniquify(data)
 
 def define_division_data():
-    return [
+    data = []
+    for d in [
         dict(modulo=2,   dividend=0,  divisor=1,  result=0),
         dict(modulo=2,   dividend=1,  divisor=1,  result=1),
         dict(modulo=3,   dividend=0,  divisor=1,  result=0),
@@ -232,7 +233,19 @@ def define_division_data():
              dividend = 62354131224573468,
              divisor  = 1235413624573468,
              result   = 6792538694198912916609),
-    ]
+    ]:
+        # Given a*b, we want to try also a*(-b), (-a)*b, (-a)*(-b).
+        d0, d1, d2, d3 = d.copy(), d.copy(), d.copy(), d.copy()
+        d1["dividend"] *= -1
+        if d1["result"] != 0:
+            d1["result"] = d1["modulo"] - d1["result"]
+        d2["divisor"] *= -1
+        if d2["result"] != 0:
+            d2["result"] = d2["modulo"] - d2["result"]
+        d3["dividend"] *= -1
+        d3["divisor"] *= -1
+        data.extend([d0, d1, d2, d3])
+    return TL.uniquify(data)
 
 def define_exponentiation_data():
     data = []
