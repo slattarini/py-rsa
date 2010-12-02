@@ -18,25 +18,33 @@ large_primes  = [ 373, 397, 401, 433, 499, 523, 541, 571, 641, 659,
 primes = small_primes + medium_primes + large_primes
 
 
-init_known_values = [
-    dict(whole=0,   modulo=1, residue=0),
-    dict(whole=1,   modulo=1, residue=0),
-    dict(whole=0,   modulo=2, residue=0),
-    dict(whole=1,   modulo=2, residue=1),
-    dict(whole=8,   modulo=5, residue=3),
-    dict(whole=77,  modulo=13, residue=12),
-    dict(whole=76,  modulo=11, residue=10),
-    dict(whole=126, modulo=25, residue=1),
-    dict(whole=150, modulo=25, residue=0),
-    dict(whole=76,  modulo=22, residue=10),
-    # the follwing have been found with GAP
-    dict(whole=(71**6 * 73**11 * 97**5 * 673),
-         modulo=(29 * 67**2 * 101**3),
-         residue=16636952179),
-    dict(whole=(3**500 * 5**50),
-         modulo=11**27,
-         residue=703780454821668921429157503L)
-]
+def define_init_known_values():
+    data = []
+    for d in [
+        dict(whole=0,   modulo=1, residue=0),
+        dict(whole=1,   modulo=1, residue=0),
+        dict(whole=0,   modulo=2, residue=0),
+        dict(whole=1,   modulo=2, residue=1),
+        dict(whole=8,   modulo=5, residue=3),
+        dict(whole=77,  modulo=13, residue=12),
+        dict(whole=76,  modulo=11, residue=10),
+        dict(whole=126, modulo=25, residue=1),
+        dict(whole=150, modulo=25, residue=0),
+        dict(whole=76,  modulo=22, residue=10),
+        # the follwing have been found with GAP
+        dict(whole=(71**6 * 73**11 * 97**5 * 673),
+             modulo=(29 * 67**2 * 101**3),
+             residue=16636952179),
+        dict(whole=(3**500 * 5**50),
+             modulo=11**27,
+             residue=703780454821668921429157503L)
+    ]:
+        d0, d1 = d.copy(), d.copy()
+        d1["whole"] = - d1["whole"]
+        if d1["residue"] != 0:
+            d1["residue"] = d1["modulo"] - d1["residue"]
+        data.extend([d0, d1])
+    return TL.uniquify(data)
 
 def define_addition_data():
     data = []
@@ -295,6 +303,7 @@ noncoprime_modulo_and_residue_data = [
 ]
 
 
+init_known_values = define_init_known_values()
 addition_data = define_addition_data()
 subtraction_data = define_subtraction_data()
 multiplication_data = define_multiplication_data()
