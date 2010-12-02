@@ -4,11 +4,9 @@
 
 """Tests for the RSA.py's implementation of integers (mod n)"""
 import py.test
-import tests.pyrsa_testlib as TL
 import RSA
-
-with_params = TL.with_params
-pytest_generate_tests = TL.pytest_generate_tests
+from tests.pyrsa_testlib import integers_mod, with_params, uniquify, \
+                                pytest_generate_tests
 
 
 ###  DATA
@@ -48,7 +46,7 @@ def define_init_known_values():
         if d1["residue"] != 0:
             d1["residue"] = d1["modulo"] - d1["residue"]
         data.extend([d0, d1])
-    return TL.uniquify(data)
+    return uniquify(data)
 
 def define_stringify_data():
     return [
@@ -94,7 +92,7 @@ def define_addition_data():
         # swap the two addends
         d1["addend1"], d1["addend2"] = d1["addend2"], d1["addend1"]
         data.extend([d0, d1])
-    return TL.uniquify(data)
+    return uniquify(data)
 
 def define_subtraction_data():
     data = []
@@ -111,7 +109,7 @@ def define_subtraction_data():
                          result=result,
                          minuend=-d["addend1"],
                          subtrahend=d["addend2"]))
-    return TL.uniquify(data)
+    return uniquify(data)
 
 def define_multiplication_data():
     data = []
@@ -166,7 +164,7 @@ def define_multiplication_data():
             x = x.copy()
             x["factor1"], x["factor2"] = x["factor2"], x["factor1"]
             data.append(x)
-    return TL.uniquify(data)
+    return uniquify(data)
 
 def define_additive_inversion_data():
     data = []
@@ -186,7 +184,7 @@ def define_additive_inversion_data():
         # If -a = b, then -b = a; so check this too.
         d1["inverse"], d1["residue"] = d1["residue"], d1["inverse"]
         data.extend([d0, d1])
-    return TL.uniquify(data)
+    return uniquify(data)
 
 def define_multiplicative_inversion_data():
     data = []
@@ -221,7 +219,7 @@ def define_multiplicative_inversion_data():
         d2["reciprocal"] = d2["modulo"] - d2["reciprocal"]
         # ---
         data.extend([d0, d1, d2])
-    return TL.uniquify(data)
+    return uniquify(data)
 
 def define_division_data():
     data = []
@@ -256,7 +254,7 @@ def define_division_data():
         d3["divisor"] *= -1
         # ---
         data.extend([d0, d1, d2, d3])
-    return TL.uniquify(data)
+    return uniquify(data)
 
 def define_exponentiation_data():
     data = []
@@ -314,7 +312,7 @@ def define_exponentiation_data():
         if d0['exponent'] % 2 == 1 and d0['result'] != 0:
             d2['result'] = d1['result'] = d0['modulo'] - d0['result']
         data.extend([d0, d1, d2])
-    return TL.uniquify(data)
+    return uniquify(data)
 
 def define_noncoprime_modulo_and_residue_data():
     data = []
@@ -343,7 +341,7 @@ def define_noncoprime_modulo_and_residue_data():
         d0, d1 = d.copy(), d.copy()
         d1['residue'] *= -1
         data.extend([d0, d1])
-    return TL.uniquify(data)
+    return uniquify(data)
 
 
 init_known_values = define_init_known_values()
@@ -362,7 +360,7 @@ noncoprime_modulo_and_residue_data = define_noncoprime_modulo_and_residue_data()
 
 
 def test_integermod_named_params():
-    IntegerMod2 = TL.integers_mod(2)
+    IntegerMod2 = integers_mod(2)
     assert IntegerMod2(whole=1) == IntegerMod2(1)
 
 
@@ -379,7 +377,7 @@ def test_integermod_subclass_no_modulo_instantiation_exception():
 # Test that 'whole % modulo == residue' (subclassing IntegerMod)
 @with_params(init_known_values)
 def test_make_int_modulo_int(whole, modulo, residue):
-    cls = TL.integers_mod(modulo)
+    cls = integers_mod(modulo)
     got = cls(whole).residue
     assert residue == got, \
            "%u = %u != %u (mod %u)" % (whole, got, residue, modulo)
@@ -388,7 +386,7 @@ def test_make_int_modulo_int(whole, modulo, residue):
 # Test that an IntegerMods can be converted to itself.
 @with_params(init_known_values)
 def test_int_modulo_int_to_itself(whole, modulo, residue):
-    integermod_subclass = TL.integers_mod(modulo)
+    integermod_subclass = integers_mod(modulo)
     integermod_instance1 = integermod_subclass(whole)
     integermod_instance2 = integermod_subclass(integermod_instance1)
     assert integermod_instance1 == integermod_instance2
@@ -396,14 +394,14 @@ def test_int_modulo_int_to_itself(whole, modulo, residue):
 # Test that an IntegerMod converte to itself return a copy, not
 # a reference to self.
 def test_int_modulo_int_to_itself_copy_not_ref():
-    integermod_subclass = TL.integers_mod(5)
+    integermod_subclass = integers_mod(5)
     integermod_instance1 = integermod_subclass(1)
     integermod_instance2 = integermod_subclass(integermod_instance1)
     assert integermod_instance1 is not integermod_instance2
 
 def test_integermod_different_subclasses_not_equal():
-    integermod_subclass_1 = TL.integers_mod(2)
-    integermod_subclass_2 = TL.integers_mod(2)
+    integermod_subclass_1 = integers_mod(2)
+    integermod_subclass_2 = integers_mod(2)
     instance_subclass_1 = integermod_subclass_1(1)
     instance_subclass_2 = integermod_subclass_2(1)
     # In case both __eq__ and __neq__ are defined
@@ -413,20 +411,20 @@ def test_integermod_different_subclasses_not_equal():
 
 @with_params(stringify_data)
 def test_stringify(whole, modulo, string):
-    integermod_subclass = TL.integers_mod(modulo)
+    integermod_subclass = integers_mod(modulo)
     assert str(integermod_subclass(whole)) == string
 
 
 @with_params(init_known_values)
 def test_integermod_equality(whole, modulo, residue):
-    cls = TL.integers_mod(modulo)
+    cls = integers_mod(modulo)
     assert (cls(whole) == cls(whole) and
             cls(whole) == cls(residue) and
             cls(residue) == cls(whole))
 
 @with_params(init_known_values)
 def test_integermod_equality_negated(whole, modulo, residue):
-    cls = TL.integers_mod(modulo)
+    cls = integers_mod(modulo)
     if modulo != 1:
         assert (not (cls(whole+1) == cls(whole)) and
                 not (cls(whole) == cls(residue+1)) and
@@ -434,14 +432,14 @@ def test_integermod_equality_negated(whole, modulo, residue):
 
 @with_params(init_known_values)
 def test_integermod_inequality_negated(whole, modulo, residue):
-    cls = TL.integers_mod(modulo)
+    cls = integers_mod(modulo)
     assert (not (cls(whole) != cls(whole)) and
             not (cls(whole) != cls(residue)) and
             not (cls(residue) != cls(whole)))
 
 @with_params(init_known_values)
 def test_integermod_inequality(whole, modulo, residue):
-    cls = TL.integers_mod(modulo)
+    cls = integers_mod(modulo)
     if modulo != 1:
         assert (cls(whole+1) != cls(whole) and
                 cls(whole) != cls(residue+1) and
@@ -450,115 +448,115 @@ def test_integermod_inequality(whole, modulo, residue):
 
 @with_params(addition_data)
 def test_integermod_add(modulo, addend1, addend2, result):
-    cls = TL.integers_mod(modulo)
+    cls = integers_mod(modulo)
     assert (cls(addend1) + cls(addend2)).residue == result
 
 @with_params(addition_data)
 def test_integermod_ladd(modulo, addend1, addend2, result):
-    cls = TL.integers_mod(modulo)
+    cls = integers_mod(modulo)
     assert (cls(addend1) + addend2).residue == result
 
 @with_params(addition_data)
 def test_integermod_radd(modulo, addend1, addend2, result):
-    cls = TL.integers_mod(modulo)
+    cls = integers_mod(modulo)
     assert (addend1 + cls(addend2)).residue == result
 
 
 @with_params(subtraction_data)
 def test_integermod_sub(modulo, minuend, subtrahend, result):
-    cls = TL.integers_mod(modulo)
+    cls = integers_mod(modulo)
     assert (cls(minuend) - cls(subtrahend)).residue == result
 
 @with_params(subtraction_data)
 def test_integermod_lsub(modulo, minuend, subtrahend, result):
-    cls = TL.integers_mod(modulo)
+    cls = integers_mod(modulo)
     assert (cls(minuend) - subtrahend).residue == result
 
 @with_params(subtraction_data)
 def test_integermod_rsub(modulo, minuend, subtrahend, result):
-    cls = TL.integers_mod(modulo)
+    cls = integers_mod(modulo)
     assert (minuend - cls(subtrahend)).residue == result
 
 
 @with_params(multiplication_data)
 def test_integermod_mul(modulo, factor1, factor2, result):
-    cls = TL.integers_mod(modulo)
+    cls = integers_mod(modulo)
     assert (cls(factor2) * cls(factor1)).residue == result
 
 @with_params(multiplication_data)
 def test_integermod_lmul(modulo, factor1, factor2, result):
-    cls = TL.integers_mod(modulo)
+    cls = integers_mod(modulo)
     assert (cls(factor1) * factor2).residue == result
 
 @with_params(multiplication_data)
 def test_integermod_rmul(modulo, factor1, factor2, result):
-    cls = TL.integers_mod(modulo)
+    cls = integers_mod(modulo)
     assert (factor1 * cls(factor2)).residue == result
 
 
 @with_params(division_data)
 def test_integermod_div(modulo, dividend, divisor, result):
-    cls = TL.integers_mod(modulo)
+    cls = integers_mod(modulo)
     assert (cls(dividend) / cls(divisor)).residue == result
 
 @with_params(division_data)
 def test_integermod_ldiv(modulo, dividend, divisor, result):
-    cls = TL.integers_mod(modulo)
+    cls = integers_mod(modulo)
     assert (cls(dividend) / divisor).residue == result
 
 @with_params(division_data)
 def test_integermod_rdiv(modulo, dividend, divisor, result):
-    cls = TL.integers_mod(modulo)
+    cls = integers_mod(modulo)
     assert (dividend / cls(divisor)).residue == result
 
 
 @with_params(additive_inversion_data)
 def test_integermod_inverse(modulo, residue, inverse):
-    cls = TL.integers_mod(modulo)
+    cls = integers_mod(modulo)
     assert (- cls(residue)).residue == inverse
 
 
 @with_params(multiplicative_inversion_data)
 def test_integermod_reciprocal_pow(modulo, residue, reciprocal):
-    cls = TL.integers_mod(modulo)
+    cls = integers_mod(modulo)
     assert (cls(residue)**(-1)).residue == reciprocal
 
 @with_params(multiplicative_inversion_data)
 def test_integermod_reciprocal_rdiv(modulo, residue, reciprocal):
-    cls = TL.integers_mod(modulo)
+    cls = integers_mod(modulo)
     assert ((cls(1)/residue).residue == reciprocal)
 
 @with_params(multiplicative_inversion_data)
 def test_integermod_reciprocal_ldiv(modulo, residue, reciprocal):
-    cls = TL.integers_mod(modulo)
+    cls = integers_mod(modulo)
     assert ((1/cls(residue)).residue == reciprocal)
 
 
 @with_params(noncoprime_modulo_and_residue_data)
 def test_integermod_invalid_reciprocal_pow(modulo, residue):
-    cls = TL.integers_mod(modulo)
+    cls = integers_mod(modulo)
     py.test.raises(RSA.IMValueError, "cls(%d)**(-1)" % residue)
 
 @with_params(noncoprime_modulo_and_residue_data)
 def test_integermod_invalid_reciprocal_rdiv(modulo, residue):
-    cls = TL.integers_mod(modulo)
+    cls = integers_mod(modulo)
     py.test.raises(RSA.IMValueError, "cls(1)/%d" % residue)
 
 @with_params(noncoprime_modulo_and_residue_data)
 def test_integermod_invalid_reciprocal_ldiv(modulo, residue):
-    cls = TL.integers_mod(modulo)
+    cls = integers_mod(modulo)
     py.test.raises(RSA.IMValueError, "1/cls(%d)" % residue)
 
 
 @with_params(exponentiation_data)
 def test_integermod_exponentiation(modulo, base, exponent, result):
-    cls = TL.integers_mod(modulo)
+    cls = integers_mod(modulo)
     assert ((cls(base) ** exponent).residue == result)
 
 
 @with_params(primes, 'p')
 def test_prime_integermod_reciprocal(p):
-    cls = TL.integers_mod(p)
+    cls = integers_mod(p)
     if p == 2:
         x = y = 1
     else:
@@ -569,7 +567,7 @@ def test_prime_integermod_reciprocal(p):
 
 @with_params(primes, 'p')
 def test_fermat_little_theorem(p):
-    cls = TL.integers_mod(p)
+    cls = integers_mod(p)
     for d in (2, 3, 10):
         x = max(1, p/d)
         assert cls(x)**(p - 1) == cls(1)
@@ -580,8 +578,8 @@ def test_integermod_reciprocal_power_of_prime(p):
     #  a^-1 = b (mod p^n)
     # then:
     #  a^-1 = 2 * b - a * b^2 (mod p^(n+1))
-    modp100 = TL.integers_mod(p**120)
-    modp101 = TL.integers_mod(p**121)
+    modp100 = integers_mod(p**120)
+    modp101 = integers_mod(p**121)
     if p == 5:
         a = 3**113
     else:
