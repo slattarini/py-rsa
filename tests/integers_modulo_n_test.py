@@ -187,13 +187,6 @@ def define_multiplicative_inversion_data():
     return TL.uniquify(data)
 
 
-addition_data = define_addition_data()
-subtraction_data = define_subtraction_data()
-multiplication_data = define_multiplication_data()
-additive_inversion_data = define_additive_inversion_data()
-multiplicative_inversion_data = define_multiplicative_inversion_data()
-
-
 division_data = [
     dict(modulo=2,   dividend=0,  divisor=1,  result=0),
     dict(modulo=2,   dividend=1,  divisor=1,  result=1),
@@ -209,7 +202,6 @@ division_data = [
          dividend = 62354131224573468,
          divisor  = 1235413624573468,
          result   = 6792538694198912916609),
-
 ]
 
 def define_exponentiation_data():
@@ -269,8 +261,6 @@ def define_exponentiation_data():
         data.extend([d0, d1])
     return TL.uniquify(data)
 
-exponentiation_data = define_exponentiation_data()
-
 stringify_data = [
     dict(whole=0,   modulo=1,  string="0 (mod 1)" ),
     dict(whole=1,   modulo=1,  string="0 (mod 1)" ),
@@ -303,6 +293,15 @@ noncoprime_modulo_and_residue_data = [
     dict(modulo=2**10000,          residue=2**4000),
     dict(modulo=3**10000*47**1000, residue=3**12000*37**1000),
 ]
+
+
+addition_data = define_addition_data()
+subtraction_data = define_subtraction_data()
+multiplication_data = define_multiplication_data()
+additive_inversion_data = define_additive_inversion_data()
+multiplicative_inversion_data = define_multiplicative_inversion_data()
+exponentiation_data = define_exponentiation_data()
+
 
 # py.test special hook function to generate test input.
 def pytest_generate_tests(metafunc):
