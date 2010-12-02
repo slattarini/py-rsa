@@ -138,67 +138,64 @@ def define_multiplication_data():
             data.append(x)
     return TL.uniquify(data)
 
-addition_data = define_addition_data()
-subtraction_data = define_subtraction_data()
-multiplication_data = define_multiplication_data()
-
-additive_inversion_data = [
-    dict(modulo=2,   residue=0,   inverse=0),
-    dict(modulo=2,   residue=1,   inverse=1),
-    dict(modulo=3,   residue=0,   inverse=0),
-    dict(modulo=3,   residue=1,   inverse=2),
-    dict(modulo=55,  residue=49,  inverse=6),
-    dict(modulo=97,  residue=24,  inverse=73),
-    dict(modulo=121, residue=11, inverse=110),
-    dict(modulo=14513461357231752457,
-         residue=9734356935945946979,
-         inverse=4779104421285805478),
-]
-
-def get_additive_inversion_data():
+def define_additive_inversion_data():
     data = []
-    for d in additive_inversion_data:
+    for d in [
+        dict(modulo=2,   residue=0,   inverse=0),
+        dict(modulo=2,   residue=1,   inverse=1),
+        dict(modulo=3,   residue=0,   inverse=0),
+        dict(modulo=3,   residue=1,   inverse=2),
+        dict(modulo=55,  residue=49,  inverse=6),
+        dict(modulo=97,  residue=24,  inverse=73),
+        dict(modulo=121, residue=11,  inverse=110),
+        dict(modulo=14513461357231752457,
+             residue=9734356935945946979,
+             inverse=4779104421285805478),
+    ]:
         d0, d1 = d.copy(), d.copy()
+        # If -a = b, then -b = a; so check this too.
         d1["inverse"], d1["residue"] = d1["residue"], d1["inverse"]
         data.extend([d0, d1])
-    return data
+    return TL.uniquify(data)
 
-test_data_generator.update(get_additive_inversion_data,
-                           ["modulo", "residue", "inverse"])
-
-multiplicative_inversion_data = [
-    dict(modulo=2,  residue=1,   reciprocal=1),
-    dict(modulo=3,  residue=2,   reciprocal=2),
-    dict(modulo=5,  residue=2,   reciprocal=3),
-    dict(modulo=8,  residue=3,   reciprocal=3),
-    dict(modulo=8,  residue=3,   reciprocal=3),
-    dict(modulo=50, residue=7,   reciprocal=43),
-    dict(modulo=50, residue=-17, reciprocal=47),
-    dict(modulo=50, residue=3,   reciprocal=17),
-    dict(modulo=55, residue=7,   reciprocal=8),
-    dict(modulo=97, residue=48,  reciprocal=95),
-    dict(modulo=97, residue=12,  reciprocal=89),
-    dict(modulo=97, residue=-1,  reciprocal=96),
-    dict(modulo=97, residue=-6,  reciprocal=16),
-    # try with big values (result found with GAP)
-    dict(modulo     = 31**41,
-         residue    = 23**23 + 1,
-         reciprocal = 12314522799775017007991696109927229269151916254315470214920129
-    ),
-]
-
-def get_multiplicative_inversion_data():
+def define_multiplicative_inversion_data():
     data = []
-    for d in multiplicative_inversion_data:
+    for d in [
+        dict(modulo=2,  residue=1,   reciprocal=1),
+        dict(modulo=3,  residue=2,   reciprocal=2),
+        dict(modulo=5,  residue=2,   reciprocal=3),
+        dict(modulo=8,  residue=3,   reciprocal=3),
+        dict(modulo=8,  residue=3,   reciprocal=3),
+        dict(modulo=50, residue=7,   reciprocal=43),
+        dict(modulo=50, residue=-17, reciprocal=47),
+        dict(modulo=50, residue=3,   reciprocal=17),
+        dict(modulo=55, residue=7,   reciprocal=8),
+        dict(modulo=97, residue=48,  reciprocal=95),
+        dict(modulo=97, residue=12,  reciprocal=89),
+        dict(modulo=97, residue=-1,  reciprocal=96),
+        dict(modulo=97, residue=-6,  reciprocal=16),
+        # try with big values (result found with GAP)
+        dict(modulo     = 31**41,
+             residue    = 23**23 + 1,
+             reciprocal = 12314522799775017007991696109927229269151916254315470214920129
+        ),
+    ]:
         d0, d1, d2 = d.copy(), d.copy(), d.copy()
+        # Given a^-1, we want to try also (-a)^-1, in two different
+        # "flavors".
         d1["residue"] *= -1
         d1["reciprocal"] = d1["modulo"] - d1["reciprocal"]
         d2["residue"] = d2["modulo"] - d2["residue"]
         d2["reciprocal"] = d2["modulo"] - d2["reciprocal"]
         data.extend([d0, d1, d2])
-    return data
-test_data_generator.update(get_multiplicative_inversion_data,
-                           ["modulo", "residue", "reciprocal"])
+    return TL.uniquify(data)
+
+
+addition_data = define_addition_data()
+subtraction_data = define_subtraction_data()
+multiplication_data = define_multiplication_data()
+additive_inversion_data = define_additive_inversion_data()
+multiplicative_inversion_data = define_multiplicative_inversion_data()
 
 
 division_data = [
@@ -483,19 +480,23 @@ def test_integermod_rdiv(modulo, dividend, divisor, result):
     assert (dividend / cls(divisor)).residue == result
 
 
+@with_params(additive_inversion_data)
 def test_integermod_inverse(modulo, residue, inverse):
     cls = TL.integers_mod(modulo)
     assert (- cls(residue)).residue == inverse
 
 
+@with_params(multiplicative_inversion_data)
 def test_integermod_reciprocal_pow(modulo, residue, reciprocal):
     cls = TL.integers_mod(modulo)
     assert (cls(residue)**(-1)).residue == reciprocal
 
+@with_params(multiplicative_inversion_data)
 def test_integermod_reciprocal_rdiv(modulo, residue, reciprocal):
     cls = TL.integers_mod(modulo)
     assert ((cls(1)/residue).residue == reciprocal)
 
+@with_params(multiplicative_inversion_data)
 def test_integermod_reciprocal_ldiv(modulo, residue, reciprocal):
     cls = TL.integers_mod(modulo)
     assert ((1/cls(residue)).residue == reciprocal)
