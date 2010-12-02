@@ -29,6 +29,14 @@ def uniquify(seq):
             uniq.append(x)
     return seq.__class__(uniq)
 
+# Dumb decorator that removes duplicates from sequences returned by
+# the decorated function.  Don't preserve function signature, name,
+# docstrings, ... as we don't need these goodies ATM.
+def without_duplicates(function):
+    def wrapper(*args, **kwargs):
+        return uniquify(function(*args, **kwargs))
+    return wrapper
+
 # Decorators that generate a list parameters for a test function.
 # Examples of usage:
 #   @with_params([dict(a=2, b=2L), dict(a=0, b=0.0)])

@@ -5,8 +5,8 @@
 """Tests for the RSA.py's implementation of integers (mod n)"""
 import py.test
 import RSA
-from tests.pyrsa_testlib import integers_mod, with_params, uniquify, \
-                                pytest_generate_tests
+from tests.pyrsa_testlib import with_params, without_duplicates, \
+                                integers_mod, pytest_generate_tests
 
 
 ###  DATA
@@ -20,6 +20,7 @@ large_primes  = [ 373, 397, 401, 433, 499, 523, 541, 571, 641, 659,
 primes = small_primes + medium_primes + large_primes
 
 
+@without_duplicates
 def define_init_known_values():
     data = []
     for d in [
@@ -46,8 +47,9 @@ def define_init_known_values():
         if d1["residue"] != 0:
             d1["residue"] = d1["modulo"] - d1["residue"]
         data.extend([d0, d1])
-    return uniquify(data)
+    return data
 
+@without_duplicates
 def define_stringify_data():
     return [
         dict(whole=0,   modulo=1,  string="0 (mod 1)" ),
@@ -66,6 +68,7 @@ def define_stringify_data():
              string="152921409798503 (mod 825461974345357)"),
     ]
 
+@without_duplicates
 def define_addition_data():
     data = []
     for d in [
@@ -92,8 +95,9 @@ def define_addition_data():
         # swap the two addends
         d1["addend1"], d1["addend2"] = d1["addend2"], d1["addend1"]
         data.extend([d0, d1])
-    return uniquify(data)
+    return data
 
+@without_duplicates
 def define_subtraction_data():
     data = []
     for d in addition_data:
@@ -109,8 +113,9 @@ def define_subtraction_data():
                          result=result,
                          minuend=-d["addend1"],
                          subtrahend=d["addend2"]))
-    return uniquify(data)
+    return data
 
+@without_duplicates
 def define_multiplication_data():
     data = []
     for d in [
@@ -164,8 +169,9 @@ def define_multiplication_data():
             x = x.copy()
             x["factor1"], x["factor2"] = x["factor2"], x["factor1"]
             data.append(x)
-    return uniquify(data)
+    return data
 
+@without_duplicates
 def define_additive_inversion_data():
     data = []
     for d in [
@@ -184,8 +190,9 @@ def define_additive_inversion_data():
         # If -a = b, then -b = a; so check this too.
         d1["inverse"], d1["residue"] = d1["residue"], d1["inverse"]
         data.extend([d0, d1])
-    return uniquify(data)
+    return data
 
+@without_duplicates
 def define_multiplicative_inversion_data():
     data = []
     for d in [
@@ -219,8 +226,9 @@ def define_multiplicative_inversion_data():
         d2["reciprocal"] = d2["modulo"] - d2["reciprocal"]
         # ---
         data.extend([d0, d1, d2])
-    return uniquify(data)
+    return data
 
+@without_duplicates
 def define_division_data():
     data = []
     for d in [
@@ -254,8 +262,9 @@ def define_division_data():
         d3["divisor"] *= -1
         # ---
         data.extend([d0, d1, d2, d3])
-    return uniquify(data)
+    return data
 
+@without_duplicates
 def define_exponentiation_data():
     data = []
     for d in [
@@ -312,8 +321,9 @@ def define_exponentiation_data():
         if d0['exponent'] % 2 == 1 and d0['result'] != 0:
             d2['result'] = d1['result'] = d0['modulo'] - d0['result']
         data.extend([d0, d1, d2])
-    return uniquify(data)
+    return data
 
+@without_duplicates
 def define_noncoprime_modulo_and_residue_data():
     data = []
     for d in [
@@ -341,7 +351,7 @@ def define_noncoprime_modulo_and_residue_data():
         d0, d1 = d.copy(), d.copy()
         d1['residue'] *= -1
         data.extend([d0, d1])
-    return uniquify(data)
+    return data
 
 
 init_known_values = define_init_known_values()
