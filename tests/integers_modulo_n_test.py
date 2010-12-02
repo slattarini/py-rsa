@@ -509,31 +509,30 @@ def test_integermod_exponentiation(modulo, base, exponent, result):
     assert ((cls(base) ** exponent).residue == result)
 
 
-@with_params([dict('prime', p) for p in primes])
-def test_prime_integermod_reciprocal(prime):
-    cls = TL.integers_mod(prime)
-    if prime == 2:
+@with_params(primes, 'p')
+def test_prime_integermod_reciprocal(p):
+    cls = TL.integers_mod(p)
+    if p == 2:
         x = y = 1
     else:
-        x = (prime - 1) / 2
-        y = prime - 2
+        x = (p - 1) / 2
+        y = p - 2
     assert (cls(x)**(-1)) == cls(y)
 
 
-@with_params([dict('prime', p) for p in primes])
-def test_fermat_little_theorem(prime):
-    cls = TL.integers_mod(prime)
+@with_params(primes, 'p')
+def test_fermat_little_theorem(p):
+    cls = TL.integers_mod(p)
     for d in (2, 3, 10):
-        x = max(1, prime/d)
-        assert cls(x)**(prime - 1) == cls(1)
+        x = max(1, p/d)
+        assert cls(x)**(p - 1) == cls(1)
 
-@with_params([dict('prime', p) for p in primes])
-def test_integermod_reciprocal_power_of_prime(prime):
+@with_params(primes, 'p')
+def test_integermod_reciprocal_power_of_prime(p):
     # It can be proved that if p is prime and:
     #  a^-1 = b (mod p^n)
     # then:
     #  a^-1 = 2 * b - a * b^2 (mod p^(n+1))
-    p = prime
     modp100 = TL.integers_mod(p**120)
     modp101 = TL.integers_mod(p**121)
     if p == 5:
