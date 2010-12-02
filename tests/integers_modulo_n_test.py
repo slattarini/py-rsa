@@ -50,6 +50,24 @@ def define_init_known_values():
         data.extend([d0, d1])
     return TL.uniquify(data)
 
+def define_stringify_data():
+    return [
+        dict(whole=0,   modulo=1,  string="0 (mod 1)" ),
+        dict(whole=1,   modulo=1,  string="0 (mod 1)" ),
+        dict(whole=0,   modulo=2,  string="0 (mod 2)" ),
+        dict(whole=1,   modulo=2,  string="1 (mod 2)" ),
+        dict(whole=11,  modulo=2,  string="1 (mod 2)" ),
+        dict(whole=4,   modulo=10, string="4 (mod 10)"),
+        dict(whole=122, modulo=10, string="2 (mod 10)"),
+        dict(whole=5,   modulo=11, string="5 (mod 11)"),
+        dict(whole=72,  modulo=11, string="6 (mod 11)"),
+        dict(whole=21729679117, modulo=11, string="3 (mod 11)"),
+        dict(whole=157895784639783246708365073, modulo=13,
+             string="9 (mod 13)"),
+        dict(whole=24723672576589724589756828724L, modulo=825461974345357L,
+             string="152921409798503 (mod 825461974345357)"),
+    ]
+
 def define_addition_data():
     data = []
     for d in [
@@ -198,23 +216,23 @@ def define_multiplicative_inversion_data():
         data.extend([d0, d1, d2])
     return TL.uniquify(data)
 
-
-division_data = [
-    dict(modulo=2,   dividend=0,  divisor=1,  result=0),
-    dict(modulo=2,   dividend=1,  divisor=1,  result=1),
-    dict(modulo=3,   dividend=0,  divisor=1,  result=0),
-    dict(modulo=3,   dividend=1,  divisor=1,  result=1),
-    dict(modulo=3,   dividend=2,  divisor=1,  result=2),
-    dict(modulo=3,   dividend=1,  divisor=2,  result=2),
-    dict(modulo=55,  dividend=45, divisor=9,  result=5),
-    dict(modulo=49,  dividend=44, divisor=39, result=25),
-    dict(modulo=101, dividend=2,  divisor=51, result=4),
-    # found with GAP
-    dict(modulo   = 7264563962592586452347,
-         dividend = 62354131224573468,
-         divisor  = 1235413624573468,
-         result   = 6792538694198912916609),
-]
+def define_division_data():
+    return [
+        dict(modulo=2,   dividend=0,  divisor=1,  result=0),
+        dict(modulo=2,   dividend=1,  divisor=1,  result=1),
+        dict(modulo=3,   dividend=0,  divisor=1,  result=0),
+        dict(modulo=3,   dividend=1,  divisor=1,  result=1),
+        dict(modulo=3,   dividend=2,  divisor=1,  result=2),
+        dict(modulo=3,   dividend=1,  divisor=2,  result=2),
+        dict(modulo=55,  dividend=45, divisor=9,  result=5),
+        dict(modulo=49,  dividend=44, divisor=39, result=25),
+        dict(modulo=101, dividend=2,  divisor=51, result=4),
+        # found with GAP
+        dict(modulo   = 7264563962592586452347,
+             dividend = 62354131224573468,
+             divisor  = 1235413624573468,
+             result   = 6792538694198912916609),
+    ]
 
 def define_exponentiation_data():
     data = []
@@ -273,47 +291,34 @@ def define_exponentiation_data():
         data.extend([d0, d1])
     return TL.uniquify(data)
 
-stringify_data = [
-    dict(whole=0,   modulo=1,  string="0 (mod 1)" ),
-    dict(whole=1,   modulo=1,  string="0 (mod 1)" ),
-    dict(whole=0,   modulo=2,  string="0 (mod 2)" ),
-    dict(whole=1,   modulo=2,  string="1 (mod 2)" ),
-    dict(whole=11,  modulo=2,  string="1 (mod 2)" ),
-    dict(whole=4,   modulo=10, string="4 (mod 10)"),
-    dict(whole=122, modulo=10, string="2 (mod 10)"),
-    dict(whole=5,   modulo=11, string="5 (mod 11)"),
-    dict(whole=72,  modulo=11, string="6 (mod 11)"),
-    dict(whole=21729679117, modulo=11, string="3 (mod 11)"),
-    dict(whole=157895784639783246708365073, modulo=13,
-         string="9 (mod 13)"),
-    dict(whole=24723672576589724589756828724L, modulo=825461974345357L,
-         string="152921409798503 (mod 825461974345357)"),
-]
-
-noncoprime_modulo_and_residue_data = [
-    dict(modulo=2,  residue=0),
-    dict(modulo=12, residue=2),
-    dict(modulo=12, residue=3),
-    dict(modulo=12, residue=4),
-    dict(modulo=12, residue=6),
-    dict(modulo=12, residue=9),
-    dict(modulo=55, residue=0),
-    dict(modulo=55, residue=5),
-    dict(modulo=55, residue=11),
-    dict(modulo=55, residue=44),
-    # try also with big modules
-    dict(modulo=2**10000,          residue=2**4000),
-    dict(modulo=3**10000*47**1000, residue=3**12000*37**1000),
-]
+def define_noncoprime_modulo_and_residue_data():
+    return [
+        dict(modulo=2,  residue=0),
+        dict(modulo=12, residue=2),
+        dict(modulo=12, residue=3),
+        dict(modulo=12, residue=4),
+        dict(modulo=12, residue=6),
+        dict(modulo=12, residue=9),
+        dict(modulo=55, residue=0),
+        dict(modulo=55, residue=5),
+        dict(modulo=55, residue=11),
+        dict(modulo=55, residue=44),
+        # try also with big modules
+        dict(modulo=2**10000,          residue=2**4000),
+        dict(modulo=3**10000*47**1000, residue=3**12000*37**1000),
+    ]
 
 
 init_known_values = define_init_known_values()
+stringify_data = define_stringify_data()
 addition_data = define_addition_data()
 subtraction_data = define_subtraction_data()
 multiplication_data = define_multiplication_data()
+division_data = define_division_data()
 additive_inversion_data = define_additive_inversion_data()
 multiplicative_inversion_data = define_multiplicative_inversion_data()
 exponentiation_data = define_exponentiation_data()
+noncoprime_modulo_and_residue_data = define_noncoprime_modulo_and_residue_data()
 
 
 ### TESTS
