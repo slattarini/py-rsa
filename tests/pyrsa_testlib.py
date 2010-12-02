@@ -56,7 +56,7 @@ class TestDataGenerator:
 #       assert a == b
 def with_params(funcarglist):
     def decorator(function):
-        function.pytest_funcarglist = uniquify(funcarglist)
+        function.pytest_funcarglist = funcarglist
         return function
     return decorator
 
