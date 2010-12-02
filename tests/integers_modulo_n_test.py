@@ -148,14 +148,18 @@ def define_multiplication_data():
     ]:
         # Given a*b, we want to try also a*(-b), (-a)*b, (-a)*(-b).
         d0, d1, d2, d3 = d.copy(), d.copy(), d.copy(), d.copy()
+        # ---
         d1["factor1"] *= -1
         if d1["result"] != 0:
             d1["result"] = d1["modulo"] - d1["result"]
+        # ---
         d2["factor2"] *= -1
         if d2["result"] != 0:
             d2["result"] = d2["modulo"] - d2["result"]
+        # ---
         d3["factor1"] *= -1
         d3["factor2"] *= -1
+        # ---
         data.extend([d0, d1, d2, d3])
         # Given a*b, we want to try also b*a.
         for x in (d0, d1, d2, d3):
@@ -209,10 +213,13 @@ def define_multiplicative_inversion_data():
         d0, d1, d2 = d.copy(), d.copy(), d.copy()
         # Given a^-1, we want to try also (-a)^-1, in two different
         # "flavors".
+        # ---
         d1["residue"] *= -1
         d1["reciprocal"] = d1["modulo"] - d1["reciprocal"]
+        # ---
         d2["residue"] = d2["modulo"] - d2["residue"]
         d2["reciprocal"] = d2["modulo"] - d2["reciprocal"]
+        # ---
         data.extend([d0, d1, d2])
     return TL.uniquify(data)
 
@@ -236,14 +243,18 @@ def define_division_data():
     ]:
         # Given a*b, we want to try also a*(-b), (-a)*b, (-a)*(-b).
         d0, d1, d2, d3 = d.copy(), d.copy(), d.copy(), d.copy()
+        # ---
         d1["dividend"] *= -1
         if d1["result"] != 0:
             d1["result"] = d1["modulo"] - d1["result"]
+        # ---
         d2["divisor"] *= -1
         if d2["result"] != 0:
             d2["result"] = d2["modulo"] - d2["result"]
+        # ---
         d3["dividend"] *= -1
         d3["divisor"] *= -1
+        # ---
         data.extend([d0, d1, d2, d3])
     return TL.uniquify(data)
 
