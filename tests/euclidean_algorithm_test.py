@@ -4,6 +4,8 @@
 
 """Unit tests for the RSA.py's implementation of euclidean algorithm"""
 import RSA
+from tests.pyrsa_testlib import pytest_generate_tests, with_params
+
 
 ### DATA
 
@@ -31,8 +33,10 @@ small_known_values = [
 ]
 known_values.extend(small_known_values)
 
-equals_known_values = [ dict(a=i, b=i, d=i, x=0, y=1)
-                        for i in [1, 2, 3, 11, 18, 25, 73, 77, 97, 99] ]
+equals_known_values = [
+    dict(a=i, b=i, d=i, x=0, y=1)
+      for i in [1, 2, 3, 11, 18, 25, 73, 77, 97, 99, 2**127 - 1, 2**10000]
+]
 known_values.extend(equals_known_values)
 
 # most of these obtained with GAP
@@ -122,32 +126,27 @@ handcrafted_known_values = [
 ]
 known_values.extend(handcrafted_known_values)
 
-# pytest special hook function to generate test input.
-def pytest_generate_tests(metafunc):
-    funcargs = metafunc.funcargnames
-    # gcd_io: "GCD Input and Output"
-    if set(["gcd_io"]) == set(funcargs):
-        for h in known_values:
-            metafunc.addcall(funcargs={'gcd_io': h})
-    else: # sanity check
-        raise RuntimeError("bad funcargsnames list: %r" % funcargs)
+gcd_args = [dict(a=x['a'], b=x['b']) for x in known_values]
+gcd_data = [dict(a=x['a'], b=x['b'], d=x['d']) for x in known_values]
+egcd_data = known_values
+
 
 ### TESTS
 
-def test_gcd_ret_type(gcd_io):
-    d = RSA.gcd(gcd_io['a'], gcd_io['b'])
-    assert type(d) in (int, long)
+@with_params(gcd_args)
+def test_gcd_ret_type(a, b):
+    assert type(RSA.gcd(a, b)) in (int, long)
 
-def test_gcd_known(gcd_io):
-    d = RSA.gcd(gcd_io['a'], gcd_io['b'])
-    assert d == gcd_io['d']
+@with_params(gcd_data)
+def test_gcd_known(a, b, d):
+    assert RSA.gcd(a, b) == d
 
-def test_gcd_commutative(gcd_io):
-    a, b = gcd_io['a'], gcd_io['b']
+@with_params(gcd_args)
+def test_gcd_commutative(a, b):
     assert RSA.gcd(a, b) == RSA.gcd(b, a)
 
-def test_gcd_consistency(gcd_io):
-    a, b = gcd_io['a'], gcd_io['b']
+@with_params(gcd_args)
+def test_gcd_consistency(a ,b):
     d = RSA.gcd(a, b)
     if a == b == 0:
         assert (a == b == d == 0)
@@ -158,26 +157,31 @@ def test_gcd_consistency(gcd_io):
     else:
         assert (a % d == 0 and b % d == 0)
 
-def test_egcd_ret_type(gcd_io):
-    d, x, y = RSA.extended_gcd(gcd_io['a'], gcd_io['b'])
+@with_params(gcd_args)
+def test_egcd_seq_type(a, b):
+    assert type(RSA.extended_gcd(a, b)) == tuple
+
+@with_params(gcd_args)
+def test_egcd_ret_type(a ,b):
+    d, x, y = RSA.extended_gcd(a, b)
     assert (
         type(d) in (int, long) and
         type(x) in (int, long) and
         type(y) in (int, long))
 
-def test_egcd_known(gcd_io):
-    d, x, y = RSA.extended_gcd(gcd_io['a'], gcd_io['b'])
-    assert d == gcd_io['d'] and x == gcd_io['x'] and y == gcd_io['y']
+@with_params(egcd_data)
+def test_egcd_known(a, b, d, x ,y):
+    assert (d, x, y) == RSA.extended_gcd(a, b)
 
-def test_egcd_reversed(gcd_io):
-    a, b = gcd_io['a'], gcd_io['b']
+@with_params(gcd_args)
+def test_egcd_reversed(a, b):
     if a != b:
         d0, x0, y0 = RSA.extended_gcd(a, b)
         d1, x1, y1 = RSA.extended_gcd(b ,a)
         assert (d0, x0, y0) == (d1, y1, x1)
 
-def test_egcd_consistency(gcd_io):
-    a, b = gcd_io['a'], gcd_io['b']
+@with_params(gcd_args)
+def test_egcd_consistency(a, b):
     d, x, y = RSA.extended_gcd(a, b)
     if a == b == 0:
         assert d == x == y == 0
