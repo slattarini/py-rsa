@@ -264,8 +264,9 @@ class IntegerMod(object):
         return self**(-1) * other
 
     def __pow__(self, exponent):
-        # TODO: assert exponent is integer
-        if exponent < 0:
+        if not isinstance(exponent, (int, long)):
+            raise IMTypeError("exponent %r is not an integer", exponent)
+        elif exponent < 0:
             exponent *= -1
             base = self._get_reciprocal()
         else:
