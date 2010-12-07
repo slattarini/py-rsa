@@ -194,11 +194,34 @@ class IntegerMod(object):
       Traceback (most recent call last):
        ...
       IMValueError: 15 is not prime with 3
+
+    If the value of the phi Euler's function for the modulo is known in
+    advance, it's a good idea to specify it explicitly when defining the
+    IntgerMod subclass, as this can be used to optimeze some otherwise
+    potentially slow operations (especially the exponentiation).
+
+    For example:
+      >>> class IntegerModMersenne127(IntegerMod):
+      ...    modulo = 2**127 - 1 # we know this is a (mersenne) prime...
+      ...    phi = 2**127 - 2 # ... so we know that phi(modulo) = modulo - 1
+      >>> # This would take a longish time without the knowledge of
+      >>> # phi(modulo).
+      >>> print (IntegerModMersenne127(2**126))**(3**100000)
+      4096 (mod 170141183460469231731687303715884105727)
+      >>> # And this would take a very long time without the knowledge
+      >>> # of phi(modulo).
+      >>> print (IntegerModMersenne127(2**126))**(3**1000000)
+      8 (mod 170141183460469231731687303715884105727)
+      >>> # BTW, noting that 2**126 = (modulo + 1) / 2, it's easy to
+      >>> # verify by hand that the two results above are correct.
     """
 
     """The modulo the integers are reduced with.  Must be overridden
     by subclasses."""
     modulo = None
+    """The value of the phi Euler function for modulo.  This might be
+    specified by subclasses."""
+    phi = None
 
     def __init__(self, whole):
         if self.modulo is None:
@@ -273,10 +296,12 @@ class IntegerMod(object):
             base = self
             if self.residue == 0:
                 # FIXME: what about e.g. 0**0? not easy to detect in the general
-                # case, since we can't easily know the value of phi(modulo),
+                # case, since we can't know the value of phi(modulo) in general,
                 # and thus we can't know if exponent % phi(modulo) == 0.
                 # Just return 0 for the moment.
                 return self.__class__(0)
+        if self.phi is not None:
+            exponent %= self.phi
         partial1 = partial2 = self.__class__(1)
         while exponent > 0:
             if exponent % 2 == 1:
