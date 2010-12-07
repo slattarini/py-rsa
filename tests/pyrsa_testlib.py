@@ -10,18 +10,14 @@ class TestError(Exception):
 # Build a proper subclass of RSA.IntegerMod, with the given
 # modulo; the class name is set to a sane default if not given
 # explicitly.
-def integers_mod(n, phi=None, class_name=None):
+def integers_mod(n, class_name=None):
     import RSA
     if not isinstance(n, (int, long)) or n <= 0:
         raise TestError("Invalid parameter n: %r" % n)
-    class klass(RSA.IntegerMod):
-        modulo = n
-    if phi is not None:
-        klass.phi = phi
     if class_name is None:
         class_name = "IntegerMod%u" % n
-        if phi is not None:
-            class_name += "_WithPhi"
+    class klass(RSA.IntegerMod):
+        modulo = n
     klass.__name__ = class_name
     return klass
 
