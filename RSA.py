@@ -300,6 +300,81 @@ class IntegerMod(object):
 
 #--------------------------------------------------------------------------
 
+## ------------------ ##
+##  RSA for numbers.  ##
+## ------------------ ##
+
+class PublicKey:
+    """The most basic usable RSA Public Key. Just a data container."""
+    def __init__(self, n, e):
+        self.n = n
+        self.e = e
+    def __eq__(self, other):
+        return (self.n == other.n and self.e == other.e)
+
+class PrivateKey:
+    """The most basic private RSA Key. Basically just a data container."""
+    public_key_class = PublicKey
+    _modular_integer_class = IntegerMod
+    def __init__(self, p, q, e):
+        # We just trust p and q to be prime and of similar size.
+        self.p = p
+        self.q = q
+        self.n = p * q
+        phi_n = (p - 1) * (q - 1)
+        # TODO: check that (e, phi) = 1 and 0 < e < phi
+        class mod_phi_n(self._modular_integer_class):
+            modulo = phi_n
+        self.e = e
+        self.d = (mod_phi_n(e)**(-1)).residue
+    def public(self):
+        return self.public_key_class(self.n, self.e)
+    def __eq__(self, other):
+        return (self.p == other.p and self.q == other.q
+                and self.d == other.d)
+
+class IntegerDecrypter:
+    """Decrypt a given integer using RSA.
+      >>> key = PrivateKey(p=2**2281-1, q=2**2203-1, e=65537)
+      >>> E = IntegerEncrypter(key)
+      >>> D1 = IntegerDecrypter(key.public())
+      >>> plain = 2**1000 + 25
+      >>> cypher = E.encrypt(plain)
+      >>> D1.decrypt(cypher) == plain
+      True
+      >>> D2 = IntegerDecrypter(key)
+      >>> plain = 2**1010 + 27
+      >>> cypher = E.encrypt(plain)
+      >>> D2.decrypt(cypher) == plain
+      True
+    """
+    modular_integer_class = IntegerMod
+    def __init__(self, key):
+        # "key" might be a public RSA key or a private RSA key.
+        self.key = key
+        class mod_n(self.modular_integer_class):
+            modulo = key.n
+        self.mod_n = mod_n
+    def _modular_exponentiation(self, x, m):
+        # TODO: assert 0 <= m < n
+        return (self.mod_n(x)**m).residue
+    def decrypt(self, i):
+        return self._modular_exponentiation(i, self.key.e)
+
+class IntegerEncrypter(IntegerDecrypter):
+    """Encrypt and/or decrypt a given integer using RSA.
+#      >>> key = PrivateKey(p=2**9689-1, q=2**9941-1, e=8191)
+#      >>> E = IntegerEncrypter(key)
+#      >>> plain = 3**3237 + 2**512 - 7
+#      >>> cypher = E.encrypt(plain)
+#      >>> E.decrypt(cypher) == plain
+#      True
+    """
+    def encrypt(self, i):
+        return self._modular_exponentiation(i, self.key.d)
+
+#--------------------------------------------------------------------------
+
 
 ## ----------- ##
 ##  Main Code  ##
