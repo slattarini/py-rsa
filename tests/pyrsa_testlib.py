@@ -45,11 +45,33 @@ def without_duplicates(function):
 #   @with_params([1, "", False, None], 'x')
 #   def test_nonzero(x):
 #       assert x != 0
+# Can be composed too:
+#   @with_params([dict(x=7, y=2), dict(x=5, y=3)])
+#   @with_params([10, 11], 'z')
+#   def test_sum_lt(x, y, z):
+#       assert x + y < z
+#   @with_params([2, 3], 'x')
+#   @with_params([dict(y=0), dict(y=1)])
+#   def test_gt(x, y):
+#       assert x > y
+# "Overriding" composition like this should be avoided:
+#   @with_params([dict(x=7, y=2), dict(x=5, y=9)])
+#   @with_params([dict(x=1, y=2), dict(x=7, y=5)])
+#   def test_different(x, y):
+#       assert x != y
 def with_params(funcarglist, param_name=None):
     if param_name is not None:
         funcarglist = [ {param_name: x} for x in funcarglist ]
     def decorator(function):
-        function.pytest_funcarglist = funcarglist
+        if hasattr(function, 'pytest_funcarglist'):
+            # We need to update the previos list of funcargs.
+            new_funcarglist = []
+            for d0 in function.pytest_funcarglist:
+                for d1 in funcarglist:
+                    new_funcarglist.append(dict(d0, **d1))
+            function.pytest_funcarglist = new_funcarglist
+        else:
+            function.pytest_funcarglist = funcarglist
         return function
     return decorator
 
