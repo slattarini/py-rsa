@@ -315,7 +315,7 @@ class PublicKey:
 class PrivateKey:
     """The most basic private RSA Key. Basically just a data container."""
     public_key_class = PublicKey
-    _modular_integer_class = IntegerMod
+    modular_integer_class = IntegerMod
     def __init__(self, p, q, e):
         # We just trust p and q to be prime and of similar size.
         self.p = p
@@ -323,7 +323,7 @@ class PrivateKey:
         self.n = p * q
         phi_n = (p - 1) * (q - 1)
         # TODO: check that (e, phi) = 1 and 0 < e < phi
-        class mod_phi_n(self._modular_integer_class):
+        class mod_phi_n(self.modular_integer_class):
             modulo = phi_n
         self.e = e
         self.d = (mod_phi_n(e)**(-1)).residue
