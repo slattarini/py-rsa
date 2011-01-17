@@ -335,6 +335,7 @@ class PrivateKey:
 
 class IntegerDecrypter:
     """Decrypt a given integer using RSA.
+      >>> # p and q are mersenne primes; see wikipedia
       >>> key = PrivateKey(p=2**2281-1, q=2**2203-1, e=65537)
       >>> E = IntegerEncrypter(key)
       >>> D1 = IntegerDecrypter(key.public())
@@ -363,12 +364,13 @@ class IntegerDecrypter:
 
 class IntegerEncrypter(IntegerDecrypter):
     """Encrypt and/or decrypt a given integer using RSA.
-#      >>> key = PrivateKey(p=2**9689-1, q=2**9941-1, e=8191)
-#      >>> E = IntegerEncrypter(key)
-#      >>> plain = 3**3237 + 2**512 - 7
-#      >>> cypher = E.encrypt(plain)
-#      >>> E.decrypt(cypher) == plain
-#      True
+      >>> # p and q are mersenne primes; see wikipedia
+      >>> key = PrivateKey(p=2**4253-1, q=2**4423-1, e=8191)
+      >>> E = IntegerEncrypter(key)
+      >>> plain = 3**3237 + 2**512 - 7
+      >>> cypher = E.encrypt(plain)
+      >>> E.decrypt(cypher) == plain
+      True
     """
     def encrypt(self, i):
         return self._modular_exponentiation(i, self.key.d)
