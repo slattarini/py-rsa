@@ -10,6 +10,9 @@
 """An "educational" implementation of the RSA encryption and digital sign
 algorithm"""
 
+# All classes declared in this file are to be new-style classes.
+__metaclass__ = type
+
 #--------------------------------------------------------------------------
 
 ## ---------------- ##
@@ -395,8 +398,7 @@ class IntegerDecrypter(IntegerEncrypter):
         except AttributeError:
             raise CryptoTypeError("key doesn't seem a private key")
         else:
-            IntegerEncrypter.__init__(self, key)
-#            super(IntegerDecrypter, self).__init__(key)
+            super(IntegerDecrypter, self).__init__(key)
     def decrypt(self, i):
         return self._modular_exponentiation(i, self.key.d)
 
