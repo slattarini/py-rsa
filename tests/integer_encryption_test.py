@@ -11,6 +11,8 @@ import RSA
 # Example stolen from wikipedia entry on RSA.
 def test_wikipedia_sample():
    key = RSA.PrivateKey(p=61, q=53, e=17)
+   assert key.n == 3233
+   assert key.d == 2753
    encrypter_priv = RSA.IntegerEncrypter(key)
    encrypter_pub = RSA.IntegerEncrypter(key.public())
    decrypter = RSA.IntegerDecrypter(key)
