@@ -29,6 +29,9 @@ __all__ = [
     'IMException',
     'IMTypeError',
     'IMValueError',
+    'CryptoException',
+    'CryptoTyepError',
+    'CryptoValueError',
     # g.c.d and euclidean algorithm
     'extended_gcd',
     'gcd',
@@ -61,6 +64,27 @@ class IMTypeError(IMException, TypeError):
 class IMValueError(IMException, ValueError):
     """ValueError exception that can be raised by classes and subroutines
     dealing with integers (mod n)"""
+    pass
+
+class CryptoException(Exception):
+    """Base class for exceptions that can be raised by classes and
+    subroutines dealing with RSA encryption (keys, encrypters and
+    decrypters)"""
+    pass
+
+class CryptoRuntimeError(CryptoException, RuntimeError):
+    """RuntimeError exception that can be raised by classes and subroutines
+    dealing with RSA encryption (keys, encrypters and decrypters)"""
+    pass
+
+class CryptoTypeError(CryptoException, TypeError):
+    """TypeError exception that can be raised by classes and subroutines
+    dealing with RSA encryption (keys, encrypters and decrypters)"""
+    pass
+
+class CryptoValueError(CryptoException, ValueError):
+    """ValueError exception that can be raised by classes and subroutines
+    dealing with RSA encryption (keys, encrypters and decrypters)"""
     pass
 
 #--------------------------------------------------------------------------
@@ -379,7 +403,7 @@ class IntegerDecrypter(IntegerEncrypter):
       >>> D = IntegerDecrypter(key.public())
       Traceback (most recent call last):
        ...
-      IMValueError: key doesn't seem a private key
+      CryptoTypeError: key doesn't seem a private key
       >>> D = IntegerDecrypter(key)
       >>> plain = 3**3237 + 2**512 - 7
       >>> # A decrypter can encrypt as well as decrypt!
@@ -391,7 +415,7 @@ class IntegerDecrypter(IntegerEncrypter):
         try:
             key.d
         except AttributeError:
-            raise IMValueError("key doesn't seem a private key")
+            raise CryptoTypeError("key doesn't seem a private key")
         else:
             IntegerEncrypter.__init__(self, key)
 #            super(IntegerDecrypter, self).__init__(key)

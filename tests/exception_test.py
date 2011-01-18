@@ -22,6 +22,18 @@ exceptions_info = {
     'IMValueError': {
         'superclasses': (Exception, 'IMException', ValueError),
     },
+    'CryptoException':  {
+        'superclasses': (Exception,),
+    },
+    'CryptoRuntimeError': {
+        'superclasses': (Exception, 'CryptoException', RuntimeError),
+    },
+    'CryptoTypeError': {
+        'superclasses': (Exception, 'CryptoException', TypeError),
+    },
+    'CryptoValueError': {
+        'superclasses': (Exception, 'CryptoException', ValueError),
+    },
 }
 
 # pytest special hook function to generate test input.
