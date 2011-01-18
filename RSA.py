@@ -316,6 +316,8 @@ class PublicKey:
         self.e = e
     def __eq__(self, other):
         return (self.n == other.n and self.e == other.e)
+    def __ne__(self, other):
+        return (not self == other)
 
 class PrivateKey:
     """The most basic private RSA Key. Basically just a data container."""
@@ -337,6 +339,8 @@ class PrivateKey:
     def __eq__(self, other):
         return (self.p == other.p and self.q == other.q
                 and self.d == other.d)
+    def __ne__(self, other):
+        return (not self == other)
 
 class IntegerEncrypter:
     """Encrypt a given integer using RSA.
