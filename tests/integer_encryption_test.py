@@ -9,18 +9,18 @@ import RSA
 #                                integers_mod, pytest_generate_tests
 
 # Example stolen from wikipedia entry on RSA.
-def test_wikipedia_sample():
-   key = RSA.PrivateKey(p=61, q=53, e=17)
-   assert key.n == 3233
-   assert key.d == 2753
-   encrypter_priv = RSA.IntegerEncrypter(key)
-   encrypter_pub = RSA.IntegerEncrypter(key.public())
-   decrypter = RSA.IntegerDecrypter(key)
-   plain = 65
-   cypher = 2790
-   assert (encrypter_priv.encrypt(plain) == cypher
-           and encrypter_pub.encrypt(plain) == cypher
-           and decrypter.decrypt(cypher) == plain)
+def test_wikipedia():
+    key = RSA.PrivateKey(p=61, q=53, e=17)
+    assert key.n == 3233
+    assert key.d == 2753
+    encrypter_priv = RSA.IntegerEncrypter(key)
+    encrypter_pub = RSA.IntegerEncrypter(key.public())
+    decrypter = RSA.IntegerDecrypter(key)
+    plain = 65
+    cypher = 2790
+    assert (encrypter_priv.encrypt(plain) == cypher
+            and encrypter_pub.encrypt(plain) == cypher
+            and decrypter.decrypt(cypher) == plain)
 
 # The list of known values has been obtained thanks to:
 #  http://www.hanewin.net/encrypt/rsa/rsa-test.htm
