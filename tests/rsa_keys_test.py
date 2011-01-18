@@ -5,8 +5,7 @@
 """Tests for our "naive" implementation of RSA keys."""
 import pytest
 import RSA
-from tests.pyrsa_testlib import with_params, integers_mod #, without_duplicates, \
-#                                , pytest_generate_tests
+from tests.pyrsa_testlib import with_params, integers_mod
 
 def test_create_public_key():
     key = RSA.PublicKey(n=35, e=3)
