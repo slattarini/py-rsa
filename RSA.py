@@ -228,9 +228,7 @@ class IntegerMod(object):
                 and self.residue == other.residue)
 
     def __ne__(self, other):
-        """Python docs suggest to define this method explicitly also
-        when __eq__ is defined"""
-        return (not (self == other))
+        return (not self == other)
 
     def __neg__(self):
         return (-1) * self
