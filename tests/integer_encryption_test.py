@@ -22,5 +22,6 @@ def test_wikipedia_sample():
 
 # The list of known values has been obtained thanks to:
 #  http://www.hanewin.net/encrypt/rsa/rsa-test.htm
+#  http://people.eku.edu/styere/Encrypt/RSAdemo.html
 
 # vim: et sw=4 ts=4 ft=python
