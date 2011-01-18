@@ -11,18 +11,14 @@ import RSA
 # Example stolen from wikipedia entry on RSA.
 def test_wikipedia_sample():
    key = RSA.PrivateKey(p=61, q=53, e=17)
-   encrypter = RSA.IntegerEncrypter(key)
-   decrypter_priv = RSA.IntegerDecrypter(key)
-   decrypter_pub = RSA.IntegerDecrypter(key.public())
+   encrypter_priv = RSA.IntegerEncrypter(key)
+   encrypter_pub = RSA.IntegerEncrypter(key.public())
+   decrypter = RSA.IntegerDecrypter(key)
    plain = 65
    cypher = 2790
-   assert (encrypter.encrypt(plain) == cypher
-           and encrypter.decrypt(cypher) == plain
-           and decrypter_priv.decrypt(cypher) == plain
-           and decrypter_pub.decrypt(cypher) == plain)
-
-###  DATA
-
+   assert (encrypter_priv.encrypt(plain) == cypher
+           and encrypter_pub.encrypt(plain) == cypher
+           and decrypter.decrypt(cypher) == plain)
 
 # The list of known values has been obtained thanks to:
 #  http://www.hanewin.net/encrypt/rsa/rsa-test.htm

@@ -333,20 +333,28 @@ class PrivateKey:
         return (self.p == other.p and self.q == other.q
                 and self.d == other.d)
 
-class IntegerDecrypter:
-    """Decrypt a given integer using RSA.
-      >>> # p and q are mersenne primes; see wikipedia
+class IntegerEncrypter:
+    """Encrypt a given integer using RSA.
+      >>> # p and q are Mersenne primes; see Wikipedia.
       >>> key = PrivateKey(p=2**2281-1, q=2**2203-1, e=65537)
-      >>> E = IntegerEncrypter(key)
-      >>> D1 = IntegerDecrypter(key.public())
+      >>> D = IntegerDecrypter(key)
+      >>> # An encrypter should work with just a public key.
+      >>> E = IntegerEncrypter(key.public())
+      >>> # The number to encrypt.
       >>> plain = 2**1000 + 25
       >>> cypher = E.encrypt(plain)
-      >>> D1.decrypt(cypher) == plain
+      >>> D.decrypt(cypher) == plain
       True
-      >>> D2 = IntegerDecrypter(key)
+      >>> # An encrypter should work also with a private key (which
+      >>> # "contains" the public key anyway).
+      >>> E2 = IntegerEncrypter(key.public())
+      >>> E2.encrypt(plain) == cypher
+      True
+      >>> # Let's try with another input.
       >>> plain = 2**1010 + 27
-      >>> cypher = E.encrypt(plain)
-      >>> D2.decrypt(cypher) == plain
+      >>> D.decrypt(E.encrypt(plain)) == plain
+      True
+      >>> D.decrypt(E2.encrypt(plain)) == plain
       True
     """
     modular_integer_class = IntegerMod
@@ -359,20 +367,35 @@ class IntegerDecrypter:
     def _modular_exponentiation(self, x, m):
         # TODO: assert 0 <= m < n
         return (self.mod_n(x)**m).residue
-    def decrypt(self, i):
+    def encrypt(self, i):
         return self._modular_exponentiation(i, self.key.e)
 
-class IntegerEncrypter(IntegerDecrypter):
-    """Encrypt and/or decrypt a given integer using RSA.
-      >>> # p and q are mersenne primes; see wikipedia
+class IntegerDecrypter(IntegerEncrypter):
+    """Decrypt and/or decrypt a given integer using RSA.
+      >>> # p and q are Mersenne primes; see Wikipedia.
       >>> key = PrivateKey(p=2**4253-1, q=2**4423-1, e=8191)
-      >>> E = IntegerEncrypter(key)
+      >>> # While an encrypter should work also with just a public key,
+      >>> # a decrypter should require a private key.
+      >>> D = IntegerDecrypter(key.public())
+      Traceback (most recent call last):
+       ...
+      IMValueError: key doesn't seem a private key
+      >>> D = IntegerDecrypter(key)
       >>> plain = 3**3237 + 2**512 - 7
-      >>> cypher = E.encrypt(plain)
-      >>> E.decrypt(cypher) == plain
+      >>> # A decrypter can encrypt as well as decrypt!
+      >>> cypher = D.encrypt(plain)
+      >>> D.decrypt(cypher) == plain
       True
     """
-    def encrypt(self, i):
+    def __init__(self, key):
+        try:
+            key.d
+        except AttributeError:
+            raise IMValueError("key doesn't seem a private key")
+        else:
+            IntegerEncrypter.__init__(self, key)
+#            super(IntegerDecrypter, self).__init__(key)
+    def decrypt(self, i):
         return self._modular_exponentiation(i, self.key.d)
 
 #--------------------------------------------------------------------------
