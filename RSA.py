@@ -214,8 +214,7 @@ class IntegerMod(object):
         self.residue = whole % self.modulo
 
     def __repr__(self):
-        # FIXME: not always correct
-        return "%s(%u)" % (self.__class__.__name__, self.residue)
+        return "%r(%u)" % (self.__class__, self.residue)
 
     def __str__(self):
         return "%u (mod %u)" % (self.residue, self.modulo)

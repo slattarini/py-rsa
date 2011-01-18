@@ -368,6 +368,17 @@ noncoprime_modulo_and_residue_data = define_noncoprime_modulo_and_residue_data()
 
 ### TESTS
 
+def test_integermod_repr():
+    class MyType(type):
+        def __repr__(self):
+            return self.__name__
+    class MyClass(RSA.IntegerMod):
+        __metaclass__ = MyType
+        modulo = 5
+    class MySubClass(MyClass):
+        modulo = 11
+    assert (repr(MyClass(23)) == "MyClass(3)"
+            and repr(MySubClass(23)) == "MySubClass(1)")
 
 @with_params([integers_mod], 'factory')
 def test_integermod_named_params(factory):
