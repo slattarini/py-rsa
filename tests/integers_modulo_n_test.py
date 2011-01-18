@@ -11,6 +11,8 @@ from tests.pyrsa_testlib import with_params, without_duplicates, \
 
 ###  DATA
 
+class DummyClass:
+    pass
 
 # obtained with GAP, but could also be looked upon a simple table
 small_primes  = [ 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 97, ]
@@ -602,6 +604,23 @@ def test_integermod_invalid_reciprocal_ldiv(modulo, residue, factory):
 def test_integermod_exponentiation(modulo, base, exponent, result, factory):
     cls = factory(modulo)
     assert ((cls(base) ** exponent).residue == result)
+
+
+@with_params([1.0, '1', [1], (1,), {1:1}, DummyClass(), object()], 'other')
+@with_params(['+', '-', '*', '/', '**'], 'operation')
+@with_params([integers_mod], 'factory')
+def test_integermod_invalid_operation(other, operation, factory):
+    cls = factory(2)
+    pytest.raises(RSA.IMTypeError, "cls(0) %s other" % operation)
+    if operation != '**':
+        pytest.raises(RSA.IMTypeError, "other %s cls(0)" % operation)
+
+@with_params([integers_mod], 'factory')
+def test_integermod_invalid_exponentation(factory):
+    int_mod_3 = factory(3)
+    int_mod_2 = factory(2)
+    pytest.raises(RSA.IMTypeError, "int_mod_3(1) ** int_mod_3(1)")
+    pytest.raises(RSA.IMTypeError, "int_mod_3(1) ** int_mod_2(1)")
 
 
 @with_params([integers_mod], 'factory')
