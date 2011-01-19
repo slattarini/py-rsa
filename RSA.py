@@ -122,6 +122,27 @@ def gcd(a, b):
     while r1 != 0:
         r0, r1 = r1, r0 % r1
     return r0
+#--------------------------------------------------------------------------
+
+## ------------------------------------------------------------------ ##
+##  Positional Representation of Integer Numbers in Different Bases.  ##
+## ------------------------------------------------------------------ ##
+
+def pos_to_int(seq, base):
+    result, base_power = 0, 1
+    for digit in seq:
+        result += base_power * digit
+        base_power *= base
+    return result
+
+def int_to_pos(n, base):
+    seq = []
+    while 1:
+        seq.append(n % base)
+        n = n / base
+        if n == 0:
+            break
+    return seq
 
 #--------------------------------------------------------------------------
 
