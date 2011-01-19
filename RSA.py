@@ -377,8 +377,8 @@ class IntegerEncrypter:
       >>> E2 = IntegerEncrypter(key.public())
       >>> E2.encrypt(plain) == cypher
       True
-      >>> # Let's try with another input.
-      >>> plain = 2**1010 + 27
+      >>> # Let's try with another input, this time greater than n = pq.
+      >>> plain = 5**5000 + 27
       >>> D.decrypt(E.encrypt(plain)) == plain
       True
       >>> D.decrypt(E2.encrypt(plain)) == plain
@@ -391,11 +391,13 @@ class IntegerEncrypter:
         class mod_n(self.modular_integer_class):
             modulo = key.n
         self.mod_n = mod_n
-    def _modular_exponentiation(self, x, m):
-        # TODO: assert 0 <= m < n
-        return (self.mod_n(x)**m).residue
+    def _extended_modular_exponentiation(self, i, m):
+        # TODO: assert m >= 0
+        n = self.key.n
+        x = [ (self.mod_n(d)**m).residue for d in int_to_pos(i, n) ]
+        return pos_to_int(x, n)
     def encrypt(self, i):
-        return self._modular_exponentiation(i, self.key.e)
+        return self._extended_modular_exponentiation(i, self.key.e)
 
 class IntegerDecrypter(IntegerEncrypter):
     """Decrypt and/or decrypt a given integer using RSA.
@@ -408,7 +410,7 @@ class IntegerDecrypter(IntegerEncrypter):
        ...
       CryptoTypeError: key doesn't seem a private key
       >>> D = IntegerDecrypter(key)
-      >>> plain = 3**3237 + 2**512 - 7
+      >>> plain = 3**3237 + 2**10000 - 7
       >>> # A decrypter can encrypt as well as decrypt!
       >>> cypher = D.encrypt(plain)
       >>> D.decrypt(cypher) == plain
@@ -422,7 +424,7 @@ class IntegerDecrypter(IntegerEncrypter):
         else:
             super(IntegerDecrypter, self).__init__(key)
     def decrypt(self, i):
-        return self._modular_exponentiation(i, self.key.d)
+        return self._extended_modular_exponentiation(i, self.key.d)
 
 #--------------------------------------------------------------------------
 

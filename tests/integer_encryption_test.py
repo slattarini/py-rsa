@@ -248,6 +248,17 @@ def b(x):
             057998 """),
     ),
 
+    # Created by hand, with some data from wikipedia (same as above).
+    dict(
+        n = 3233,
+        p = 61,
+        q = 53,
+        e = 17,
+        d = 2753,
+        plain = 65 + 3233 + 65 * 3233**2,
+        cypher = 2790 + 3233 + 2790 * 3233**2,
+    ),
+
 ])
 def test_sample(n, p, q, e, d, plain, cypher):
     key = RSA.PrivateKey(p, q, e)
