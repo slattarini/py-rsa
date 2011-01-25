@@ -151,6 +151,7 @@ def int_to_pos(n, base):
 ##  Integers Modulo N  ##
 ## ------------------- ##
 
+
 class IntegerMod(object):
     """A class representing integers (modulo n), for an unspecified modulo.
     Not meant to be used directly; you should use it by subclassing.
@@ -322,6 +323,29 @@ class IntegerMod(object):
         # self.residue * y = 1 (mod self.modulo), so...
         return self.__class__(y)
 
+
+class IntegerModPQ(IntegerMod):
+    """A class representing integers (modulo pq), where p and q are two
+    different prime numbers.  It offers an optimized implementation of
+    exponentation, using the Chinese Reminder Theorem.
+    This calss could probably be generalized to all integers whose
+    factorization into primes is known; but the particular case we
+    implementat is enough for our needs (i.e., implementing the RSA
+    encryption/decryption)."""
+
+    """The two primes whose product gives the modulo."""
+    p = None
+    q = None
+
+    def __init__(self, whole):
+        if self.p is None or self.q is None:
+            # Sanity check: `p' and `q' should be overridden by subclasses.
+            raise IMRuntimeError("p or q not overridden (is still None)")
+        if self.__class__.modulo is None:
+            self.__class__.modulo = self.p * self.q
+        super(IntegerModPQ, self).__init__(whole)
+
+
 #--------------------------------------------------------------------------
 
 ## ------------------ ##
@@ -341,7 +365,6 @@ class PublicKey:
 class PrivateKey:
     """The most basic private RSA Key. Basically just a data container."""
     public_key_class = PublicKey
-    modular_integer_class = IntegerMod
     def __init__(self, p, q, e):
         # We just trust p and q to be prime and of similar size.
         self.p = p
@@ -349,7 +372,7 @@ class PrivateKey:
         self.n = p * q
         phi_n = (p - 1) * (q - 1)
         # TODO: check that (e, phi) = 1 and 0 < e < phi
-        class mod_phi_n(self.modular_integer_class):
+        class mod_phi_n(IntegerMod):
             modulo = phi_n
         self.e = e
         self.d = (mod_phi_n(e)**(-1)).residue
@@ -385,12 +408,22 @@ class IntegerEncrypter:
       >>> D.decrypt(E2.encrypt(plain)) == plain
       True
     """
-    modular_integer_class = IntegerMod
+    modular_integer_class = IntegerModPQ
     def __init__(self, key):
         # "key" might be a public RSA key or a private RSA key.
+        # But we can optimize encryption (and decryption in derived classes
+        # BTW) if it is a private key.
         self.key = key
-        class mod_n(self.modular_integer_class):
-            modulo = key.n
+        try:
+            key.p, key.q
+        except AttributeError:
+            # is a public key
+            class mod_n(IntegerMod):
+                modulo = key.n
+        else:
+            # is a private key
+            class mod_n(IntegerModPQ):
+                p, q = key.p, key.q
         self.mod_n = mod_n
     def _extended_modular_exponentiation(self, i, m):
         # TODO: assert m >= 0
@@ -419,7 +452,7 @@ class IntegerDecrypter(IntegerEncrypter):
     """
     def __init__(self, key):
         try:
-            key.d
+            key.d, key.p, key.q
         except AttributeError:
             raise CryptoTypeError("key doesn't seem a private key")
         else:
