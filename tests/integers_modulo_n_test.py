@@ -370,6 +370,7 @@ noncoprime_modulo_and_residue_data = define_noncoprime_modulo_and_residue_data()
 
 ### TESTS
 
+
 def test_integermod_repr():
     class MyType(type):
         def __repr__(self):
@@ -382,19 +383,35 @@ def test_integermod_repr():
     assert (repr(MyClass(23)) == "MyClass(3)"
             and repr(MySubClass(23)) == "MySubClass(1)")
 
+
 @with_params([integers_mod], 'factory')
 def test_integermod_named_params(factory):
     IntegerMod2 = factory(2)
     assert IntegerMod2(whole=1) == IntegerMod2(1)
 
+def test_integermod_pq_init():
+    class IntegerMod22(RSA.IntegerModPQ):
+        p, q = 2, 11
+    assert IntegerMod22(whole=25) == IntegerMod22(3)
 
-def test_integermod_direct_instantiation_exception():
-    pytest.raises(RSA.IMRuntimeError, "RSA.IntegerMod(1)")
 
-def test_integermod_subclass_no_modulo_instantiation_exception():
+@with_params([RSA.IntegerMod, RSA.IntegerModPQ], 'cls')
+def test_integermod_direct_instantiation_exception(cls):
+    pytest.raises(RSA.IMRuntimeError, cls, [1])
+
+@with_params([RSA.IntegerMod, RSA.IntegerModPQ], 'cls')
+def test_integermod_subclass_no_modulo_instantiation_exception(cls):
     # check that instantiation of an IntegerMod subclass fails if
     # `modulo' class attribute is not overridden
-    class integermod_subclass(RSA.IntegerMod): pass
+    class integermod_subclass(cls): pass
+    pytest.raises(RSA.IMRuntimeError, "integermod_subclass(1)")
+
+@with_params(['p', 'q'], 'attr')
+def test_integermod_pq_subclass_incomplete_instantiation_exception(attr):
+    # check that instantiation of an IntegerMod subclass fails if
+    # `modulo' class attribute is not overridden
+    class integermod_subclass(RSA.IntegerModPQ): pass
+    setattr(integermod_subclass, attr, 5)
     pytest.raises(RSA.IMRuntimeError, "integermod_subclass(1)")
 
 

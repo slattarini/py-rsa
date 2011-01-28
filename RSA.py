@@ -337,12 +337,23 @@ class IntegerModPQ(IntegerMod):
     p = None
     q = None
 
-    def __init__(self, whole):
-        if self.p is None or self.q is None:
+    @classmethod
+    def _cls_init(cls):
+        if cls.p is None or cls.q is None:
             # Sanity check: `p' and `q' should be overridden by subclasses.
             raise IMRuntimeError("p or q not overridden (is still None)")
-        if self.__class__.modulo is None:
-            self.__class__.modulo = self.p * self.q
+        # So that we can assume p > q.
+        p, q = max(cls.p, cls.q), min(cls.p, cls.q)
+        cls.modulo = p * q
+        class mod_q(IntegerMod):
+            modulo = q
+        # p^(-1) (mod q)
+        cls._p_1_mod_n = (mod_q(p)**(-1)).residue
+        cls._p, cls._q = p, q
+        cls._cls_init = classmethod(lambda cls : None)
+
+    def __init__(self, whole):
+        self.__class__._cls_init()
         super(IntegerModPQ, self).__init__(whole)
 
 
