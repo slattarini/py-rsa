@@ -596,6 +596,9 @@ def test_integermod_reciprocal_ldiv(modulo, residue, reciprocal, factory):
     cls = factory(modulo)
     assert ((1/cls(residue)).residue == reciprocal)
 
+@with_params(multiplicative_inversion_data)
+def test_integermod_reciprocal_func(modulo, residue, reciprocal):
+    assert RSA.modular_reciprocal(residue, modulo) == reciprocal
 
 @with_params([integers_mod], 'factory')
 @with_params(noncoprime_modulo_and_residue_data)
@@ -614,6 +617,11 @@ def test_integermod_invalid_reciprocal_rdiv(modulo, residue, factory):
 def test_integermod_invalid_reciprocal_ldiv(modulo, residue, factory):
     cls = factory(modulo)
     pytest.raises(RSA.IMValueError, "1/cls(%d)" % residue)
+
+@with_params(noncoprime_modulo_and_residue_data)
+def test_integermod_invalid_reciprocal_func(modulo, residue):
+    pytest.raises(RSA.IMValueError, RSA.modular_reciprocal,
+                  residue, modulo)
 
 
 @with_params([integers_mod], 'factory')

@@ -343,18 +343,25 @@ class IntegerModPQ(IntegerMod):
             # Sanity check: `p' and `q' should be overridden by subclasses.
             raise IMRuntimeError("p or q not overridden (is still None)")
         # So that we can assume p > q.
-        p, q = max(cls.p, cls.q), min(cls.p, cls.q)
-        cls.modulo = p * q
-        class mod_q(IntegerMod):
-            modulo = q
+        cls.p, cls.q = max(cls.p, cls.q), min(cls.p, cls.q)
+        cls.modulo = cls.p * cls.q
         # p^(-1) (mod q)
-        cls._p_1_mod_n = (mod_q(p)**(-1)).residue
-        cls._p, cls._q = p, q
+        cls.p_reciprocal_mod_q = modular_reciprocal(cls.p, cls.q)
         cls._cls_init = classmethod(lambda cls : None)
 
     def __init__(self, whole):
         self.__class__._cls_init()
         super(IntegerModPQ, self).__init__(whole)
+
+
+def modular_reciprocal(a, m):
+    """Calculate the inverse of a (mod m), i.e. 0 < b < m such that
+    ab = 1 (mod m).  This will raise an exception if a and b are not
+    coprime"""
+    class cls(IntegerMod):
+        modulo = m
+    cls.__name__ = "IntegerMod%u" % m  # for better error messages
+    return (cls(a)**(-1)).residue
 
 
 #--------------------------------------------------------------------------
@@ -383,10 +390,8 @@ class PrivateKey:
         self.n = p * q
         phi_n = (p - 1) * (q - 1)
         # TODO: check that (e, phi) = 1 and 0 < e < phi
-        class mod_phi_n(IntegerMod):
-            modulo = phi_n
         self.e = e
-        self.d = (mod_phi_n(e)**(-1)).residue
+        self.d = modular_reciprocal(e, phi_n)
     def public(self):
         return self.public_key_class(self.n, self.e)
     def __eq__(self, other):
