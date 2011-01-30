@@ -12,12 +12,17 @@ class TestError(Exception):
 # explicitly.
 def integers_mod(n, class_name=None):
     import RSA
-    if not isinstance(n, (int, long)) or n <= 0:
+    if isinstance(n, (tuple, list)) and len(n) == 2:
+        class klass(RSA.IntegerModPQ):
+            p, q = n[0], n[1]
+        n = n[0] * n[1]
+    elif isinstance(n, (int, long)) or n <= 0:
+        class klass(RSA.IntegerMod):
+            modulo = n
+    else:
         raise TestError("Invalid parameter n: %r" % n)
     if class_name is None:
         class_name = "IntegerMod%u" % n
-    class klass(RSA.IntegerMod):
-        modulo = n
     klass.__name__ = class_name
     return klass
 
