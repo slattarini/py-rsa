@@ -634,18 +634,20 @@ def test_integermod_exponentiation(modulo, base, exponent, result, factory):
 @with_params([1.0, '1', [1], (1,), {1:1}, DummyClass(), object()], 'other')
 @with_params(['+', '-', '*', '/', '**'], 'operation')
 @with_params([integers_mod], 'factory')
-def test_integermod_invalid_operation(other, operation, factory):
-    cls = factory(2)
+@with_params([2, 100, (5, 11), (97, 73)], 'modulo')
+def test_integermod_invalid_operation(other, operation, modulo, factory):
+    cls = factory(modulo)
     pytest.raises(RSA.IMTypeError, "cls(0) %s other" % operation)
     if operation != '**':
         pytest.raises(RSA.IMTypeError, "other %s cls(0)" % operation)
 
+@with_params([dict(b=3, e=2), dict(b=(3, 5), e=8)])
 @with_params([integers_mod], 'factory')
-def test_integermod_invalid_exponentation(factory):
-    int_mod_3 = factory(3)
-    int_mod_2 = factory(2)
-    pytest.raises(RSA.IMTypeError, "int_mod_3(1) ** int_mod_3(1)")
-    pytest.raises(RSA.IMTypeError, "int_mod_3(1) ** int_mod_2(1)")
+def test_integermodpq_invalid_exponentation(factory, b, e):
+    int_mod_b = factory(b)
+    int_mod_e = factory(e)
+    pytest.raises(RSA.IMTypeError, "int_mod_b(1) ** int_mod_b(1)")
+    pytest.raises(RSA.IMTypeError, "int_mod_b(1) ** int_mod_e(1)")
 
 
 @with_params([integers_mod], 'factory')
