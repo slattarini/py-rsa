@@ -345,6 +345,10 @@ class IntegerModPQ(IntegerMod):
         # So that we can assume p > q.
         cls.p, cls.q = max(cls.p, cls.q), min(cls.p, cls.q)
         cls.modulo = cls.p * cls.q
+        class int_mod_p(IntegerMod): modulo = cls.p
+        class int_mod_q(IntegerMod): modulo = cls.q
+        cls.int_mod_p = int_mod_p
+        cls.int_mod_q = int_mod_q
         # p^(-1) (mod q)
         cls.p_reciprocal_mod_q = modular_reciprocal(cls.p, cls.q)
         cls._cls_init = classmethod(lambda cls : None)
@@ -352,7 +356,14 @@ class IntegerModPQ(IntegerMod):
     def __init__(self, whole):
         self.__class__._cls_init()
         super(IntegerModPQ, self).__init__(whole)
+        self.mod_p = self.int_mod_p(whole)
+        self.mod_q = self.int_mod_q(whole)
 
+    def __pow__(self, exponent):
+        a = (self.mod_p**exponent).residue
+        b = (self.mod_q**exponent).residue
+        result = a + self.p * (b - a) * self.p_reciprocal_mod_q
+        return self.__class__(result)
 
 def modular_reciprocal(a, m):
     """Calculate the inverse of a (mod m), i.e. 0 < b < m such that
