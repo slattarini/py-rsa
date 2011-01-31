@@ -47,7 +47,7 @@ def define_init_known_values():
         dict(whole=126, modulo=25, residue=1),
         dict(whole=150, modulo=25, residue=0),
         dict(whole=76,  modulo=22, residue=10),
-        # the follwing have been found with GAP
+        # the following have been found with GAP
         dict(whole=(71**6 * 73**11 * 97**5 * 673),
              modulo=(29 * 67**2 * 101**3),
              residue=16636952179),
