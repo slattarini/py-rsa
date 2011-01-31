@@ -360,8 +360,10 @@ class IntegerModPQ(IntegerMod):
         self.mod_q = self.int_mod_q(whole)
 
     def __pow__(self, exponent):
-        a = (self.mod_p**exponent).residue
-        b = (self.mod_q**exponent).residue
+        if not isinstance(exponent, (int, long)):
+            raise IMTypeError("exponent %r is not an integer", exponent)
+        a = (self.mod_p ** (exponent % (self.p - 1))).residue
+        b = (self.mod_q ** (exponent % (self.q - 1))).residue
         result = a + self.p * (b - a) * self.p_reciprocal_mod_q
         return self.__class__(result)
 
