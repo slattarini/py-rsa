@@ -5,8 +5,19 @@
 """Tests for the RSA.py's implementation of integers (mod n)"""
 import pytest
 import RSA
+import functools
 from tests.pyrsa_testlib import with_params, without_duplicates, \
                                 integers_mod, pytest_generate_tests
+
+
+###  HELPER FUNCTIONS/DECORATORS
+
+def check_integermod_operation(func):
+    def wrapper(**kwargs):
+        cls, expect, result = func(**kwargs)
+        assert result.__class__ == cls
+        assert result.residue == expect
+    return functools.update_wrapper(wrapper, func)
 
 
 ###  DATA
@@ -495,106 +506,122 @@ def test_integermod_inequality(whole, modulo, residue, factory):
                 cls(whole+1) != cls(residue))
 
 
+@check_integermod_operation
 @with_params([integers_mod], 'factory')
 @with_params(addition_data)
 def test_integermod_add(modulo, addend1, addend2, result, factory):
     cls = factory(modulo)
-    assert (cls(addend1) + cls(addend2)).residue == result
+    return cls, result, cls(addend1) + cls(addend2)
 
+@check_integermod_operation
 @with_params([integers_mod], 'factory')
 @with_params(addition_data)
 def test_integermod_ladd(modulo, addend1, addend2, result, factory):
     cls = factory(modulo)
-    assert (cls(addend1) + addend2).residue == result
+    return cls, result, cls(addend1) + addend2
 
+@check_integermod_operation
 @with_params([integers_mod], 'factory')
 @with_params(addition_data)
 def test_integermod_radd(modulo, addend1, addend2, result, factory):
     cls = factory(modulo)
-    assert (addend1 + cls(addend2)).residue == result
+    return cls, result, addend1 + cls(addend2)
 
 
+@check_integermod_operation
 @with_params([integers_mod], 'factory')
 @with_params(subtraction_data)
 def test_integermod_sub(modulo, minuend, subtrahend, result, factory):
     cls = factory(modulo)
-    assert (cls(minuend) - cls(subtrahend)).residue == result
+    return cls, result, cls(minuend) - cls(subtrahend)
 
+@check_integermod_operation
 @with_params([integers_mod], 'factory')
 @with_params(subtraction_data)
 def test_integermod_lsub(modulo, minuend, subtrahend, result, factory):
     cls = factory(modulo)
-    assert (cls(minuend) - subtrahend).residue == result
+    return cls, result, cls(minuend) - subtrahend
 
+@check_integermod_operation
 @with_params([integers_mod], 'factory')
 @with_params(subtraction_data)
 def test_integermod_rsub(modulo, minuend, subtrahend, result, factory):
     cls = factory(modulo)
-    assert (minuend - cls(subtrahend)).residue == result
+    return cls, result, minuend - cls(subtrahend)
 
 
+@check_integermod_operation
 @with_params([integers_mod], 'factory')
 @with_params(multiplication_data)
 def test_integermod_mul(modulo, factor1, factor2, result, factory):
     cls = factory(modulo)
-    assert (cls(factor2) * cls(factor1)).residue == result
+    return cls, result, cls(factor2) * cls(factor1)
 
+@check_integermod_operation
 @with_params([integers_mod], 'factory')
 @with_params(multiplication_data)
 def test_integermod_lmul(modulo, factor1, factor2, result, factory):
     cls = factory(modulo)
-    assert (cls(factor1) * factor2).residue == result
+    return cls, result, cls(factor1) * factor2
 
+@check_integermod_operation
 @with_params([integers_mod], 'factory')
 @with_params(multiplication_data)
 def test_integermod_rmul(modulo, factor1, factor2, result, factory):
     cls = factory(modulo)
-    assert (factor1 * cls(factor2)).residue == result
+    return cls, result, factor1 * cls(factor2)
 
 
+@check_integermod_operation
 @with_params([integers_mod], 'factory')
 @with_params(division_data)
 def test_integermod_div(modulo, dividend, divisor, result, factory):
     cls = factory(modulo)
-    assert (cls(dividend) / cls(divisor)).residue == result
+    return cls, result, cls(dividend) / cls(divisor)
 
+@check_integermod_operation
 @with_params([integers_mod], 'factory')
 @with_params(division_data)
 def test_integermod_ldiv(modulo, dividend, divisor, result, factory):
     cls = factory(modulo)
-    assert (cls(dividend) / divisor).residue == result
+    return cls, result, cls(dividend) / divisor
 
+@check_integermod_operation
 @with_params([integers_mod], 'factory')
 @with_params(division_data)
 def test_integermod_rdiv(modulo, dividend, divisor, result, factory):
     cls = factory(modulo)
-    assert (dividend / cls(divisor)).residue == result
+    return cls, result, dividend / cls(divisor)
 
 
+@check_integermod_operation
 @with_params([integers_mod], 'factory')
 @with_params(additive_inversion_data)
 def test_integermod_inverse(modulo, residue, inverse, factory):
     cls = factory(modulo)
-    assert (- cls(residue)).residue == inverse
+    return cls, inverse, - cls(residue)
 
 
+@check_integermod_operation
 @with_params([integers_mod], 'factory')
 @with_params(multiplicative_inversion_data)
 def test_integermod_reciprocal_pow(modulo, residue, reciprocal, factory):
     cls = factory(modulo)
-    assert (cls(residue)**(-1)).residue == reciprocal
+    return cls, reciprocal, cls(residue)**(-1)
 
+@check_integermod_operation
 @with_params([integers_mod], 'factory')
 @with_params(multiplicative_inversion_data)
 def test_integermod_reciprocal_rdiv(modulo, residue, reciprocal, factory):
     cls = factory(modulo)
-    assert ((cls(1)/residue).residue == reciprocal, factory)
+    return cls, reciprocal, cls(1) / residue
 
+@check_integermod_operation
 @with_params([integers_mod], 'factory')
 @with_params(multiplicative_inversion_data)
 def test_integermod_reciprocal_ldiv(modulo, residue, reciprocal, factory):
     cls = factory(modulo)
-    assert ((1/cls(residue)).residue == reciprocal)
+    return cls, reciprocal, 1 / cls(residue)
 
 @with_params(multiplicative_inversion_data)
 def test_integermod_reciprocal_func(modulo, residue, reciprocal):
@@ -624,11 +651,12 @@ def test_integermod_invalid_reciprocal_func(modulo, residue):
                   residue, modulo)
 
 
+@check_integermod_operation
 @with_params([integers_mod], 'factory')
 @with_params(exponentiation_data)
 def test_integermod_exponentiation(modulo, base, exponent, result, factory):
     cls = factory(modulo)
-    assert ((cls(base) ** exponent).residue == result)
+    return cls, result, cls(base) ** exponent
 
 
 @with_params([1.0, '1', [1], (1,), {1:1}, DummyClass(), object()], 'other')
