@@ -7,6 +7,11 @@
 class TestError(Exception):
     pass
 
+# Helper function used to nicely break up *long* integers over
+# multiple lines.
+def s2i(x):
+    return int(''.join(x.split()))
+
 # Build a proper subclass of RSA.IntegerMod, with the given
 # modulo; the class name is set to a sane default if not given
 # explicitly.
