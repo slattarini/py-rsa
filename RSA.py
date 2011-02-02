@@ -379,9 +379,9 @@ def modular_reciprocal(a, m):
 
 #--------------------------------------------------------------------------
 
-## ------------------ ##
-##  RSA for numbers.  ##
-## ------------------ ##
+## -------------------------------- ##
+##  RSA encryption and decryption.  ##
+## -------------------------------- ##
 
 class PublicKey:
     """The most basic usable RSA Public Key. Just a data container."""
