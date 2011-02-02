@@ -321,7 +321,7 @@ def unravel_rsa_test_data(data):
             del data_clump['_']
             for d in plain_encrypted_couples_list:
                 unravelled_test_data.append(
-                    dict(data_clump, plain=d['plain'], cipher=d['cypher']))
+                    dict(data_clump, plain=d['plain'], cipher=d['cipher']))
     return unravelled_test_data
 
 integer_rsa_test_data = unravel_rsa_test_data(integer_rsa_test_data)
