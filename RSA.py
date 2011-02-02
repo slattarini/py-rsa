@@ -414,27 +414,37 @@ class PrivateKey:
         return (not self == other)
 
 class Encrypter:
-    """Encrypt a given integer using RSA.
-      >>> # p and q are Mersenne primes; see Wikipedia.
+    """Encrypt/decrypt a given integer using RSA.
+    Can only encrypt if given a public key, can also decrypt if given a
+    private key.
+      >>> plain = 2**1000 + 25 # The number to encrypt.
+      >>> # p and q are Mersenne primes; source: Wikipedia.
       >>> key = PrivateKey(p=2**2281-1, q=2**2203-1, e=65537)
-      >>> D = Decrypter(key)
-      >>> # An encrypter should work with just a public key.
+      >>> # An encrypter knowing just the public key will only be able to
+      >>> # encrypt; one knowing the private key should be able to both
+      >>> # encrypt and decrypt.
       >>> E = Encrypter(key.public())
-      >>> # The number to encrypt.
-      >>> plain = 2**1000 + 25
-      >>> cipher = E.encrypt(plain)
-      >>> D.decrypt(cipher) == plain
-      True
-      >>> # An encrypter should work also with a private key (which
-      >>> # "contains" the public key anyway).
-      >>> E2 = Encrypter(key.public())
-      >>> E2.encrypt(plain) == cipher
-      True
-      >>> # Let's try with another input, this time greater than n = pq.
-      >>> plain = 5**5000 + 27
+      >>> D = Encrypter(key)
       >>> D.decrypt(E.encrypt(plain)) == plain
       True
-      >>> D.decrypt(E2.encrypt(plain)) == plain
+      >>> # A decrypter (i.e. an encypter in posses of a private key)
+      >>> # should also be able to encrypt.
+      >>> D.decrypt(D.encrypt(plain)) == plain
+      True
+      >>> # As already said, an encrypter requires a private key in order
+      >>> # to be able to decrypt.
+      >>> cipher = E.encrypt(plain)
+      >>> E.decrypt(cipher) == plain
+      Traceback (most recent call last):
+       ...
+      CryptoTypeError: cannot decrypt without a private key
+      >>> # Let's try with another input.  This time, the integer to be
+      >>> # encrypted is greater than n = pq.
+      >>> key = PrivateKey(p=2**4253-1, q=2**4423-1, e=8191)
+      >>> plain = 7**5000 + 27
+      >>> D.decrypt(E.encrypt(plain)) == plain
+      True
+      >>> D.decrypt(D.encrypt(plain)) == plain
       True
     """
     modular_integer_class = IntegerModPQ
@@ -454,40 +464,21 @@ class Encrypter:
             class mod_n(IntegerModPQ):
                 p, q = key.p, key.q
         self.mod_n = mod_n
-    def _extended_modular_exponentiation(self, i, m):
+    def merlin(self, i, m):
+        """Our magic is done here."""
         # TODO: assert m >= 0
         n = self.key.n
-        x = [ (self.mod_n(d)**m).residue for d in int_to_pos(i, n) ]
+        x = [ (self.mod_n(c)**m).residue for c in int_to_pos(i, n) ]
         return pos_to_int(x, n)
     def encrypt(self, i):
-        return self._extended_modular_exponentiation(i, self.key.e)
-
-class Decrypter(Encrypter):
-    """Decrypt and/or decrypt a given integer using RSA.
-      >>> # p and q are Mersenne primes; see Wikipedia.
-      >>> key = PrivateKey(p=2**4253-1, q=2**4423-1, e=8191)
-      >>> # While an encrypter should work also with just a public key,
-      >>> # a decrypter should require a private key.
-      >>> D = Decrypter(key.public())
-      Traceback (most recent call last):
-       ...
-      CryptoTypeError: key doesn't seem a private key
-      >>> D = Decrypter(key)
-      >>> plain = 3**3237 + 2**10000 - 7
-      >>> # A decrypter can encrypt as well as decrypt!
-      >>> cipher = D.encrypt(plain)
-      >>> D.decrypt(cipher) == plain
-      True
-    """
-    def __init__(self, key):
-        try:
-            key.d, key.p, key.q
-        except AttributeError:
-            raise CryptoTypeError("key doesn't seem a private key")
-        else:
-            super(Decrypter, self).__init__(key)
+        return self.merlin(i, self.key.e)
     def decrypt(self, i):
-        return self._extended_modular_exponentiation(i, self.key.d)
+        try:
+            d = self.key.d
+        except AttributeError:
+            raise CryptoTypeError("cannot decrypt without a private key")
+        else:
+            return self.merlin(i, d)
 
 #--------------------------------------------------------------------------
 

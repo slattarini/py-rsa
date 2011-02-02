@@ -347,8 +347,8 @@ def test_encrypt_privkey(n, p, q, e, d, plain, cipher):
 
 @with_params(integer_rsa_test_data)
 def test_decrypt(n, p, q, e, d, plain, cipher):
-    decrypter = RSA.Decrypter(RSA.PrivateKey(p, q, e))
-    assert decrypter.decrypt(cipher) == plain
+    encrypter = RSA.Encrypter(RSA.PrivateKey(p, q, e))
+    assert encrypter.decrypt(cipher) == plain
 
 # Without the Chinise Remainder theorem optimization, this would take
 # a ridicoulously long time: on the test machine, it took ~ half an
@@ -359,7 +359,7 @@ def test_decrypt_speed():
     p = 2**11213 - 1
     q = 2**9941 - 1
     e = 2**3217 - 1
-    decrypter = RSA.Decrypter(RSA.PrivateKey(p, q, e))
-    decrypter.decrypt((p - 10) * (q - 23) / 2)
+    encrypter = RSA.Encrypter(RSA.PrivateKey(p, q, e))
+    encrypter.decrypt((p - 10) * (q - 23) / 2)
 
 # vim: et sw=4 ts=4 ft=python
