@@ -25,11 +25,11 @@ integer_rsa_test_data = [
         _ = [
             dict(
                 plain = 65,
-                cypher = 2790,
+                cipher = 2790,
             ),
             dict(
                 plain = 65 + 3233 + 65 * 3233**2,
-                cypher = 2790 + 3233 + 2790 * 3233**2,
+                cipher = 2790 + 3233 + 2790 * 3233**2,
             ),
         ]
     ),
@@ -44,17 +44,17 @@ integer_rsa_test_data = [
         _ = [
             dict(
                 plain = 876,
-                cypher = 20628,
+                cipher = 20628,
             ),
             dict(
                 # if plain = n + 1 ...
                 plain = 31243,
-                # ... we also expect that cypher = n + 1
-                cypher = 31243,
+                # ... we also expect that cipher = n + 1
+                cipher = 31243,
             ),
             dict(
                 plain  = (31243 * 876   + 30888 * 31243**7 + 157   * 31243**12),
-                cypher = (31243 * 20628 + 3362  * 31243**7 + 20724 * 31243**12),
+                cipher = (31243 * 20628 + 3362  * 31243**7 + 20724 * 31243**12),
             ),
         ],
     ),
@@ -69,15 +69,15 @@ integer_rsa_test_data = [
         _ = [
             dict(
                 plain = 0,
-                cypher = 0,
+                cipher = 0,
             ),
             dict(
                 plain = 2,
-                cypher = 2**17,
+                cipher = 2**17,
             ),
             dict(
                 plain = 57128184570925880835232907122,
-                cypher = 6764407817379484644525719120,
+                cipher = 6764407817379484644525719120,
             ),
         ],
     ),
@@ -105,7 +105,7 @@ integer_rsa_test_data = [
             99597921367850945315474143925943532423516957495472126238
             57652061972441899562100158646230426553421519267911017057
             92539724815673563824224453532477 """),
-        cypher = s2i("""
+        cipher = s2i("""
             22137228139183158439669852364694862732482535535249847884
             49720954411001899921124803798801814042011086202993150254
             88274823131673309070513331643338514100983106623894620132
@@ -148,7 +148,7 @@ integer_rsa_test_data = [
             47212623857652061972441899562100158646230426553421519267
             91101705792539724815673563824224453532477555555555555555
             5588 """),
-        cypher = s2i("""
+        cipher = s2i("""
             11249617172664411689713341259914189929078337526026500935
             12409469092809495376007898985547994042625180666716133109
             95539518373396124849705037687042903923722455371479737993
@@ -189,7 +189,7 @@ integer_rsa_test_data = [
             00000000010001101001101101011101010111000011111100001000
             11000010100101101101000110001101100111010111110100111100
             1000000010000110111101011011 """),
-        cypher = s2i("""
+        cipher = s2i("""
             47367835209253383690467819493169886887363241045271912689
             00355152276480321075665546480570294956458929661801603950
             24876056438618301000575546096514331576813852538215249532
@@ -247,19 +247,19 @@ integer_rsa_test_data = [
         _ = [
             dict(
                 plain = 1,
-                cypher = 1,
+                cipher = 1,
             ),
             dict(
                 # if plain = n + 1 ...
                 plain = 2**4484 - 2**2281 - 2**2203 + 2,
-                # ... we also expect that cypher = n + 1
-                cypher= 2**4484 - 2**2281 - 2**2203 + 2,
+                # ... we also expect that cipher = n + 1
+                cipher= 2**4484 - 2**2281 - 2**2203 + 2,
             ),
             dict(
                 # We should work correctly even if the message is not
                 # coprime with n.
                 plain = 2**2281 - 1,
-                cypher = s2i("""
+                cipher = s2i("""
 640061972037093167636558270100139108712369267897169070438891215707482244962
 393307421036022966093171525790720912529525208236195591994399606764414667052
 689699597644707387251579059824583202620366624568044047189018477774569237057
@@ -282,7 +282,7 @@ integer_rsa_test_data = [
                 ),
             dict(
                 plain = 3**2000,
-                cypher = s2i("""
+                cipher = s2i("""
 233809301053491252688030600443670530842394086866430960416605728469810811696
 508390132960387214408615701257439084340027749781724406984689209417293472019
 451589843933378306480165645864951895113609011960106369048974775114147642802
@@ -321,7 +321,7 @@ def unravel_rsa_test_data(data):
             del data_clump['_']
             for d in plain_encrypted_couples_list:
                 unravelled_test_data.append(
-                    dict(data_clump, plain=d['plain'], cypher=d['cypher']))
+                    dict(data_clump, plain=d['plain'], cipher=d['cypher']))
     return unravelled_test_data
 
 integer_rsa_test_data = unravel_rsa_test_data(integer_rsa_test_data)
@@ -331,24 +331,24 @@ integer_rsa_test_data = unravel_rsa_test_data(integer_rsa_test_data)
 # -------------------- #
 
 @with_params(integer_rsa_test_data)
-def test_build_key(n, p, q, e, d, plain, cypher):
+def test_build_key(n, p, q, e, d, plain, cipher):
     key = RSA.PrivateKey(p, q, e)
     assert key.n == n and key.d == d
 
 @with_params(integer_rsa_test_data)
-def test_encrypt_pubkey(n, p, q, e, d, plain, cypher):
+def test_encrypt_pubkey(n, p, q, e, d, plain, cipher):
     encrypter = RSA.Encrypter(RSA.PublicKey(n, e))
-    assert encrypter.encrypt(plain) == cypher
+    assert encrypter.encrypt(plain) == cipher
 
 @with_params(integer_rsa_test_data)
-def test_encrypt_privkey(n, p, q, e, d, plain, cypher):
+def test_encrypt_privkey(n, p, q, e, d, plain, cipher):
     encrypter = RSA.Encrypter(RSA.PrivateKey(p, q, e))
-    assert encrypter.encrypt(plain) == cypher
+    assert encrypter.encrypt(plain) == cipher
 
 @with_params(integer_rsa_test_data)
-def test_decrypt(n, p, q, e, d, plain, cypher):
+def test_decrypt(n, p, q, e, d, plain, cipher):
     decrypter = RSA.Decrypter(RSA.PrivateKey(p, q, e))
-    assert decrypter.decrypt(cypher) == plain
+    assert decrypter.decrypt(cipher) == plain
 
 # Without the Chinise Remainder theorem optimization, this would take
 # a ridicoulously long time: on the test machine, it took ~ half an

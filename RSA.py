@@ -422,13 +422,13 @@ class Encrypter:
       >>> E = Encrypter(key.public())
       >>> # The number to encrypt.
       >>> plain = 2**1000 + 25
-      >>> cypher = E.encrypt(plain)
-      >>> D.decrypt(cypher) == plain
+      >>> cipher = E.encrypt(plain)
+      >>> D.decrypt(cipher) == plain
       True
       >>> # An encrypter should work also with a private key (which
       >>> # "contains" the public key anyway).
       >>> E2 = Encrypter(key.public())
-      >>> E2.encrypt(plain) == cypher
+      >>> E2.encrypt(plain) == cipher
       True
       >>> # Let's try with another input, this time greater than n = pq.
       >>> plain = 5**5000 + 27
@@ -475,8 +475,8 @@ class Decrypter(Encrypter):
       >>> D = Decrypter(key)
       >>> plain = 3**3237 + 2**10000 - 7
       >>> # A decrypter can encrypt as well as decrypt!
-      >>> cypher = D.encrypt(plain)
-      >>> D.decrypt(cypher) == plain
+      >>> cipher = D.encrypt(plain)
+      >>> D.decrypt(cipher) == plain
       True
     """
     def __init__(self, key):
