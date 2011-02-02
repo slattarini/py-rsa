@@ -413,13 +413,13 @@ class PrivateKey:
     def __ne__(self, other):
         return (not self == other)
 
-class IntegerEncrypter:
+class Encrypter:
     """Encrypt a given integer using RSA.
       >>> # p and q are Mersenne primes; see Wikipedia.
       >>> key = PrivateKey(p=2**2281-1, q=2**2203-1, e=65537)
-      >>> D = IntegerDecrypter(key)
+      >>> D = Decrypter(key)
       >>> # An encrypter should work with just a public key.
-      >>> E = IntegerEncrypter(key.public())
+      >>> E = Encrypter(key.public())
       >>> # The number to encrypt.
       >>> plain = 2**1000 + 25
       >>> cypher = E.encrypt(plain)
@@ -427,7 +427,7 @@ class IntegerEncrypter:
       True
       >>> # An encrypter should work also with a private key (which
       >>> # "contains" the public key anyway).
-      >>> E2 = IntegerEncrypter(key.public())
+      >>> E2 = Encrypter(key.public())
       >>> E2.encrypt(plain) == cypher
       True
       >>> # Let's try with another input, this time greater than n = pq.
@@ -462,17 +462,17 @@ class IntegerEncrypter:
     def encrypt(self, i):
         return self._extended_modular_exponentiation(i, self.key.e)
 
-class IntegerDecrypter(IntegerEncrypter):
+class Decrypter(Encrypter):
     """Decrypt and/or decrypt a given integer using RSA.
       >>> # p and q are Mersenne primes; see Wikipedia.
       >>> key = PrivateKey(p=2**4253-1, q=2**4423-1, e=8191)
       >>> # While an encrypter should work also with just a public key,
       >>> # a decrypter should require a private key.
-      >>> D = IntegerDecrypter(key.public())
+      >>> D = Decrypter(key.public())
       Traceback (most recent call last):
        ...
       CryptoTypeError: key doesn't seem a private key
-      >>> D = IntegerDecrypter(key)
+      >>> D = Decrypter(key)
       >>> plain = 3**3237 + 2**10000 - 7
       >>> # A decrypter can encrypt as well as decrypt!
       >>> cypher = D.encrypt(plain)
@@ -485,7 +485,7 @@ class IntegerDecrypter(IntegerEncrypter):
         except AttributeError:
             raise CryptoTypeError("key doesn't seem a private key")
         else:
-            super(IntegerDecrypter, self).__init__(key)
+            super(Decrypter, self).__init__(key)
     def decrypt(self, i):
         return self._extended_modular_exponentiation(i, self.key.d)
 
