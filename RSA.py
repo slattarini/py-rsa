@@ -449,9 +449,8 @@ class Encrypter:
     """
     modular_integer_class = IntegerModPQ
     def __init__(self, key):
-        # "key" might be a public RSA key or a private RSA key.
-        # But we can optimize encryption (and decryption in derived classes
-        # BTW) if it is a private key.
+        """ The key might be a public RSA key or a private RSA key."""
+        # But we can optimize decryption if it is a private key.
         self.key = key
         try:
             key.p, key.q
