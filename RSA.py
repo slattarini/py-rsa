@@ -418,12 +418,13 @@ class PrivateKey:
 
 
 class BasicEncrypter:
-    """Encrypt/decrypt a given integer using RSA.
+    """Base class for encrypting/decrypting using RSA.
 
     Can only encrypt if given a public key, can also decrypt if given a
     private key.
 
-    Note that this implementation is very naive and not semantically secure
+    This class works only on integers, and uses a naive and minimalistic
+    implementation. The implementation is also not semantically secure
     (no padding, etc.).  But it is designed to be extended by subclasses,
     which can then offer various enhancements.
 
