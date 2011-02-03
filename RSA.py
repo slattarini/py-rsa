@@ -415,8 +415,15 @@ class PrivateKey:
 
 class Encrypter:
     """Encrypt/decrypt a given integer using RSA.
+
     Can only encrypt if given a public key, can also decrypt if given a
     private key.
+
+    Note that this implementation is very naive and not semantically secure
+    (no padding, etc.).  But it is designed to be extended by subclasses,
+    which can then offer various enhancements.
+
+    Some examples of usage:
       >>> plain = 2**1000 + 25 # The number to encrypt.
       >>> # p and q are Mersenne primes; source: Wikipedia.
       >>> key = PrivateKey(p=2**2281-1, q=2**2203-1, e=65537)
@@ -447,10 +454,14 @@ class Encrypter:
       >>> D.decrypt(D.encrypt(plain)) == plain
       True
     """
+
     modular_integer_class = IntegerModPQ
+
     def __init__(self, key):
         """ The key might be a public RSA key or a private RSA key."""
-        # But we can optimize decryption if it is a private key.
+        # But we can decrypt only if it is a private key, in which case we
+        # can also used on optimized implementation to improve encryption
+        # and decryption performances.
         self.key = key
         try:
             key.p, key.q
@@ -463,21 +474,43 @@ class Encrypter:
             class mod_n(IntegerModPQ):
                 p, q = key.p, key.q
         self.mod_n = mod_n
-    def merlin(self, i, m):
+
+    # Transform the encrypted integer into/from an output object.
+    # These will allow defining derived classes which can encrypt/decrypt
+    # non-integer objects (e.g. strings and sequences of bytes).
+    def o2i(self, an_object):
+        return an_object
+    def i2o(self, an_integer):
+        return an_integer
+
+    # Implement the padding scheme used by the class.
+    # Meant to be overridden by subclasses.
+    def pad(self, plaintext):
+        return plaintext
+    def unpad(self, plaintext):
+        return plaintext
+
+    # Implement breaking/recomposing of integers.  This will allow us to
+    # have messages which integer representation is > n = pq.
+    # Can be overridden by subclasses.
+    def decompose(self, an_integer):
+        return int_to_pos(an_integer, self.key.n)
+    def recompose(self, a_list):
+        return pos_to_int(a_list, self.key.n)
+
+    def merlin(self, integer, exponent):
         """Our magic is done here."""
-        # TODO: assert m >= 0
-        n = self.key.n
-        x = [ (self.mod_n(c)**m).residue for c in int_to_pos(i, n) ]
-        return pos_to_int(x, n)
-    def encrypt(self, i):
-        return self.merlin(i, self.key.e)
-    def decrypt(self, i):
+        return self.recompose([(self.mod_n(c)**exponent).residue
+                               for c in self.decompose(integer)])
+    def encrypt(self, plaintext):
+        return self.i2o(self.merlin(self.o2i(plaintext), self.key.e))
+    def decrypt(self, ciphertext):
         try:
             d = self.key.d
         except AttributeError:
             raise CryptoTypeError("cannot decrypt without a private key")
         else:
-            return self.merlin(i, d)
+            return self.i2o(self.merlin(self.o2i(ciphertext), d))
 
 #--------------------------------------------------------------------------
 
