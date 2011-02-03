@@ -449,7 +449,7 @@ class BasicEncrypter:
       >>> E.decrypt(cipher) == plain
       Traceback (most recent call last):
        ...
-      CryptoTypeError: cannot decrypt without a private key
+      CryptoRuntimeError: can't decrypt without a private key
       >>> # Let's try with another input.  This time, the integer to be
       >>> # encrypted is greater than n = pq.
       >>> key = PrivateKey(p=2**4253-1, q=2**4423-1, e=8191)
@@ -513,7 +513,7 @@ class BasicEncrypter:
         try:
             d = self.key.d
         except AttributeError:
-            raise CryptoTypeError("cannot decrypt without a private key")
+            raise CryptoRuntimeError("can't decrypt without a private key")
         else:
             return self.i2o(self.merlin(self.o2i(ciphertext), d))
 
