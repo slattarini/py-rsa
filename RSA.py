@@ -417,7 +417,7 @@ class PrivateKey:
         return (not self == other)
 
 
-class Encrypter:
+class BasicEncrypter:
     """Encrypt/decrypt a given integer using RSA.
 
     Can only encrypt if given a public key, can also decrypt if given a
@@ -434,8 +434,8 @@ class Encrypter:
       >>> # An encrypter knowing just the public key will only be able to
       >>> # encrypt; one knowing the private key should be able to both
       >>> # encrypt and decrypt.
-      >>> E = Encrypter(key.public())
-      >>> D = Encrypter(key)
+      >>> E = BasicEncrypter(key.public())
+      >>> D = BasicEncrypter(key)
       >>> D.decrypt(E.encrypt(plain)) == plain
       True
       >>> # A decrypter (i.e. an encypter in posses of a private key)
