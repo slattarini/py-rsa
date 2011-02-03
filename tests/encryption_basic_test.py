@@ -13,7 +13,7 @@ from tests.pyrsa_testlib import s2i, with_params, without_duplicates, \
 # ---------------------------- #
 
 # Temporary definition, will be post-processed later.
-integer_rsa_test_data = [
+rsa_test_data = [
 
     # Inspired from http://en.wikipedia.org/wiki/RSA#A_worked_example
     dict(
@@ -305,11 +305,12 @@ integer_rsa_test_data = [
             ),
         ],
     ),
-] # integer_rsa_test_data
+] # rsa_test_data
 
 def unravel_rsa_test_data(data):
     unravelled_test_data = []
-    for data_clump in data:
+    for data_clump in [ x.copy() for x in data ]:
+        data_clump.setdefault('encrypter_type', RSA.BasicEncrypter)
         try:
             plain_encrypted_couples_list = data_clump['_']
         except KeyError:
@@ -324,30 +325,38 @@ def unravel_rsa_test_data(data):
                     dict(data_clump, plain=d['plain'], cipher=d['cipher']))
     return unravelled_test_data
 
-integer_rsa_test_data = unravel_rsa_test_data(integer_rsa_test_data)
+def extract_rsa_keys_data(data):
+    munged_data = []
+    for datum in data:
+        munged_data.append(dict([(k, v) for k, v in datum.iteritems()
+                                        if k in 'npqed']))
+    return munged_data
+
+rsa_keys_data = extract_rsa_keys_data(rsa_test_data)
+rsa_test_data = unravel_rsa_test_data(rsa_test_data)
 
 # -------------------- #
 #  Go with the tests.  #
 # -------------------- #
 
-@with_params(integer_rsa_test_data)
-def test_build_key(n, p, q, e, d, plain, cipher):
+@with_params(rsa_keys_data)
+def test_build_key(n, p, q, e, d):
     key = RSA.PrivateKey(p, q, e)
     assert key.n == n and key.d == d
 
-@with_params(integer_rsa_test_data)
-def test_encrypt_pubkey(n, p, q, e, d, plain, cipher):
-    encrypter = RSA.BasicEncrypter(RSA.PublicKey(n, e))
+@with_params(rsa_test_data)
+def test_encrypt_pubkey(n, p, q, e, d, plain, cipher, encrypter_type):
+    encrypter = encrypter_type(RSA.PublicKey(n, e))
     assert encrypter.encrypt(plain) == cipher
 
-@with_params(integer_rsa_test_data)
-def test_encrypt_privkey(n, p, q, e, d, plain, cipher):
-    encrypter = RSA.BasicEncrypter(RSA.PrivateKey(p, q, e))
+@with_params(rsa_test_data)
+def test_encrypt_privkey(n, p, q, e, d, plain, cipher, encrypter_type):
+    encrypter = encrypter_type(RSA.PrivateKey(p, q, e))
     assert encrypter.encrypt(plain) == cipher
 
-@with_params(integer_rsa_test_data)
-def test_decrypt(n, p, q, e, d, plain, cipher):
-    encrypter = RSA.BasicEncrypter(RSA.PrivateKey(p, q, e))
+@with_params(rsa_test_data)
+def test_decrypt(n, p, q, e, d, plain, cipher, encrypter_type):
+    encrypter = encrypter_type(RSA.PrivateKey(p, q, e))
     assert encrypter.decrypt(cipher) == plain
 
 # Without the Chinise Remainder theorem optimization, this would take
