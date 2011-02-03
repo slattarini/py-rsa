@@ -147,6 +147,7 @@ def int_to_pos(n, base):
 
 #--------------------------------------------------------------------------
 
+
 ## ------------------- ##
 ##  Integers Modulo N  ##
 ## ------------------- ##
@@ -379,9 +380,11 @@ def modular_reciprocal(a, m):
 
 #--------------------------------------------------------------------------
 
+
 ## -------------------------------- ##
 ##  RSA encryption and decryption.  ##
 ## -------------------------------- ##
+
 
 class PublicKey:
     """The most basic usable RSA Public Key. Just a data container."""
@@ -412,6 +415,7 @@ class PrivateKey:
                 and self.d == other.d)
     def __ne__(self, other):
         return (not self == other)
+
 
 class Encrypter:
     """Encrypt/decrypt a given integer using RSA.
@@ -511,6 +515,7 @@ class Encrypter:
             raise CryptoTypeError("cannot decrypt without a private key")
         else:
             return self.i2o(self.merlin(self.o2i(ciphertext), d))
+
 
 #--------------------------------------------------------------------------
 
