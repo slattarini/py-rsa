@@ -58,16 +58,6 @@ class CryptoRuntimeError(CryptoException, RuntimeError):
     dealing with RSA encryption (keys, encrypters and decrypters)"""
     pass
 
-class CryptoTypeError(CryptoException, TypeError):
-    """TypeError exception that can be raised by classes and subroutines
-    dealing with RSA encryption (keys, encrypters and decrypters)"""
-    pass
-
-class CryptoValueError(CryptoException, ValueError):
-    """ValueError exception that can be raised by classes and subroutines
-    dealing with RSA encryption (keys, encrypters and decrypters)"""
-    pass
-
 #--------------------------------------------------------------------------
 
 ## ---------------------------------------------- ##
