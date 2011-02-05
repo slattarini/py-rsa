@@ -21,6 +21,9 @@ test_known_input_output = [
     dict(o = '\001\000', i = 1 + 256**2),
     dict(o = '\000' * 100, i = 1 << 800),
     dict(o = '\000' * 101, i = 1 << 808),
+    dict(o = 'a', i = 353),
+    dict(o = 'x', i = 376),
+    dict(o = 'abc', i = 23290465),
 ]
 
 some_files = [
