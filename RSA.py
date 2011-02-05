@@ -507,6 +507,22 @@ class BasicEncrypter:
         else:
             return self.i2o(self.merlin(self.o2i(ciphertext), d))
 
+class ByteSequenceConversionMixin:
+    """Mixin for BasicEncrypter to allow encryption/decryption of generic
+    sequences of bytes."""
+    NBIT = 8
+    def o2i(self, bytes):
+        result, exp = 0, 0
+        for b in bytes:
+            result += ord(b) << exp
+            exp += self.NBIT
+        # So that we can distinguish between e.g. sequences ending with
+        # '\000' and '\000\000'.
+        result += 1 << exp
+        return result
+    def i2o(self, integer):
+        return ''.join([chr(i) for i in
+                        int_to_pos(integer, 1 << self.NBIT)[:-1]])
 
 #--------------------------------------------------------------------------
 
