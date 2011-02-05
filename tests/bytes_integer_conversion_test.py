@@ -15,6 +15,7 @@ test_known_input_output = [
     dict(o = '', i = 1),
     dict(o = '\000', i = 256),
     dict(o = '\001', i = 257),
+    dict(o = '\377', i = 511),
     dict(o = '\000\000', i = 256**2),
     dict(o = '\000\001', i = 256*257),
     dict(o = '\001\000', i = 1 + 256**2),
