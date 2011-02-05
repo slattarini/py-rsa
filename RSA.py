@@ -470,13 +470,36 @@ class BasicEncrypter:
                 p, q = key.p, key.q
         self.mod_n = mod_n
 
-    # Transform the encrypted integer into/from an output object.
-    # These will allow defining derived classes which can encrypt/decrypt
-    # non-integer objects (e.g. strings and sequences of bytes).
-    def o2i(self, an_object):
-        return an_object
-    def i2o(self, an_integer):
-        return an_integer
+    #
+    # Transform the encrypted/decrypted messages into/from an integers.
+    #
+    # Subclasses can override these functions in order to be able to
+    # encrypt/decrypt objects of more generic types (e.g. strings
+    # and sequences of bytes), provided that there's a simple way to
+    # univocally convert between such objects and unsigned integers.
+    #
+    # Note that we deliberately allow the objects representing the plain
+    # messages and the objects representing the encrypted messages to be
+    # of different types.  This might be truly
+    #
+    def o2i(self, text):
+        """From plaintext/ciphertext to integer."""
+        return text
+    def i2o(self, integer):
+        """From integer to plaintext/ciphetext."""
+        return integer
+    def p2i(self, plaintext):
+        """From plaintext to integer. By default, equivalent to 'o2i'"""
+        return self.o2i(plaintext)
+    def i2p(self, integer):
+        """From integer to plaintext. By default, equivalent to 'i2o'"""
+        return self.i2o(integer)
+    def c2i(self, ciphertext):
+        """From ciphertext to integer. By default, equivalent to 'o2i'"""
+        return self.o2i(ciphertext)
+    def i2c(self, integer):
+        """From integer to ciphertext. By default, equivalent to 'i2o'"""
+        return self.i2o(integer)
 
     # Implement the padding scheme used by the class.
     # Meant to be overridden by subclasses.
@@ -498,14 +521,14 @@ class BasicEncrypter:
         return self.recompose([(self.mod_n(c)**exponent).residue
                                for c in self.decompose(integer)])
     def encrypt(self, plaintext):
-        return self.i2o(self.merlin(self.o2i(plaintext), self.key.e))
+        return self.i2c(self.merlin(self.p2i(plaintext), self.key.e))
     def decrypt(self, ciphertext):
         try:
             d = self.key.d
         except AttributeError:
             raise CryptoRuntimeError("can't decrypt without a private key")
         else:
-            return self.i2o(self.merlin(self.o2i(ciphertext), d))
+            return self.i2p(self.merlin(self.c2i(ciphertext), d))
 
 class ByteSequenceConversionMixin:
     """Mixin for BasicEncrypter to allow encryption/decryption of generic
