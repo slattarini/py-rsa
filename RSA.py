@@ -444,8 +444,6 @@ class BasicEncrypter:
       CryptoRuntimeError: can't decrypt without a private key
     """
 
-    modular_integer_class = IntegerModPQ
-
     def __init__(self, key):
         """ The key might be a public RSA key or a private RSA key."""
         # But we can decrypt only if it is a private key, in which case we
