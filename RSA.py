@@ -358,6 +358,7 @@ class IntegerModPQ(IntegerMod):
         result = a + self.p * (b - a) * self.p_reciprocal_mod_q
         return self.__class__(result)
 
+
 def modular_reciprocal(a, m):
     """Calculate the inverse of a (mod m), i.e. 0 < b < m such that
     ab = 1 (mod m).  This will raise an exception if a and b are not
@@ -385,6 +386,7 @@ class PublicKey:
         return (self.n == other.n and self.e == other.e)
     def __ne__(self, other):
         return (not self == other)
+
 
 class PrivateKey:
     """The most basic private RSA Key. Basically just a data container."""
@@ -530,10 +532,18 @@ class BasicEncrypter:
         else:
             return self.i2p(self.merlin(self.c2i(ciphertext), d))
 
+
 class ByteSequenceConversionMixin:
     """Mixin for BasicEncrypter to allow encryption/decryption of generic
     sequences of bytes."""
+
     BASE = 1 << 8
+
+    def i2c(self, integer):
+        return ''.join([chr(i) for i in int_to_pos(integer, self.BASE)])
+    def c2i(self, bytes):
+        return pos_to_int([ord(b) for b in bytes], self.BASE)
+
     def p2i(self, bytes):
         # Apend `1' so that we can distinguish between e.g. sequences
         # ending with '\000' and '\000\000'.
@@ -541,14 +551,12 @@ class ByteSequenceConversionMixin:
     def i2p(self, integer):
         return ''.join([chr(i) for i in
                         int_to_pos(integer, self.BASE)[:-1]])
-    def i2c(self, integer):
-        return ''.join([chr(i) for i in int_to_pos(integer, self.BASE)])
-    def c2i(self, bytes):
-        return pos_to_int([ord(b) for b in bytes], self.BASE)
+
 
 class ByteSequenceEncrypter(ByteSequenceConversionMixin, BasicEncrypter):
     """Encrypt a generic byte sequence with RSA"""
     pass
+
 
 #--------------------------------------------------------------------------
 
