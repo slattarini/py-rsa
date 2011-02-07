@@ -4,6 +4,8 @@
 
 """Helper subroutines and classes for the RSA.py's testsuite"""
 
+import RSA
+
 class TestError(Exception):
     pass
 
@@ -16,7 +18,6 @@ def s2i(x):
 # modulo; the class name is set to a sane default if not given
 # explicitly.
 def integers_mod(n, class_name=None):
-    import RSA
     if isinstance(n, (tuple, list)) and len(n) == 2:
         class klass(RSA.IntegerModPQ):
             p, q = n[0], n[1]

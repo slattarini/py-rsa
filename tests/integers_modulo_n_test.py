@@ -5,7 +5,6 @@
 """Tests for the RSA.py's implementation of integers (mod n)"""
 import pytest
 import RSA
-import functools
 from tests.pyrsa_testlib import s2i, with_params, without_duplicates, \
                                 integers_mod, pytest_generate_tests
 

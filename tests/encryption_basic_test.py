@@ -3,7 +3,6 @@
 # This file is part of RSA.py testsuite.
 
 """Tests for our implementation of RSA applied to integers."""
-import pytest
 from RSA import PublicKey, PrivateKey, BasicEncrypter
 from tests.pyrsa_testlib import s2i, with_params, without_duplicates, \
                                 pytest_generate_tests

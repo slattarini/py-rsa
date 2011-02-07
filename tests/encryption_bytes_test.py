@@ -5,7 +5,7 @@
 """Tests for our implementation of RSA applied to generic sequences
 of bytes."""
 
-import RSA
+from RSA import ByteSequenceEncrypter, PublicKey, PrivateKey
 from tests.keys import keys
 from tests.pyrsa_testlib import with_params, without_duplicates, \
                                 pytest_generate_tests
@@ -58,8 +58,8 @@ plaintexts = define_texts()
 @with_params(plaintexts, 'plaintext')
 @with_params(keys)
 def test_pubkey_encrypt_privkey_decrypt(n, p, q, e, d, plaintext):
-    encrypter = RSA.ByteSequenceEncrypter(RSA.PublicKey(n, e))
-    decrypter = RSA.ByteSequenceEncrypter(RSA.PrivateKey(p, q, e))
+    encrypter = ByteSequenceEncrypter(PublicKey(n, e))
+    decrypter = ByteSequenceEncrypter(PrivateKey(p, q, e))
     ciphertext = encrypter.encrypt(plaintext)
     assert type(ciphertext) == str
     assert decrypter.decrypt(ciphertext) == plaintext
@@ -67,7 +67,7 @@ def test_pubkey_encrypt_privkey_decrypt(n, p, q, e, d, plaintext):
 @with_params(plaintexts, 'plaintext')
 @with_params(keys)
 def test_privkey_encrypt_privkey_decrypt(n, p, q, e, d, plaintext):
-    encrypter = RSA.ByteSequenceEncrypter(RSA.PrivateKey(p, q, e))
+    encrypter = ByteSequenceEncrypter(PrivateKey(p, q, e))
     ciphertext = encrypter.encrypt(plaintext)
     assert type(ciphertext) == str
     assert plaintext == encrypter.decrypt(ciphertext)

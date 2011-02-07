@@ -3,7 +3,7 @@
 # This file is part of RSA.py testsuite.
 
 """Unit tests for the RSA.py's implementation of euclidean algorithm"""
-import RSA
+from RSA import gcd, extended_gcd
 from tests.pyrsa_testlib import pytest_generate_tests, with_params
 
 
@@ -135,19 +135,19 @@ egcd_data = known_values
 
 @with_params(gcd_args)
 def test_gcd_ret_type(a, b):
-    assert type(RSA.gcd(a, b)) in (int, long)
+    assert type(gcd(a, b)) in (int, long)
 
 @with_params(gcd_data)
 def test_gcd_known(a, b, d):
-    assert RSA.gcd(a, b) == d
+    assert gcd(a, b) == d
 
 @with_params(gcd_args)
 def test_gcd_commutative(a, b):
-    assert RSA.gcd(a, b) == RSA.gcd(b, a)
+    assert gcd(a, b) == gcd(b, a)
 
 @with_params(gcd_args)
 def test_gcd_consistency(a ,b):
-    d = RSA.gcd(a, b)
+    d = gcd(a, b)
     if a == b == 0:
         assert (a == b == d == 0)
     elif a == 0:
@@ -159,11 +159,11 @@ def test_gcd_consistency(a ,b):
 
 @with_params(gcd_args)
 def test_egcd_seq_type(a, b):
-    assert type(RSA.extended_gcd(a, b)) == tuple
+    assert type(extended_gcd(a, b)) == tuple
 
 @with_params(gcd_args)
 def test_egcd_ret_type(a ,b):
-    d, x, y = RSA.extended_gcd(a, b)
+    d, x, y = extended_gcd(a, b)
     assert (
         type(d) in (int, long) and
         type(x) in (int, long) and
@@ -171,18 +171,18 @@ def test_egcd_ret_type(a ,b):
 
 @with_params(egcd_data)
 def test_egcd_known(a, b, d, x ,y):
-    assert (d, x, y) == RSA.extended_gcd(a, b)
+    assert (d, x, y) == extended_gcd(a, b)
 
 @with_params(gcd_args)
 def test_egcd_reversed(a, b):
     if a != b:
-        d0, x0, y0 = RSA.extended_gcd(a, b)
-        d1, x1, y1 = RSA.extended_gcd(b ,a)
+        d0, x0, y0 = extended_gcd(a, b)
+        d1, x1, y1 = extended_gcd(b ,a)
         assert (d0, x0, y0) == (d1, y1, x1)
 
 @with_params(gcd_args)
 def test_egcd_consistency(a, b):
-    d, x, y = RSA.extended_gcd(a, b)
+    d, x, y = extended_gcd(a, b)
     if a == b == 0:
         assert d == x == y == 0
     elif a == 0:
