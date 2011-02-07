@@ -1,0 +1,16 @@
+TODO list for py-rsa
+
+ * make py-rsa really work with padding
+
+ * implement a real padding scheme in py-rsa
+
+ * make py-rsa work with data encoded in base64
+ 
+ * implement digital signature (using sha-512 and md5 provided by
+   the 'hashlib' python's standard module)
+ 
+ * make the "Encrypter" objects of py-rsa work with iterators.
+
+ * [MAYBE] implement key generation (no clue yet about how to do it,
+           and it might be difficult).
+
