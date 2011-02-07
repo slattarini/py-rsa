@@ -534,13 +534,17 @@ class ByteSequenceConversionMixin:
     """Mixin for BasicEncrypter to allow encryption/decryption of generic
     sequences of bytes."""
     BASE = 1 << 8
-    def o2i(self, bytes):
+    def p2i(self, bytes):
         # Apend `1' so that we can distinguish between e.g. sequences
         # ending with '\000' and '\000\000'.
         return pos_to_int([ord(b) for b in bytes] + [1], self.BASE)
-    def i2o(self, integer):
+    def i2p(self, integer):
         return ''.join([chr(i) for i in
                         int_to_pos(integer, self.BASE)[:-1]])
+    def i2c(self, integer):
+        return ''.join([chr(i) for i in int_to_pos(integer, self.BASE)])
+    def c2i(self, bytes):
+        return pos_to_int([ord(b) for b in bytes], self.BASE)
 
 #--------------------------------------------------------------------------
 

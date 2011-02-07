@@ -39,15 +39,15 @@ some_files = [
 
 def check_converter_reversibility(bytes):
     __tracebackhide__ = True
-    assert converter.i2o(converter.o2i(bytes))
+    assert converter.i2p(converter.p2i(bytes))
 
 @with_params(test_known_input_output)
 def test_o2i(o, i):
-    assert converter.o2i(o) == i
+    assert converter.p2i(o) == i
 
 @with_params(test_known_input_output)
 def test_i2o(o, i):
-    assert converter.i2o(i) == o
+    assert converter.i2p(i) == o
 
 @with_params(some_files, 'path')
 def test_converter_reversibility_from_file(path):
