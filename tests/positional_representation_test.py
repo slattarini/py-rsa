@@ -5,7 +5,7 @@
 """Tests internal routines for positional representation of integers."""
 import pytest
 from RSA import int_to_pos, pos_to_int
-from tests.pyrsa_testlib import with_params, pytest_generate_tests
+from tests.lib import with_params, pytest_generate_tests
 
 # b is the base, n the integer, r its positional representation
 # FIXME: it should be easy to have more automatically-generated

@@ -7,7 +7,7 @@ positive integers."""
 import sys
 import pytest
 from RSA import ByteSequenceConversionMixin
-from tests.pyrsa_testlib import with_params, pytest_generate_tests
+from tests.lib import with_params, pytest_generate_tests
 
 converter = ByteSequenceConversionMixin()
 

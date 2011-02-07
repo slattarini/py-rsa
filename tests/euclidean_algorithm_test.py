@@ -4,7 +4,7 @@
 
 """Unit tests for the RSA.py's implementation of euclidean algorithm"""
 from RSA import gcd, extended_gcd
-from tests.pyrsa_testlib import pytest_generate_tests, with_params
+from tests.lib import pytest_generate_tests, with_params
 
 
 ### DATA

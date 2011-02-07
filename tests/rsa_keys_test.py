@@ -5,7 +5,7 @@
 """Tests for our "naive" implementation of RSA keys."""
 from RSA import PublicKey, PrivateKey
 from tests.keys import keys
-from tests.pyrsa_testlib import with_params, pytest_generate_tests
+from tests.lib import with_params, pytest_generate_tests
 
 private_keys = [ v for (_, v) in keys.iteritems() ]
 public_keys = [ dict(n = k['n'], e = k['e']) for k in private_keys ]

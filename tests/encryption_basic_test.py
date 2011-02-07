@@ -4,8 +4,8 @@
 
 """Tests for our implementation of RSA applied to integers."""
 from RSA import PublicKey, PrivateKey, BasicEncrypter
-from tests.pyrsa_testlib import s2i, with_params, without_duplicates, \
-                                pytest_generate_tests
+from tests.lib import s2i, with_params, without_duplicates, \
+                      pytest_generate_tests
 from tests.keys import keys
 
 # ---------------------------- #

@@ -7,8 +7,7 @@ of bytes."""
 
 from RSA import ByteSequenceEncrypter, PublicKey, PrivateKey
 from tests.keys import keys
-from tests.pyrsa_testlib import with_params, without_duplicates, \
-                                pytest_generate_tests
+from tests.lib import with_params, without_duplicates, pytest_generate_tests
 
 keys = [ keys[tag] for tag in keys ]
 

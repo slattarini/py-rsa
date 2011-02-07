@@ -5,8 +5,8 @@
 """Tests for the RSA.py's implementation of integers (mod n)"""
 import pytest
 import RSA
-from tests.pyrsa_testlib import s2i, with_params, without_duplicates, \
-                                integers_mod, pytest_generate_tests
+from tests.lib import s2i, integers_mod, with_params, \
+                      without_duplicates, pytest_generate_tests
 
 
 ###  HELPER FUNCTIONS/DECORATORS

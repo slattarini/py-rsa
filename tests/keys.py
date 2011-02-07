@@ -3,7 +3,7 @@
 # This file is part of RSA.py testsuite.
 
 """Define RSA keys to be used in tests."""
-from tests.pyrsa_testlib import s2i
+from tests.lib import s2i
 
 
 keys = {
