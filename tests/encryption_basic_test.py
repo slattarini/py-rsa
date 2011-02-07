@@ -3,7 +3,7 @@
 # This file is part of RSA.py testsuite.
 
 """Tests for our implementation of RSA applied to integers."""
-from RSA import PublicKey, PrivateKey, BasicEncrypter
+from RSA import PublicKey, PrivateKey, BasicEncrypter, IntegerEncrypter
 from tests.lib import s2i, with_params, without_duplicates, \
                       pytest_generate_tests
 from tests.keys import keys
@@ -15,9 +15,54 @@ from tests.keys import keys
 # Temporary definition, will be post-processed later.
 rsa_test_data = [
 
+    # Sanity checks on the implementation(s).
+    dict(
+        key = keys['small'],
+        encrypter_type = IntegerEncrypter,
+        _ = [
+            dict(
+                plain  = 0,
+                cipher = 0,
+            ),
+            dict(
+                plain  = 1,
+                cipher = 1,
+            ),
+            dict(
+                plain  = 2,
+                cipher = 32,
+            ),
+            dict(
+                plain  = 5,
+                cipher = 161,
+            ),
+            dict(
+                plain  = 3,
+                cipher = 243,
+            ),
+            dict(
+                plain  =   3 +  2 * 247,
+                cipher = 243 + 32 * 247,
+            ),
+            dict(
+                plain  = 2  + 1 * 247 +   3 * 247**2,
+                cipher = 32 + 1 * 247 + 243 * 247**2,
+            ),
+            dict(
+                plain  = 13 +   5 * 247,
+                cipher = 52 + 161 * 247,
+            ),
+            dict(
+                plain  = 13 +   5 * 247,
+                cipher = 52 + 161 * 247,
+            ),
+        ]
+    ),
+
     # http://en.wikipedia.org/wiki/RSA#A_worked_example
     dict(
         key = keys['wikipedia'],
+        encrypter_type = IntegerEncrypter,
         _ = [
             dict(
                 plain = 65,
@@ -33,6 +78,7 @@ rsa_test_data = [
     # http://critto.liceofoscarini.it/critto/rsa/rsa_demo.phtml
     dict(
         key = keys['foscarini'],
+        encrypter_type = IntegerEncrypter,
         _ = [
             dict(
                 plain = 876,
@@ -127,6 +173,7 @@ rsa_test_data = [
     # Also check some corner cases.
     dict(
         key = keys['M2281_M2203'],
+        encrypter_type = IntegerEncrypter,
         _ = [
             dict(
                 plain = 1,
@@ -190,22 +237,25 @@ rsa_test_data = [
     ),
 ] # rsa_test_data
 
-def unravel_rsa_test_data(data):
+
+def unravel_rsa_test_data(lst):
     unravelled_test_data = []
-    for data_clump in [ x.copy() for x in data ]:
-        data_clump.setdefault('encrypter_type', BasicEncrypter)
+    for data_clump in [ x.copy() for x in lst ]:
         try:
-            plain_encrypted_couples_list = data_clump['_']
+            list_of_plain_encrypted_couples = data_clump['_']
         except KeyError:
-            # There's only one datum in the clump.  Register it.
-            unravelled_test_data.append(data_clump)
+            # There's only one datum in the clump.
+            data_entries = [data_clump]
         else:
-            # Unravel the data contained in the clump, and register each of
-            # them singularly.
+            # Unravel the data contained in the clump.
             del data_clump['_']
-            for d in plain_encrypted_couples_list:
-                unravelled_test_data.append(
-                    dict(data_clump, plain=d['plain'], cipher=d['cipher']))
+            data_entries = []
+            for d in list_of_plain_encrypted_couples:
+                data_entries.append(dict(data_clump, plain=d['plain'],
+                                                     cipher=d['cipher']))
+        for entry in data_entries:
+            entry.setdefault('encrypter_type', BasicEncrypter)
+        unravelled_test_data.extend(data_entries)
     return unravelled_test_data
 
 rsa_test_data = unravel_rsa_test_data(rsa_test_data)

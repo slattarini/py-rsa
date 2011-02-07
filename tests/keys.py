@@ -8,6 +8,16 @@ from tests.lib import s2i
 
 keys = {
 
+    # useful for some basic checks
+    'small' :
+    dict(
+        p = 19,
+        q = 13,
+        e = 5,
+        d = 173,
+        n = 247,
+    ),
+
     # http://en.wikipedia.org/wiki/RSA#A_worked_example
     'wikipedia' : 
     dict(
@@ -180,6 +190,5 @@ keys = {
 """), ),
 
 }
-
 
 # vim: et sw=4 ts=4 ft=python

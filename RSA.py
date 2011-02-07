@@ -415,10 +415,10 @@ class BasicEncrypter:
     Can only encrypt if given a public key, can also decrypt if given a
     private key.
 
-    This class works only on integers, and uses a naive and minimalistic
-    implementation. The implementation is also not semantically secure
-    (no padding, etc.).  But it is designed to be extended by subclasses,
-    which can then offer various enhancements.
+    This class works only on integers < pq, and uses a minimalistic and
+    naive implementation, which is also not semantically secure (no padding,
+    etc.).  But this implemetnation is designed to be easily extended by
+    subclasses, which can then offer various enhancements.
 
     Some examples of usage:
       >>> plain = 2**1000 + 25 # The number to encrypt.
@@ -442,14 +442,6 @@ class BasicEncrypter:
       Traceback (most recent call last):
        ...
       CryptoRuntimeError: can't decrypt without a private key
-      >>> # Let's try with another input.  This time, the integer to be
-      >>> # encrypted is greater than n = pq.
-      >>> key = PrivateKey(p=2**4253-1, q=2**4423-1, e=8191)
-      >>> plain = 7**5000 + 27
-      >>> D.decrypt(E.encrypt(plain)) == plain
-      True
-      >>> D.decrypt(D.encrypt(plain)) == plain
-      True
     """
 
     modular_integer_class = IntegerModPQ
@@ -473,34 +465,39 @@ class BasicEncrypter:
         self.mod_n = mod_n
 
     #
-    # Transform the encrypted/decrypted messages into/from an integers.
+    # Transform the encrypted/decrypted messages into/from a sequence
+    # of non-negative integers.
     #
     # Subclasses can override these functions in order to be able to
-    # encrypt/decrypt objects of more generic types (e.g. strings
-    # and sequences of bytes), provided that there's a simple way to
-    # univocally convert between such objects and unsigned integers.
+    # encrypt/decrypt objects of generic types (e.g. strings and sequences
+    # of bytes), provided that there's a simple way to univocally convert
+    # between such objects and sequences of unsigned integers.
     #
     # Note that we deliberately allow the objects representing the plain
     # messages and the objects representing the encrypted messages to be
-    # of different types.  This might be truly
+    # of different types.  This might be truly useful in practice.
     #
     def o2i(self, text):
-        """From plaintext/ciphertext to integer."""
-        return text
-    def i2o(self, integer):
-        """From integer to plaintext/ciphetext."""
-        return integer
+        """From plaintext and/or ciphertext to sequence of integers."""
+        return (text,)
+    def i2o(self, seq):
+        """From sequence of integers to plaintext and/or ciphertext."""
+        return seq[0]
     def p2i(self, plaintext):
-        """From plaintext to integer. By default, equivalent to 'o2i'"""
+        """From plaintext to sequence of integers.
+        By default, equivalent to 'o2i'"""
         return self.o2i(plaintext)
     def i2p(self, integer):
-        """From integer to plaintext. By default, equivalent to 'i2o'"""
+        """From sequence integers to plaintext.
+        By default, equivalent to 'i2o'"""
         return self.i2o(integer)
     def c2i(self, ciphertext):
-        """From ciphertext to integer. By default, equivalent to 'o2i'"""
+        """From ciphertext to sequence of integers.
+        By default, equivalent to 'o2i'"""
         return self.o2i(ciphertext)
     def i2c(self, integer):
-        """From integer to ciphertext. By default, equivalent to 'i2o'"""
+        """From sequence of integers to ciphertext.
+        By default, equivalent to 'i2o'"""
         return self.i2o(integer)
 
     # Implement the padding scheme used by the class.
@@ -510,27 +507,52 @@ class BasicEncrypter:
     def unpad(self, plaintext):
         return plaintext
 
-    # Implement breaking/recomposing of integers.  This will allow us to
-    # have messages which integer representation is > n = pq.
-    # Can be overridden by subclasses.
-    def decompose(self, an_integer):
-        return int_to_pos(an_integer, self.key.n)
-    def recompose(self, a_list):
-        return pos_to_int(a_list, self.key.n)
+    def _modexp(self, integer, exponent):
+        if not 0 <= integer < self.key.n:
+            # FIXME: better error class?
+            raise CryptoRuntimeError("integer %d out of range" % integer)
+        return (self.mod_n(integer)**exponent).residue
 
-    def merlin(self, integer, exponent):
-        """Our magic is done here."""
-        return self.recompose([(self.mod_n(c)**exponent).residue
-                               for c in self.decompose(integer)])
-    def encrypt(self, plaintext):
-        return self.i2c(self.merlin(self.p2i(plaintext), self.key.e))
-    def decrypt(self, ciphertext):
+    def _encrypt(self, integer):
+        return self._modexp(integer, self.key.e)
+
+    def _decrypt(self, integer):
         try:
             d = self.key.d
         except AttributeError:
             raise CryptoRuntimeError("can't decrypt without a private key")
         else:
-            return self.i2p(self.merlin(self.c2i(ciphertext), d))
+            return self._modexp(integer, d)
+
+    def encrypt(self, plaintext):
+        return self.i2c(map(self._encrypt, self.p2i(plaintext)))
+    def decrypt(self, ciphertext):
+        return self.i2p(map(self._decrypt, self.c2i(ciphertext)))
+
+
+class BigIntMixin:
+    """Mixin for BasicEncrypter to allow encryption/decryption of generic
+    integers (even >= pq)."""
+    def o2i(self, big_integer):
+        return int_to_pos(big_integer, self.key.n)
+    def i2o(self, sequence):
+        return pos_to_int(sequence, self.key.n)
+
+class IntegerEncrypter(BigIntMixin, BasicEncrypter):
+    """Encrypt/Decrypt generic integers.  This class is meant to work also
+    with integers > pq.
+
+    Example:
+      >>> key = PrivateKey(p=2**1279-1, q=2**3217-1, e=8191)
+      >>> plain = 7**4000 + 27
+      >>> E = IntegerEncrypter(key.public())
+      >>> D = IntegerEncrypter(key)
+      >>> D.decrypt(E.encrypt(plain)) == plain
+      True
+      >>> D.decrypt(D.encrypt(plain)) == plain
+      True
+    """
+    pass
 
 
 class ByteSequenceConversionMixin:
