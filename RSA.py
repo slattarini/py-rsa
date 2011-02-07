@@ -546,6 +546,10 @@ class ByteSequenceConversionMixin:
     def c2i(self, bytes):
         return pos_to_int([ord(b) for b in bytes], self.BASE)
 
+class ByteSequenceEncrypter(ByteSequenceConversionMixin, BasicEncrypter):
+    """Encrypt a generic byte sequence with RSA"""
+    pass
+
 #--------------------------------------------------------------------------
 
 
