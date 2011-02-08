@@ -528,17 +528,9 @@ class BasicEncrypter:
         return self.i2p(map(self._decrypt, self.c2i(ciphertext)))
 
 
-class BigIntMixin:
-    """Mixin for BasicEncrypter to allow encryption/decryption of generic
-    integers (even >= pq)."""
-    def o2i(self, big_integer):
-        return int_to_pos(big_integer, self.key.n)
-    def i2o(self, sequence):
-        return pos_to_int(sequence, self.key.n)
-
 class IntegerEncrypter(BigIntMixin, BasicEncrypter):
     """Encrypt/Decrypt generic integers.  This class is meant to work also
-    with integers > pq.
+    with integers >= pq.
 
     Example:
       >>> key = PrivateKey(p=2**1279-1, q=2**3217-1, e=8191)
@@ -550,12 +542,14 @@ class IntegerEncrypter(BigIntMixin, BasicEncrypter):
       >>> D.decrypt(D.encrypt(plain)) == plain
       True
     """
-    pass
+    def o2i(self, big_integer):
+        return int_to_pos(big_integer, self.key.n)
+    def i2o(self, sequence):
+        return pos_to_int(sequence, self.key.n)
 
 
-class ByteSequenceConversionMixin:
-    """Mixin for BasicEncrypter to allow encryption/decryption of generic
-    sequences of bytes."""
+class ByteSequenceEncrypter(ByteSequenceConversionMixin, BasicEncrypter):
+    """Encrypt a generic byte sequence with RSA"""
 
     BASE = 1 << 8
 
@@ -571,11 +565,6 @@ class ByteSequenceConversionMixin:
     def i2p(self, integer):
         return ''.join([chr(i) for i in
                         int_to_pos(integer, self.BASE)[:-1]])
-
-
-class ByteSequenceEncrypter(ByteSequenceConversionMixin, BasicEncrypter):
-    """Encrypt a generic byte sequence with RSA"""
-    pass
 
 
 #--------------------------------------------------------------------------
