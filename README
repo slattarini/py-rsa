@@ -1,5 +1,5 @@
 RSA.py: simple "educational" implementation of the RSA encryption and
-digital sign algorithm.  No optimizations, no tight security.
+digital sign algorithm.  Few optimizations, no tight security.
 
 Requires python version >= 2.7 and < 3.0.
 
