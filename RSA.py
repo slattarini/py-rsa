@@ -528,7 +528,7 @@ class BasicEncrypter:
         return self.i2p(map(self._decrypt, self.c2i(ciphertext)))
 
 
-class IntegerEncrypter(BigIntMixin, BasicEncrypter):
+class IntegerEncrypter(BasicEncrypter):
     """Encrypt/Decrypt generic integers.  This class is meant to work also
     with integers >= pq.
 
@@ -548,7 +548,7 @@ class IntegerEncrypter(BigIntMixin, BasicEncrypter):
         return pos_to_int(sequence, self.key.n)
 
 
-class ByteSequenceEncrypter(ByteSequenceConversionMixin, BasicEncrypter):
+class ByteSequenceEncrypter(BasicEncrypter):
     """Encrypt a generic byte sequence with RSA"""
 
     BASE = 1 << 8
