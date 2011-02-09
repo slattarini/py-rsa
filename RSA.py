@@ -549,7 +549,41 @@ class IntegerEncrypter(BasicEncrypter):
 
 
 class ByteSequenceEncrypter(BasicEncrypter):
-    """Encrypt a generic byte sequence with RSA"""
+    """Encrypt a generic byte sequence with RSA."""
+
+    # Plaintext conversion  [byte sequence] <--> [list of integer]
+    #--------------------------------------------------------------
+    # We'll first convert the byte sequence into a bits sequence.
+    # This bits sequence will be broken in chunks of proper size;
+    # each of these chunks will be padded with a final bit = 1, and
+    # trivially converted into an integer, by considering its list
+    # of bits as a representation of said integer in base 2 (big
+    # endian format).
+    # The padding is necessary to avoid ambiguity in case the chunk
+    # ends with one or more 0 bits; otherwise, distinct bit sequences
+    # like '111', '1110' and '1110000' whould all be converted into
+    # the same integer (in this case, '7').
+    # Since the integers to be encrypted must be less than n, the bits
+    # sequence must be broken in chunks whose integer representation
+    # is < n.  An easy way to do so is to ensure that each chunk has
+    # at most (n_bitlen - 1) bits, where n_bitlen is the number of
+    # bits in n.  Since we need room also to append the final padding
+    # bit = 1, the unpadded chunks will have to be (n_bitlen - 2) bits
+    # long actually.
+
+    # Ciphertext conversion  [byte sequence] <--> [list of integer]
+    #---------------------------------------------------------------
+    # Each integer must be converted into a chunk of bytes of fixed
+    # length, so that the receiving end can unambiguously decompose
+    # the arriving sequence of bytes, to recover the original list of
+    # integers.
+    # This is quite easy to do: we just convert the integers in base
+    # 2**8 = 256 (in big-endian format), and if necessary pad the
+    # resulting byte sequence with null bytes.
+    # Also, the length of the chunks is easy to determine: since the
+    # integers are all to be < n, the length *in bytes* of n will
+    # suffice (this lenght is simply one-eight of the length in bits
+    # of n, rounded *up*).
 
     BASE = 1 << 8
 
