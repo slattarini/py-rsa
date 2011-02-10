@@ -9,17 +9,6 @@ import pytest
 from tests.lib import with_params, without_duplicates, pytest_generate_tests
 from RSA import ByteSequenceEncrypter, CryptoException
 
-
-def _same_bytelen_integers(n_byte):
-    lst = []
-    n_bit = 8 * n_byte
-    for bitnum in range(n_bit, n_bit + 8):
-        n = 1 << bitnum 
-        lst.extend([n, n + 1, n + 16, n + 55])
-        if bitnum < n_bit + 7:
-            lst.extend([n * 3, n * 3 + 1, n * 3 + 74])
-    return lst
-
 def seq2gen(seq):
     for x in seq:
         yield x
