@@ -20,6 +20,10 @@ def _same_bytelen_integers(n_byte):
             lst.extend([n * 3, n * 3 + 1, n * 3 + 74])
     return lst
 
+def seq2gen(seq):
+    for x in seq:
+        yield x
+
 def generate_plain_conversion_data():
     data = []
     for n in (
@@ -231,6 +235,10 @@ def test_chunk_length(n, chunk_length):
 @with_params(plain_conversion_data)
 def test_p2i(n, bytes, ints):
     assert list(ByteSeqConverter(n).p2i(bytes)) == ints
+
+@with_params(plain_conversion_data)
+def test_p2i_with_generator(n, bytes, ints):
+    assert list(ByteSeqConverter(n).p2i(seq2gen(bytes))) == ints
 
 @with_params(plain_conversion_data)
 def test_i2p(n, bytes, ints):
