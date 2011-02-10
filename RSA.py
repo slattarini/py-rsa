@@ -644,7 +644,7 @@ class ByteSequenceEncrypter(BasicEncrypter):
     def i2p(self, integers):
         for integer in integers:
             digits = int_to_pos(integer, 1 << 8)
-            assert len(digits) <= self.chunk_byte_length # sanity check
+            assert len(digits) - 1 <= self.chunk_byte_length # sanity check
             # TODO: assert digits[-1] is 0xff
             del digits[-1]
             # Yield one encrypted chunk at a time.

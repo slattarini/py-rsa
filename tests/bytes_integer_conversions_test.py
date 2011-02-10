@@ -120,11 +120,28 @@ def generate_plain_conversion_data():
             ints = [0xff616261626162616261626162616261,
                     0xff6261626162616261626162],
         ),
-#        dict(
-#            n_byte = 22,
-#            bytes = ''.join([chr(_) for _ in range(0, 256)]),
-#            ints = [], # TODO
-#        ),
+        dict(
+            n_byte = 1,
+            bytes = ''.join([chr(i) for i in range(0, 256)]),
+            ints = [0xff00 + i for i in range(0, 256)],
+        ),
+        dict(
+            # Finally a "nice" "stress test".
+            n_byte = 22,
+            bytes = ''.join([chr(i) for i in range(0, 256)]),
+            ints = [0xff1514131211100f0e0d0c0b0a09080706050403020100,
+                    0xff2b2a292827262524232221201f1e1d1c1b1a19181716,
+                    0xff41403f3e3d3c3b3a393837363534333231302f2e2d2c,
+                    0xff57565554535251504f4e4d4c4b4a4948474645444342,
+                    0xff6d6c6b6a696867666564636261605f5e5d5c5b5a5958,
+                    0xff838281807f7e7d7c7b7a797877767574737271706f6e,
+                    0xff999897969594939291908f8e8d8c8b8a898887868584,
+                    0xffafaeadacabaaa9a8a7a6a5a4a3a2a1a09f9e9d9c9b9a,
+                    0xffc5c4c3c2c1c0bfbebdbcbbbab9b8b7b6b5b4b3b2b1b0,
+                    0xffdbdad9d8d7d6d5d4d3d2d1d0cfcecdcccbcac9c8c7c6,
+                    0xfff1f0efeeedecebeae9e8e7e6e5e4e3e2e1e0dfdedddc,
+                    0xfffffefdfcfbfaf9f8f7f6f5f4f3f2],
+        ),
     ]
     for d in raw_data:
         n_byte = d['n_byte']
