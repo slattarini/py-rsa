@@ -549,29 +549,40 @@ class IntegerEncrypter(BasicEncrypter):
 
 
 class ByteSequenceEncrypter(BasicEncrypter):
-    """Encrypt a generic byte sequence with RSA."""
+    """Encrypt a generic byte sequence with RSA.  This class requires a
+    key with n > 65536 (i.e., 17 or more bits long) in order to work
+    correctly.
 
-    # Plaintext conversion  [byte sequence] <--> [list of integer]
+    The encryption/decryption methods are implemented as generators, so
+    if you want to encrypt/decrypt a long byte sequence and obtain the
+    result as a single string, you're advised to resort to e.g.:
+      >>> key = PrivateKey(p=1103, q=2179, e=127)
+      >>> encrypter = ByteSequenceEncrypter(key)
+      >>> ciphertext = ''.join(encrypter.encrypt(plaintext))
+      >>> plaintext = ''.join(encrypter.decrypt(ciphertext))
+    """
+
+    # Plaintext conversion: [byte sequence] <--> [list of integer]
     #--------------------------------------------------------------
-    # We'll first convert the byte sequence into a bits sequence.
-    # This bits sequence will be broken in chunks of proper size;
-    # each of these chunks will be padded with a final bit = 1, and
-    # trivially converted into an integer, by considering its list
-    # of bits as a representation of said integer in base 2 (big
-    # endian format).
+    # The byte sequence is broken in chunks of proper size; each of
+    # these chunks is padded with a final byte = 0xff, and trivially
+    # converted into an integer, by considering its list of bits as
+    # a representation of said integer in base 2**8 = 256 (big endian
+    # format).
     # The padding is necessary to avoid ambiguity in case the chunk
-    # ends with one or more 0 bits; otherwise, distinct bit sequences
-    # like '111', '1110' and '1110000' whould all be converted into
-    # the same integer (in this case, '7').
-    # Since the integers to be encrypted must be less than n, the bits
+    # ends with one or more null bytes; otherwise, distinct sequences
+    # like 'a', 'a\0' and 'a\0\0\0' whould all be converted into the
+    # same integer (in this case, '97').
+    # Since the integers to be encrypted must be less than n, the byte
     # sequence must be broken in chunks whose integer representation
     # is < n.  An easy way to do so is to ensure that each chunk has
-    # at most (n_bitlen - 1) bits, where n_bitlen is the number of
-    # bits in n.  Since we need room also to append the final padding
-    # bit = 1, the unpadded chunks will have to be (n_bitlen - 2) bits
-    # long actually.
+    # a number of bits which is strictly less than the number of bits
+    # of n.  When we need room also to append the final padding byte
+    # = 0xff, the unpadded chunks will actually have to be a byte
+    # shorter than that -- our methods take care of this additional
+    # calculation.
 
-    # Ciphertext conversion  [byte sequence] <--> [list of integer]
+    # Ciphertext conversion: [byte sequence] <--> [list of integer]
     #---------------------------------------------------------------
     # Each integer must be converted into a chunk of bytes of fixed
     # length, so that the receiving end can unambiguously decompose
@@ -585,20 +596,59 @@ class ByteSequenceEncrypter(BasicEncrypter):
     # suffice (this lenght is simply one-eight of the length in bits
     # of n, rounded *up*).
 
-    BASE = 1 << 8
+    def __init__(self, key):
+        super(ByteSequenceEncrypter, self).__init__(key)
+        self._setup_chunk_length(key.n)
 
-    def i2c(self, integer):
-        return ''.join([chr(i) for i in int_to_pos(integer, self.BASE)])
-    def c2i(self, bytes):
-        return pos_to_int([ord(b) for b in bytes], self.BASE)
+    def _setup_chunk_length(self, n):
+        chunk_bitlen = max(n.bit_length() - 1, 0)
+        # Division by 8, rounded *down*.
+        self.chunk_byte_length = chunk_bitlen / 8
 
     def p2i(self, bytes):
-        # Apend `1' so that we can distinguish between e.g. sequences
-        # ending with '\000' and '\000\000'.
-        return pos_to_int([ord(b) for b in bytes] + [1], self.BASE)
-    def i2p(self, integer):
-        return ''.join([chr(i) for i in
-                        int_to_pos(integer, self.BASE)[:-1]])
+        return self._o2i(bytes, padding='\xff')
+
+    def c2i(self, bytes):
+        return self._o2i(bytes)
+
+    def _o2i(self, bytes, padding=''):
+        padding = [ord(c) for c in padding]
+        chunk_byte_length = self.chunk_byte_length - len(padding)
+        if chunk_byte_length <= 0:
+            # FIXME: better error class?
+            raise CryptoRuntimeError("key has too few bits")
+        count = 0
+        digits = []
+        for byte in bytes:
+            digits.append(ord(byte))
+            count += 1
+            # Convert one chunk at a time into an integer.
+            if count == chunk_byte_length:
+                digits.extend(padding)
+                yield pos_to_int(digits, 1 << 8)
+                count = 0
+                digits = []
+        if count > 0:
+            digits.extend(padding)
+            yield pos_to_int(digits, 1 << 8)
+
+    def i2c(self, integers):
+        for integer in integers:
+            digits = int_to_pos(integer, 1 << 8)
+            assert len(digits) <= self.chunk_byte_length # sanity check
+            # Pad the chunk if it's too short.
+            digits.extend([0] * (self.chunk_byte_length - len(digits)))
+            # Yield one encrypted chunk at a time.
+            yield ''.join(map(chr, digits))
+
+    def i2p(self, integers):
+        for integer in integers:
+            digits = int_to_pos(integer, 1 << 8)
+            assert len(digits) <= self.chunk_byte_length # sanity check
+            # TODO: assert digits[-1] is 0xff
+            del digits[-1]
+            # Yield one encrypted chunk at a time.
+            yield ''.join(map(chr, digits))
 
 
 #--------------------------------------------------------------------------
