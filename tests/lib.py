@@ -9,6 +9,11 @@ import RSA
 class TestError(Exception):
     pass
 
+# Helper subroutine to turn a generic sequence into a generator.
+def seq2gen(seq):
+    for x in seq:
+        yield x
+
 # Helper function used to nicely break up *long* integers over
 # multiple lines.
 def s2i(x):
