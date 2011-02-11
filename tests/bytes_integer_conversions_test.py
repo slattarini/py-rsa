@@ -226,6 +226,14 @@ def test_p2i(n, bytes, ints):
 def test_p2i_with_generator(n, bytes, ints):
     assert list(ByteSeqConverter(n).p2i(seq2gen(bytes))) == ints
 
+@with_params(plain_conversion_data)
+def test_i2p(n, bytes, ints):
+    assert ''.join((ByteSeqConverter(n).i2p(ints))) == bytes
+
+@with_params(plain_conversion_data)
+def test_i2p_with_generator(n, bytes, ints):
+    assert ''.join((ByteSeqConverter(n).i2p(seq2gen(ints)))) == bytes
+
 @with_params([2 ,3 , 4, 5, 100, 997], 'n_byte')
 def test_p2i_with_infinite_generator(n_byte):
     # TODO: using a timeout would be better than risking to let the
@@ -237,10 +245,6 @@ def test_p2i_with_infinite_generator(n_byte):
         assert c == int('0xff' + '78' * (n_byte - 1), 16)
         if i > 10:
             break
-
-@with_params(plain_conversion_data)
-def test_i2p(n, bytes, ints):
-    assert ''.join((ByteSeqConverter(n).i2p(ints))) == bytes
 
 @with_params([1 << i for i in range(0, 16)] +
              [3, 55, 80, 157, 999, 1000, 63123, 2**16 - 1], 'n')
