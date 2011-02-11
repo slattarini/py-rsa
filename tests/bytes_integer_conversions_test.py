@@ -7,7 +7,7 @@ conversions."""
 
 import pytest
 from tests.lib import with_params, without_duplicates, pytest_generate_tests
-from tests.lib import infinite_iteration, seq2gen
+from tests.lib import infinite_iteration, seq2gen, TestError
 from RSA import ByteSequenceEncrypter, CryptoException
 
 def generate_plain_conversion_data():
@@ -236,28 +236,26 @@ def test_i2p_with_generator(n, bytes, ints):
 
 @with_params([2 ,3, 4, 5, 100, 997], 'n_byte')
 @with_params([1, 2 ,3, 10, 97, 128], 'n_iter')
-def test_p2i_with_infinite_generator(n_byte, n_iter):
+@with_params(['p2i', 'i2p'], 'convtype')
+def test_p2i_or_i2p_with_infinite_generator(n_byte, n_iter, convtype):
     # TODO: using a timeout would be better than risking to let the
     # test hang in case of failure...
     iter_count = 0
+    character = 'a'
+    string = character * (n_byte - 1)
+    integer = int('0xff' + '61' * (n_byte - 1), 16)
     n = 1 << n_byte * 8
-    for i in ByteSeqConverter(n).p2i(infinite_iteration('x')):
+    if convtype == 'p2i':
+        iterator = ByteSeqConverter(n).p2i(infinite_iteration(character))
+        chunk_expected = integer
+    elif convtype == 'i2p':
+        iterator = ByteSeqConverter(n).i2p(infinite_iteration(integer))
+        chunk_expected = string
+    else:
+        raise TestError("invalid 'convtype' param: '%s'" % convtype)
+    for chunk_got in iterator:
         iter_count += 1
-        assert i == int('0xff' + '78' * (n_byte - 1), 16)
-        if iter_count >= n_iter:
-            break
-
-@with_params([2 ,3, 4, 5, 100, 997], 'n_byte')
-@with_params([1, 2 ,3, 10, 97, 128], 'n_iter')
-def test_i2p_with_infinite_generator(n_byte, n_iter):
-    # TODO: using a timeout would be better than risking to let the
-    # test hang in case of failure...
-    integer = int('0xff' + '78' * (n_byte - 1), 16)
-    iter_count = 0
-    n = 1 << n_byte * 8
-    for s in ByteSeqConverter(n).i2p(infinite_iteration(integer)):
-        iter_count += 1
-        assert s == 'x' * (n_byte - 1)
+        assert chunk_expected == chunk_got
         if iter_count >= n_iter:
             break
 
