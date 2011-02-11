@@ -498,13 +498,6 @@ class BasicEncrypter:
         By default, equivalent to 'i2o'"""
         return self.i2o(integer)
 
-    # Implement the padding scheme used by the class.
-    # Meant to be overridden by subclasses.
-    def pad(self, plaintext):
-        return plaintext
-    def unpad(self, plaintext):
-        return plaintext
-
     def _modexp(self, integer, exponent):
         if not 0 <= integer < self.key.n:
             # FIXME: better error class?
