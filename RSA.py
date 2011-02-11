@@ -605,12 +605,6 @@ class ByteSequenceEncrypter(BasicEncrypter):
         # Division by 8, rounded *down*.
         self.chunk_byte_length = chunk_bitlen / 8
 
-    def p2i(self, bytes):
-        return self._o2i(bytes, padding='\xff')
-
-    def c2i(self, bytes):
-        return self._o2i(bytes)
-
     def _o2i(self, bytes, padding=''):
         padding = [ord(c) for c in padding]
         chunk_byte_length = self.chunk_byte_length - len(padding)
@@ -632,24 +626,31 @@ class ByteSequenceEncrypter(BasicEncrypter):
             digits.extend(padding)
             yield pos_to_int(digits, 1 << 8)
 
-    def i2c(self, integers):
+    def _i2o(self, integers, input_padded=False, pad_output=False):
         for integer in integers:
             digits = int_to_pos(integer, 1 << 8)
-            assert len(digits) <= self.chunk_byte_length # sanity check
-            # Pad the chunk if it's too short.
-            digits.extend([0] * (self.chunk_byte_length - len(digits)))
+            if input_padded:
+                # Sanity check and remove trailing padding byte.
+                assert digits[-1] == 0xff 
+                del digits[-1]
+            assert len(digits) <= self.chunk_byte_length # Sanity check.
+            if pad_output:
+                # Pad the chunk if it's too short.
+                digits.extend([0] * (self.chunk_byte_length - len(digits)))
             # Yield one encrypted chunk at a time.
             yield ''.join(map(chr, digits))
 
+    def p2i(self, bytes):
+        return self._o2i(bytes, padding='\xff')
+
+    def c2i(self, bytes):
+        return self._o2i(bytes)
+
+    def i2c(self, integers):
+        return self._i2o(integers, pad_output=True)
+
     def i2p(self, integers):
-        for integer in integers:
-            digits = int_to_pos(integer, 1 << 8)
-            # Remove the trailing padding byte
-            assert digits[-1] == 0xff
-            del digits[-1]
-            assert len(digits) <= self.chunk_byte_length # sanity check
-            # Yield one encrypted chunk at a time.
-            yield ''.join(map(chr, digits))
+        return self._i2o(integers, input_padded=True)
 
 
 #--------------------------------------------------------------------------
