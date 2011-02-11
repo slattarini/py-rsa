@@ -553,14 +553,50 @@ class ByteSequenceEncrypter(BasicEncrypter):
     key with n > 65536 (i.e., 17 or more bits long) in order to work
     correctly.
 
-    The encryption/decryption methods are implemented as generators, so
-    if you want to encrypt/decrypt a long byte sequence and obtain the
-    result as a single string, you're advised to resort to e.g.:
-      >>> key = PrivateKey(p=1103, q=2179, e=127)
+    The encryption/decryption methods are implemented as generators, and
+    thus might return the encrypted/decrypted text a chunk at a time,
+    rather than as a single string:
+      >>> key = PrivateKey(p=4111, q=4703, e=127)
       >>> encrypter = ByteSequenceEncrypter(key)
-      >>> plaintext = 'foobar'
+      >>> plaintext = 'foobar' * 1000
+      >>> ciphertext = encrypter.encrypt(plaintext)
+      >>> ciphertext
+      <generator object ...>
+      >>> len(list(ciphertext))
+      3000
+      >>> # Express the ciphertext as a single string.
       >>> ciphertext = ''.join(encrypter.encrypt(plaintext))
-      >>> plaintext = ''.join(encrypter.decrypt(ciphertext))
+      >>> deciphertext = encrypter.decrypt(ciphertext)
+      >>> deciphertext
+      <generator object ...>
+ 
+    Thus, if you want to encrypt/decrypt a long byte sequence and obtain
+    the result as a single string, you're advised to resort to something
+    like:
+      >>> encrypter = ByteSequenceEncrypter(key)
+      >>> ciphertext = ''.join(encrypter.encrypt(plaintext))
+      >>> deciphertext = ''.join(encrypter.decrypt(ciphertext))
+      >>> deciphertext == plaintext
+      True
+
+    Notice that the cyphertext will be larger than the plaintext; this
+    is due to paddings introduced in the encryption/decryption process.
+    Luckily, the percentual increase in size should be almost negligible
+    when bigger keys are used:
+       >>> def cipher_overhead(key):
+       ...     encrypter = ByteSequenceEncrypter(key)
+       ...     plaintext = 'foobar' * 10000 # a longish plaintext
+       ...     ciphertext = ''.join(encrypter.encrypt(plaintext))
+       ...     overhead = float(len(ciphertext)) / len(plaintext) - 1
+       ...     print "%.0f%%" % (overhead * 100)
+       >>> cipher_overhead(PublicKey(n=1103*2179, e=127))
+       200%
+       >>> cipher_overhead(PrivateKey(p=4111, q=4703, e=127))
+       50%
+       >>> cipher_overhead(PublicKey(n=(2**107-1)*(2**127-1), e=65537))
+       6%
+       >>> cipher_overhead(PrivateKey(p=2**2281-1, q=2**2203-1, e=65537))
+       1%
     """
 
     # Plaintext conversion: [byte sequence] <--> [list of integer]
