@@ -417,7 +417,7 @@ class BasicEncrypter:
 
     This class works only on integers < pq, and uses a minimalistic and
     naive implementation, which is also not semantically secure (no padding,
-    etc.).  But this implemetnation is designed to be easily extended by
+    etc.).  But this implementation is designed to be easily extended by
     subclasses, which can then offer various enhancements.
 
     Some examples of usage:
