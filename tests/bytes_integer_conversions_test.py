@@ -10,6 +10,11 @@ from tests.lib import with_params, without_duplicates, seq2gen
 from tests.lib import pytest_generate_tests
 from RSA import ByteSequenceEncrypter, CryptoException
 
+def infinite_iteration(*lst):
+    while True:
+        for x in lst:
+            yield x
+
 def generate_plain_conversion_data():
     data = []
     for n in (
@@ -225,6 +230,18 @@ def test_p2i(n, bytes, ints):
 @with_params(plain_conversion_data)
 def test_p2i_with_generator(n, bytes, ints):
     assert list(ByteSeqConverter(n).p2i(seq2gen(bytes))) == ints
+
+@with_params([2 ,3 , 4, 5, 100, 997], 'n_byte')
+def test_p2i_with_infinite_generator(n_byte):
+    # TODO: using a timeout would be better than risking to let the
+    # test hang in case of failure...
+    i = 0
+    n = 1 << n_byte * 8
+    for c in ByteSeqConverter(n).p2i(infinite_iteration('x')):
+        i += 1
+        assert c == int('0xff' + '78' * (n_byte - 1), 16)
+        if i > 10:
+            break
 
 @with_params(plain_conversion_data)
 def test_i2p(n, bytes, ints):
