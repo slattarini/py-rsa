@@ -558,6 +558,7 @@ class ByteSequenceEncrypter(BasicEncrypter):
     result as a single string, you're advised to resort to e.g.:
       >>> key = PrivateKey(p=1103, q=2179, e=127)
       >>> encrypter = ByteSequenceEncrypter(key)
+      >>> plaintext = 'foobar'
       >>> ciphertext = ''.join(encrypter.encrypt(plaintext))
       >>> plaintext = ''.join(encrypter.decrypt(ciphertext))
     """
