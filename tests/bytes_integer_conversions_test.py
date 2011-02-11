@@ -143,7 +143,7 @@ def generate_plain_conversion_data():
         list_of_n = []
         n_bit = 8 * n_byte + 8
         for i in range(n_bit, n_bit + 8):
-            n = 1 << i 
+            n = 1 << i
             list_of_n.extend([n, n + 1, n + 16, n + 55])
             if i < n_bit + 7:
                 list_of_n.extend([n * 3, n * 3 + 1, n * 3 + 74])

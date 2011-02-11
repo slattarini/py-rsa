@@ -18,7 +18,7 @@ keys = {
     ),
 
     # http://en.wikipedia.org/wiki/RSA#A_worked_example
-    'wikipedia' : 
+    'wikipedia' :
     dict(
         e = 17,
         p = 61,

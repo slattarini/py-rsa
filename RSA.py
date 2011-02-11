@@ -562,7 +562,7 @@ class ByteSequenceEncrypter(BasicEncrypter):
       >>> deciphertext = encrypter.decrypt(ciphertext)
       >>> deciphertext
       <generator object ...>
- 
+
     Thus, if you want to encrypt/decrypt a long byte sequence and obtain
     the result as a single string, you're advised to resort to something
     like:
@@ -661,7 +661,7 @@ class ByteSequenceEncrypter(BasicEncrypter):
             digits = int_to_pos(integer, 1 << 8)
             if input_padded:
                 # Sanity check and remove trailing padding byte.
-                assert digits[-1] == 0xff 
+                assert digits[-1] == 0xff
                 del digits[-1]
 # FIXME: why does this cause apparently spurious failures?
 #            assert len(digits) <= self.chunk_byte_length # Sanity check.
