@@ -14,6 +14,16 @@ def seq2gen(seq):
     for x in seq:
         yield x
 
+def infinite_iteration(*lst):
+    while True:
+        for x in lst:
+            yield x
+
+def no_iteration():
+    while False:
+        yield None
+    return
+
 # Helper function used to nicely break up *long* integers over
 # multiple lines.
 def s2i(x):

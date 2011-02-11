@@ -6,14 +6,9 @@
 conversions."""
 
 import pytest
-from tests.lib import with_params, without_duplicates, seq2gen
-from tests.lib import pytest_generate_tests
+from tests.lib import with_params, without_duplicates, pytest_generate_tests
+from tests.lib import infinite_iteration, seq2gen
 from RSA import ByteSequenceEncrypter, CryptoException
-
-def infinite_iteration(*lst):
-    while True:
-        for x in lst:
-            yield x
 
 def generate_plain_conversion_data():
     data = []

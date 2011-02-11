@@ -32,17 +32,8 @@ def bits_to_bytes(bits):
         raise ValueError("the number ob bits read is not a multiple of 8")
 
 
-from tests.lib import with_params, pytest_generate_tests, seq2gen
-
-def infinite_iteration(*lst):
-    while True:
-        for x in lst:
-            yield x
-
-def no_iteration():
-    while False:
-        yield None
-    return
+from tests.lib import with_params, pytest_generate_tests
+from tests.lib import seq2gen, no_iteration, infinite_iteration
 
 known_io = [
     dict(
