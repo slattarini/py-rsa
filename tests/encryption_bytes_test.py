@@ -90,14 +90,14 @@ plaintexts = define_texts()
 def test_pubkey_encrypt_privkey_decrypt(n, p, q, e, d, plaintext):
     encrypter = ByteSequenceEncrypter(PublicKey(n, e))
     decrypter = ByteSequenceEncrypter(PrivateKey(p, q, e))
-    ciphertext = encrypter.encrypt(plaintext)
+    ciphertext = ''.join(encrypter.encrypt(plaintext))
     assert plaintext == ''.join(decrypter.decrypt(ciphertext))
 
 @with_params(plaintexts, 'plaintext')
 @with_params(keys)
 def test_privkey_encrypt_privkey_decrypt(n, p, q, e, d, plaintext):
     encrypter = ByteSequenceEncrypter(PrivateKey(p, q, e))
-    ciphertext = encrypter.encrypt(plaintext)
+    ciphertext = ''.join(encrypter.encrypt(plaintext))
     assert plaintext == ''.join(encrypter.decrypt(ciphertext))
 
 # vim: et sw=4 ts=4 ft=python
