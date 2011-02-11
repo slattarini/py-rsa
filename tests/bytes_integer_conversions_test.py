@@ -235,7 +235,8 @@ def test_i2p_with_generator(n, bytes, ints):
     assert ''.join((ByteSeqConverter(n).i2p(seq2gen(ints)))) == bytes
 
 @with_params([2 ,3, 4, 5, 100, 997], 'n_byte')
-def test_p2i_with_infinite_generator(n_byte):
+@with_params([1, 2 ,3, 10, 97, 128], 'n_iter')
+def test_p2i_with_infinite_generator(n_byte, n_iter):
     # TODO: using a timeout would be better than risking to let the
     # test hang in case of failure...
     iter_count = 0
@@ -243,11 +244,12 @@ def test_p2i_with_infinite_generator(n_byte):
     for i in ByteSeqConverter(n).p2i(infinite_iteration('x')):
         iter_count += 1
         assert i == int('0xff' + '78' * (n_byte - 1), 16)
-        if iter_count > 10:
+        if iter_count >= n_iter:
             break
 
 @with_params([2 ,3, 4, 5, 100, 997], 'n_byte')
-def test_i2p_with_infinite_generator(n_byte):
+@with_params([1, 2 ,3, 10, 97, 128], 'n_iter')
+def test_i2p_with_infinite_generator(n_byte, n_iter):
     # TODO: using a timeout would be better than risking to let the
     # test hang in case of failure...
     integer = int('0xff' + '78' * (n_byte - 1), 16)
@@ -256,7 +258,7 @@ def test_i2p_with_infinite_generator(n_byte):
     for s in ByteSeqConverter(n).i2p(infinite_iteration(integer)):
         iter_count += 1
         assert s == 'x' * (n_byte - 1)
-        if iter_count > 10:
+        if iter_count >= n_iter:
             break
 
 @with_params([1 << i for i in range(0, 16)] +
