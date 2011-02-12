@@ -10,6 +10,20 @@ from tests.lib import with_params, without_duplicates, pytest_generate_tests
 from tests.lib import infinite_iteration, seq2gen, TestError
 from RSA import ByteSequenceEncrypter, CryptoException
 
+# Return a list of integers that should cause the platexts to be broken
+# into chunks of size (in bytes) = n_byte.  This means that n should
+# require n_byte + 1 bytes to be represented, i.e. a number ob bits 'x'
+# with  8 * n_byte + 8 <= x <= 8 * n_byte + 15.
+def n_with_chunklen(n_byte):
+    list_of_n = []
+    n_bit = 8 * n_byte + 8
+    for i in range(n_bit, n_bit + 8):
+        n = 1 << i
+        list_of_n.extend([n, n + 1, n + 16, n + 55])
+        if i < n_bit + 7:
+            list_of_n.extend([n * 3, n * 3 + 1, n * 3 + 74])
+    return list_of_n
+
 def generate_plain_conversion_data():
     data = []
     for n in (
@@ -136,18 +150,7 @@ def generate_plain_conversion_data():
     for d in raw_data:
         n_byte = d['n_byte']
         del d['n_byte']
-        # All the integers we'll use as 'n' should cause the platexts to
-        # be broken into chunks of size (in bytes) = [n_byte].  This means
-        # that n should require [n_byte + 1] bytes to be represented, i.e.
-        # between [8 * n_byte + 8]  and [8 * n_byte + 15] bits.
-        list_of_n = []
-        n_bit = 8 * n_byte + 8
-        for i in range(n_bit, n_bit + 8):
-            n = 1 << i
-            list_of_n.extend([n, n + 1, n + 16, n + 55])
-            if i < n_bit + 7:
-                list_of_n.extend([n * 3, n * 3 + 1, n * 3 + 74])
-        for n in list_of_n:
+        for n in n_with_chunklen(n_byte):
             data.append(dict(d, n=n))
     return data
 
