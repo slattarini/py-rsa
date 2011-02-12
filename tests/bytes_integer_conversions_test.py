@@ -269,4 +269,23 @@ def test_p2i_key_too_small(n, bytes):
     pytest.raises(CryptoException,
                   "for _ in ByteSeqConverter(n).p2i(bytes): pass")
 
+# Check that we can convert also "big" byte sequences (~ 200M) in a
+# reasonable time.
+# FIXME: having a timeout here would be better than risking to have
+# the testsuite almost hang ...
+@with_params([1 << 16, 1 << 1511], 'n')
+def test_p2i_large(n):
+    def gen_bytes():
+        for i in range(0, 20):
+            fp = open("random.bytes")
+            while True:
+                byte = fp.read(1)
+                if byte:
+                    yield byte
+                else:
+                    fp.close()
+                    break
+    for _ in ByteSeqConverter(n).p2i(gen_bytes()): pass
+
+
 # vim: et sw=4 ts=4 ft=python
