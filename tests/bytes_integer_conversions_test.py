@@ -10,9 +10,9 @@ from tests.lib import with_params, without_duplicates, pytest_generate_tests
 from tests.lib import infinite_iteration, seq2gen, TestError
 from RSA import ByteSequenceEncrypter, CryptoException
 
-# Return a list of integers that should cause the platexts to be broken
+# Return a list of integers that should cause the plaintexts to be broken
 # into chunks of size (in bytes) = n_byte.  This means that n should
-# require n_byte + 1 bytes to be represented, i.e. a number ob bits 'x'
+# require n_byte + 1 bytes to be represented, i.e. a number of bits 'x'
 # with  8 * n_byte + 8 <= x <= 8 * n_byte + 15.
 def n_with_chunklen(n_byte):
     list_of_n = []
