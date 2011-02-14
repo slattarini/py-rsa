@@ -86,7 +86,7 @@ plaintexts = define_texts()
 # -------------------- #
 
 @with_params(plaintexts, 'plaintext')
-@with_params(keys)
+@with_params([k for k in keys if k['n'].bit_length() > 16])
 def test_pubkey_encrypt_privkey_decrypt(n, p, q, e, d, plaintext):
     encrypter = ByteSequenceEncrypter(PublicKey(n, e))
     decrypter = ByteSequenceEncrypter(PrivateKey(p, q, e))
@@ -94,7 +94,7 @@ def test_pubkey_encrypt_privkey_decrypt(n, p, q, e, d, plaintext):
     assert plaintext == ''.join(decrypter.decrypt(ciphertext))
 
 @with_params(plaintexts, 'plaintext')
-@with_params(keys)
+@with_params([k for k in keys if k['n'].bit_length() > 16])
 def test_privkey_encrypt_privkey_decrypt(n, p, q, e, d, plaintext):
     encrypter = ByteSequenceEncrypter(PrivateKey(p, q, e))
     ciphertext = ''.join(encrypter.encrypt(plaintext))

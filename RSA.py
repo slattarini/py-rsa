@@ -386,6 +386,8 @@ class PublicKey:
         return (self.n == other.n and self.e == other.e)
     def __ne__(self, other):
         return (not self == other)
+    def bit_length(self):
+        return self.n.bit_length()
 
 
 class PrivateKey:
@@ -400,13 +402,15 @@ class PrivateKey:
         # TODO: check that (e, phi) = 1 and 0 < e < phi
         self.e = e
         self.d = modular_reciprocal(e, phi_n)
-    def public(self):
-        return self.public_key_class(self.n, self.e)
     def __eq__(self, other):
         return (self.p == other.p and self.q == other.q
                 and self.d == other.d)
     def __ne__(self, other):
         return (not self == other)
+    def public(self):
+        return self.public_key_class(self.n, self.e)
+    def bit_length(self):
+        return self.n.bit_length()
 
 
 class BasicEncrypter:
@@ -542,9 +546,21 @@ class IntegerEncrypter(BasicEncrypter):
 
 
 class ByteSequenceEncrypter(BasicEncrypter):
-    """Encrypt a generic byte sequence with RSA.  This class requires a
-    key with n > 65536 (i.e., 17 or more bits long) in order to work
-    correctly.
+    """Encrypt a generic byte sequence with RSA.
+
+    This class requires a key with n > 65536 (i.e., 17 or more bits
+    long) in order to work correctly:
+      >>> ByteSequenceEncrypter(PrivateKey(p=53, q=67, e=17))
+      Traceback (most recent call last):
+       ...
+      CryptoRuntimeError: key is too small (12 bits)
+      >>> ByteSequenceEncrypter(PrivateKey(p=17, q=2667, e=59))
+      Traceback (most recent call last):
+       ...
+      CryptoRuntimeError: key is too small (16 bits)
+      >>> encrypter = ByteSequenceEncrypter(PrivateKey(p=67, q=997, e=19))
+      >>> encrypter.key.bit_length()
+      17
 
     The encryption/decryption methods are implemented as generators, and
     thus might return the encrypted/decrypted text a chunk at a time,
@@ -574,22 +590,92 @@ class ByteSequenceEncrypter(BasicEncrypter):
 
     Notice that the cyphertext will be larger than the plaintext; this
     is due to paddings introduced in the encryption/decryption process.
-    Luckily, the percentual increase in size should be almost negligible
-    when bigger keys are used:
-       >>> def cipher_overhead(key):
+    Luckily, the percentual increase in size should become smaller and
+    smaller as the size of key and plaintext grows.
+
+       >>> # Helper subroutine.
+       >>> def cipher_overhead(key, plaintext):
        ...     encrypter = ByteSequenceEncrypter(key)
-       ...     plaintext = 'foobar' * 10000 # a longish plaintext
        ...     ciphertext = ''.join(encrypter.encrypt(plaintext))
        ...     overhead = float(len(ciphertext)) / len(plaintext) - 1
        ...     print "%.0f%%" % (overhead * 100)
-       >>> cipher_overhead(PublicKey(n=1103*2179, e=127))
+
+
+       >>> key = PrivateKey(p=4111, q=4703, e=127)
+       >>> cipher_overhead(key, 'x')
+       300%
+       >>> # Even increasing the size of the message, we won't see
+       >>> # any further improvements.
+       >>> cipher_overhead(key, 'x' * 20)
+       100%
+       >>> cipher_overhead(key, 'x' * 100)
+       100%
+       >>> cipher_overhead(key, 'x' * 1000)
+       100%
+
+       >>> key = PrivateKey(p=99713, q=104707, e=997)
+       >>> cipher_overhead(key, 'x')
+       400%
+       >>> cipher_overhead(key, 'x' * 20)
+       75%
+       >>> cipher_overhead(key, 'x' * 100)
+       70%
+       >>> cipher_overhead(key, 'x' * 1000)
+       67%
+       >>> # Even increasing the size of the message, we won't see
+       >>> # any real further improvements.
+       >>> cipher_overhead(key, 'x' * 3000)
+       67%
+       >>> cipher_overhead(key, 'x' * 40000)
+       67%
+
+       >>> key = PublicKey(n=(2**107-1)*(2**127-1), e=4201)
+       >>> cipher_overhead(key, 'x' * 3)
+       900%
+       >>> cipher_overhead(key, 'x' * 10)
        200%
-       >>> cipher_overhead(PrivateKey(p=4111, q=4703, e=127))
+       >>> cipher_overhead(key, 'x' * 20)
        50%
-       >>> cipher_overhead(PublicKey(n=(2**107-1)*(2**127-1), e=65537))
+       >>> cipher_overhead(key, 'x' * 500)
+       8%
+       >>> cipher_overhead(key, 'x' * 10000)
+       7%
+
+       >>> key = PrivateKey(p=2**521-1, q=2**607-1, e=65537)
+       >>> cipher_overhead(key, 'x' * 100)
+       41%
+       >>> # Noticeable fluctuations are possible with smaller inputs.
+       >>> # This is due to the fact that the required amount of padding
+       >>> # can vary noticeably among inputs of similar size.
+       >>> cipher_overhead(key, 'x' * 400)
        6%
-       >>> cipher_overhead(PrivateKey(p=2**2281-1, q=2**2203-1, e=65537))
+       >>> cipher_overhead(key, 'x' * 900)
+       10%
+       >>> cipher_overhead(key, 'x' * 1000)
+       13%
+       >>> cipher_overhead(key, 'x' * 1100)
+       3%
+       >>> cipher_overhead(key, 'x' * 1200)
+       6%
+       >>> # For largish inputs, the overhead stabilizes around small
+       >>> # value (~ 2%).
+       >>> cipher_overhead(key, 'x' * 5000)
+       2%
+       >>> cipher_overhead(key, 'x' * 20000)
+       2%
+       >>> cipher_overhead(key, 'x' * 70000)
+       2%
+
+       >>> key = PublicKey(n=(2**2281-1)*(2**2203-1), e=65537)
+       >>> cipher_overhead(key, 'x' * 300)
+       87%
+       >>> cipher_overhead(key, 'x' * 1000)
+       12%
+       >>> # The overhead will soon become negligible.
+       >>> cipher_overhead(key, 'x' * 10**4)
        1%
+       >>> cipher_overhead(key, 'x' * 10**5)
+       0%
     """
 
     # Plaintext conversion: [byte sequence] <--> [list of integer]
@@ -623,66 +709,79 @@ class ByteSequenceEncrypter(BasicEncrypter):
     # resulting byte sequence with null bytes.
     # Also, the length of the chunks is easy to determine: since the
     # integers are all to be < n, the length *in bytes* of n will
-    # suffice (this lenght is simply one-eight of the length in bits
+    # suffice (this length is simply one-eight of the length in bits
     # of n, rounded *up*).
 
     def __init__(self, key):
         super(ByteSequenceEncrypter, self).__init__(key)
-        self._setup_chunk_length(key.n)
+        self._setup_byte_lengths(key.n)
 
-    def _setup_chunk_length(self, n):
-        chunk_bitlen = max(n.bit_length() - 1, 0)
-        # Division by 8, rounded *down*.
-        self.chunk_byte_length = chunk_bitlen / 8
-
-    def _o2i(self, bytes, padding=''):
-        padding = [ord(c) for c in padding]
-        chunk_byte_length = self.chunk_byte_length - len(padding)
-        if chunk_byte_length <= 0:
+    def _setup_byte_lengths(self, n):
+        self.n_byte_length = n.bit_length() / 8
+        if n.bit_length() % 8 > 0:
+            self.n_byte_length += 1
+        self.plain_chunk_byte_length = (n.bit_length() - 1) / 8
+        self.plain_chunk_byte_length -= 1 # make room for padding byte
+        if self.plain_chunk_byte_length <= 0:
             # FIXME: better error class?
-            raise CryptoRuntimeError("key has too few bits")
+            raise CryptoRuntimeError(
+                "key is too small (%u bits)" % n.bit_length())
+
+    def _chunk_bytelen(self, is_plain):
+        if is_plain:
+            return self.plain_chunk_byte_length
+        else:
+            return self.n_byte_length
+
+    def _o2i(self, bytes, is_plain):
         count = 0
         digits = []
         for byte in bytes:
             digits.append(ord(byte))
             count += 1
             # Convert one chunk at a time into an integer.
-            if count == chunk_byte_length:
-                digits.extend(padding)
+            if count == self._chunk_bytelen(is_plain):
+                if is_plain:
+                    digits.append(0xff)
                 yield pos_to_int(digits, 1 << 8)
                 count = 0
                 digits = []
         if count > 0:
-            digits.extend(padding)
-            yield pos_to_int(digits, 1 << 8)
+            if is_plain:
+                digits.append(0xff)
+                yield pos_to_int(digits, 1 << 8)
+            else:
+                # FIXME: better error class?
+                raise CryptoRuntimeError(
+                    "input is not aligned (%u unconverted bytes)" % count)
 
-    def _i2o(self, integers, input_padded=False, pad_output=False):
+    def _i2o(self, integers, is_plain):
         for integer in integers:
             digits = int_to_pos(integer, 1 << 8)
-            if input_padded:
+            if is_plain:
                 # Sanity check and remove trailing padding byte.
                 assert digits[-1] == 0xff
                 del digits[-1]
-# FIXME: why does this cause apparently spurious failures?
-#            assert len(digits) <= self.chunk_byte_length # Sanity check.
-            if pad_output:
+            # Sanity check.
+            assert len(digits) <= self._chunk_bytelen(is_plain)
+            if not is_plain:
                 # Pad the chunk if it's too short.
-                digits.extend([0] * (self.chunk_byte_length - len(digits)))
+                pad_length = self._chunk_bytelen(is_plain) - len(digits)
+                digits.extend([0] * pad_length)
             # Yield one encrypted chunk at a time.
             yield ''.join(map(chr, digits))
 
     def p2i(self, bytes):
-        return self._o2i(bytes, padding='\xff')
+        return self._o2i(bytes, is_plain=True)
 
     def c2i(self, bytes):
-        return self._o2i(bytes)
-
-    def i2c(self, integers):
-        return self._i2o(integers, pad_output=True)
+        return self._o2i(bytes, is_plain=False)
 
     def i2p(self, integers):
-        return self._i2o(integers, input_padded=True)
+        return self._i2o(integers, is_plain=True)
 
+    def i2c(self, integers):
+        return self._i2o(integers, is_plain=False)
 
 #--------------------------------------------------------------------------
 

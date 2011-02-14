@@ -10,11 +10,23 @@ from tests.lib import with_params, without_duplicates, pytest_generate_tests
 from tests.lib import infinite_iteration, seq2gen, TestError
 from RSA import ByteSequenceEncrypter, CryptoException
 
-# Return a list of integers that should cause the plaintexts to be broken
-# into chunks of size (in bytes) = n_byte.  This means that n should
-# require n_byte + 1 bytes to be represented, i.e. a number of bits 'x'
-# with  8 * n_byte + 8 <= x <= 8 * n_byte + 15.
-def n_with_chunklen(n_byte):
+miscellaneous_integers_with_17_or_more_bits = [
+    1<<16, 1<<17, 1<<23, 1<<24, 1<<25, 1<<31, 1<<32, 1<<64, 1<<65,
+    2**16 + 1, 2**16 + 55, 2**16 + 2**13, 2**17 - 1, 2**17 + 523,
+    2**31 + 45673, 2**32 + 72, 3 * 2**32 + 679, 2**50, 3**100,
+    5**123 + 7**43, 13**57 + 12, 2**1000,  2**2000 + 3**1000
+]
+
+#miscellaneous_integers_with_9_or_more_bits = [
+#    1<<8, 1<<9, 1<<15, 1<<16,
+#    2**8 + 1, 2**8 + 55, 2**8 + 2**5, 2**9 - 1, 2**9 + 523
+#] + miscellaneous_integers_with_17_or_more_bits
+
+# Return a list of integers that should cause the plaintexts to be
+# broken into chunks of size (in bytes) = n_byte.  This means that
+# n should require, to be represented, a number of bits 'x' with:
+#   8 * n_byte + 8 <= x <= 8 * n_byte + 15.
+def n_with_plaintext_chunklen(n_byte):
     list_of_n = []
     n_bit = 8 * n_byte + 8
     for i in range(n_bit, n_bit + 8):
@@ -24,14 +36,25 @@ def n_with_chunklen(n_byte):
             list_of_n.extend([n * 3, n * 3 + 1, n * 3 + 74])
     return list_of_n
 
+# XXX: still hacky/rough
+def generate_cipher_conversion_data():
+    data = []
+    for n_byte in (2, 3, 4, 11, 64, 101, 1023, 1024, 1025):
+        n = 1 << (n_byte * 8)
+        data.append(dict(n=n, bytes='', ints=[]))
+        data.append(dict(n=n, bytes='\000' * (n_byte+1), ints=[0x00]))
+        for x in [
+            '00', '01', '02', '03', '07', '09', '0a', '41', '61',
+            '6a', '7e', '80', '81', '94', 'f1', 'fe', 'ff'
+        ]:
+            ints = [eval("0x%s" % x)]
+            bytes = eval("'\\x%s'" % x) + '\000' * n_byte
+            data.append(dict(n=n, bytes=bytes, ints=ints))
+    return data
+
 def generate_plain_conversion_data():
     data = []
-    for n in (
-        1<<16, 1<<17, 1<<23, 1<<24, 1<<25, 1<<31, 1<<32, 1<<64, 1<<65,
-        2**16 + 1, 2**16 + 55, 2**16 + 2**13, 2**17 - 1, 2**17 + 523,
-        2**31 + 45673, 2**32 + 72, 3 * 2**32 + 679, 2**50, 3**100,
-        5**123 + 7**43, 13**57 + 12, 2**1000,  2**2000 + 3**1000
-    ):
+    for n in miscellaneous_integers_with_17_or_more_bits:
         data.append(dict(n=n, bytes='', ints=[]))
         data.append(dict(n=n, bytes='\000', ints=[0xff00]))
         data.append(dict(n=n, bytes='\001', ints=[0xff01]))
@@ -150,76 +173,91 @@ def generate_plain_conversion_data():
     for d in raw_data:
         n_byte = d['n_byte']
         del d['n_byte']
-        for n in n_with_chunklen(n_byte):
+        for n in n_with_plaintext_chunklen(n_byte):
             data.append(dict(d, n=n))
     return data
 
 plain_conversion_data = generate_plain_conversion_data()
+cipher_conversion_data = generate_cipher_conversion_data()
 
-chunk_length_data = eval("""[
-#------------5432109876543210987654321------------------
-    dict(n=0b........................., chunk_length=0),
-    dict(n=0b........................1, chunk_length=0),
-    dict(n=0b.......................1., chunk_length=0),
-    dict(n=0b......................1.., chunk_length=0),
-    dict(n=0b......................111, chunk_length=0),
-    dict(n=0b.....................1..., chunk_length=0),
-    dict(n=0b..................1......, chunk_length=0),
-    dict(n=0b.................1......., chunk_length=0),
-    dict(n=0b.................11111111, chunk_length=0),
-#------------5432109876543210987654321------------------
-    dict(n=0b................1........, chunk_length=1),
-    dict(n=0b................1.1.11.11, chunk_length=1),
-    dict(n=0b...............1........., chunk_length=1),
-    dict(n=0b..............1.........., chunk_length=1),
-    dict(n=0b.............1..........., chunk_length=1),
-    dict(n=0b...........1............., chunk_length=1),
-    dict(n=0b...........1..11..11..1.1, chunk_length=1),
-    dict(n=0b..........1.............., chunk_length=1),
-    dict(n=0b.........1..............., chunk_length=1),
-    dict(n=0b.........1111111111111111, chunk_length=1),
-#------------5432109876543210987654321------------------
-    dict(n=0b........1................, chunk_length=2),
-    dict(n=0b........11111111111111111, chunk_length=2),
-    dict(n=0b.......1................., chunk_length=2),
-    dict(n=0b.......1.1.1.1.1.1.1.1.1., chunk_length=2),
-    dict(n=0b......1.................., chunk_length=2),
-    dict(n=0b.....1..................., chunk_length=2),
-    dict(n=0b....1...................., chunk_length=2),
-    dict(n=0b...1....................., chunk_length=2),
-    dict(n=0b..1......................, chunk_length=2),
-    dict(n=0b.1......................., chunk_length=2),
-    dict(n=0b.111111111111111111111111, chunk_length=2),
-#------------5432109876543210987654321------------------
-    dict(n=0b1........................, chunk_length=3),
-#-------------------------------------------------------
-    dict(n=1<<26,      chunk_length=3),
-    dict(n=1<<27,      chunk_length=3),
-    dict(n=1<<28,      chunk_length=3),
-    dict(n=1<<29,      chunk_length=3),
-    dict(n=1<<30,      chunk_length=3),
-    dict(n=1<<31,      chunk_length=3),
-    dict(n=1<<32 - 1,  chunk_length=3),
-    dict(n=1<<32,      chunk_length=4),
-    dict(n=1<<800,     chunk_length=100),
-    dict(n=1<<807,     chunk_length=100),
-    dict(n=1<<808 - 1, chunk_length=100),
-    dict(n=1<<808,     chunk_length=101),
-    dict(n=1<<809,     chunk_length=101),
+length_data = eval("""[
+#------------5432109876543210987654321----------------
+    dict(n=0b........................., pc_len=None),
+    dict(n=0b........................1, pc_len=None),
+    dict(n=0b.......................1., pc_len=None),
+    dict(n=0b......................1.., pc_len=None),
+    dict(n=0b......................111, pc_len=None),
+    dict(n=0b.....................1..., pc_len=None),
+    dict(n=0b..................1......, pc_len=None),
+    dict(n=0b.................1......., pc_len=None),
+    dict(n=0b.................11111111, pc_len=None),
+#------------5432109876543210987654321----------------
+    dict(n=0b................1........, pc_len=None),
+    dict(n=0b................1.1.11.11, pc_len=None),
+    dict(n=0b...............1........., pc_len=None),
+    dict(n=0b..............1.........., pc_len=None),
+    dict(n=0b.............1..........., pc_len=None),
+    dict(n=0b...........1............., pc_len=None),
+    dict(n=0b...........1..11..11..1.1, pc_len=None),
+    dict(n=0b..........1.............., pc_len=None),
+    dict(n=0b.........1..............., pc_len=None),
+    dict(n=0b.........1111111111111111, pc_len=None),
+#------------5432109876543210987654321----------------
+    dict(n=0b........1................, pc_len=1),
+    dict(n=0b........11111111111111111, pc_len=1),
+    dict(n=0b.......1................., pc_len=1),
+    dict(n=0b.......1.1.1.1.1.1.1.1.1., pc_len=1),
+    dict(n=0b......1.................., pc_len=1),
+    dict(n=0b.....1..................., pc_len=1),
+    dict(n=0b....1...................., pc_len=1),
+    dict(n=0b...1....................., pc_len=1),
+    dict(n=0b..1......................, pc_len=1),
+    dict(n=0b.1......................., pc_len=1),
+    dict(n=0b.111111111111111111111111, pc_len=1),
+#------------5432109876543210987654321---------------
+    dict(n=0b1........................, pc_len=2),
+#----------------------------------------------------
+    dict(n=1<<26,      pc_len=2),
+    dict(n=1<<27,      pc_len=2),
+    dict(n=1<<28,      pc_len=2),
+    dict(n=1<<29,      pc_len=2),
+    dict(n=1<<30,      pc_len=2),
+    dict(n=1<<31,      pc_len=2),
+    dict(n=1<<32 - 1,  pc_len=2),
+    dict(n=1<<32,      pc_len=3),
+    dict(n=1<<33,      pc_len=3),
+    dict(n=1<<47,      pc_len=4),
+    dict(n=1<<48 - 1,  pc_len=4),
+    dict(n=1<<48,      pc_len=5),
+    dict(n=1<<49,      pc_len=5),
+    dict(n=1<<800,     pc_len=99),
+    dict(n=1<<807,     pc_len=99),
+    dict(n=1<<808 - 1, pc_len=99),
+    dict(n=1<<808,     pc_len=100),
+    dict(n=1<<809,     pc_len=100),
 #-------------------------------------------------------
 ]""".replace('.', '0'))
 
 class ByteSeqConverter(ByteSequenceEncrypter):
     def __init__(self, x):
-        self._setup_chunk_length(x)
+        self._setup_byte_lengths(x)
 
 # -------------------- #
 #  Go with the tests.  #
 # -------------------- #
 
-@with_params(chunk_length_data)
-def test_chunk_length(n, chunk_length):
-    assert chunk_length == ByteSeqConverter(n).chunk_byte_length
+@with_params([dict(n=d['n'], chunk_length=d['pc_len'])
+                for d in length_data if d['pc_len'] is not None])
+def test_plain_chunk_length(n, chunk_length):
+    assert chunk_length == ByteSeqConverter(n).plain_chunk_byte_length
+
+@with_params([d['n'] for d in length_data if d['pc_len'] is None], 'n')
+def test_plain_chunk_length_key_too_small(n):
+    pytest.raises(CryptoException, "ByteSeqConverter(n)")
+
+#@with_params(chunk_length_data)
+#def test_cipher_chunk_length(n, chunk_length):
+#    assert chunk_length + 1 == ByteSeqConverter(n).n_byte_length
 
 @with_params(plain_conversion_data)
 def test_p2i(n, bytes, ints):
@@ -236,6 +274,23 @@ def test_i2p(n, bytes, ints):
 @with_params(plain_conversion_data)
 def test_i2p_with_generator(n, bytes, ints):
     assert ''.join((ByteSeqConverter(n).i2p(seq2gen(ints)))) == bytes
+
+@with_params(cipher_conversion_data)
+def test_c2i(n, bytes, ints):
+    assert list(ByteSeqConverter(n).c2i(bytes)) == ints
+
+@with_params(cipher_conversion_data)
+def test_c2i_with_generator(n, bytes, ints):
+    assert list(ByteSeqConverter(n).c2i(seq2gen(bytes))) == ints
+
+@with_params(cipher_conversion_data)
+def test_i2c(n, bytes, ints):
+    assert ''.join((ByteSeqConverter(n).i2c(ints))) == bytes
+
+@with_params(cipher_conversion_data)
+def test_i2c_with_generator(n, bytes, ints):
+    assert ''.join((ByteSeqConverter(n).i2c(seq2gen(ints)))) == bytes
+
 
 @with_params([2 ,3, 4, 5, 100, 997], 'n_byte')
 @with_params([1, 2 ,3, 10, 97, 128], 'n_iter')
