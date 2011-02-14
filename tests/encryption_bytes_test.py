@@ -6,10 +6,10 @@
 of bytes."""
 
 from RSA import ByteSequenceEncrypter, PublicKey, PrivateKey
-from tests.keys import keys
+from tests.keys import keys as keys_dict
 from tests.lib import with_params, without_duplicates, pytest_generate_tests
 
-keys = [ keys[tag] for tag in keys ]
+keys_list = [ keys_dict[tag] for tag in keys_dict ]
 
 def define_texts():
     texts = set()
@@ -86,7 +86,7 @@ plaintexts = define_texts()
 # -------------------- #
 
 @with_params(plaintexts, 'plaintext')
-@with_params([k for k in keys if k['n'].bit_length() > 16])
+@with_params([k for k in keys_list if k['n'].bit_length() > 16])
 def test_pubkey_encrypt_privkey_decrypt(n, p, q, e, d, plaintext):
     encrypter = ByteSequenceEncrypter(PublicKey(n, e))
     decrypter = ByteSequenceEncrypter(PrivateKey(p, q, e))
@@ -94,10 +94,29 @@ def test_pubkey_encrypt_privkey_decrypt(n, p, q, e, d, plaintext):
     assert plaintext == ''.join(decrypter.decrypt(ciphertext))
 
 @with_params(plaintexts, 'plaintext')
-@with_params([k for k in keys if k['n'].bit_length() > 16])
+@with_params([k for k in keys_list if k['n'].bit_length() > 16])
 def test_privkey_encrypt_privkey_decrypt(n, p, q, e, d, plaintext):
     encrypter = ByteSequenceEncrypter(PrivateKey(p, q, e))
     ciphertext = ''.join(encrypter.encrypt(plaintext))
     assert plaintext == ''.join(encrypter.decrypt(ciphertext))
+
+# Check that we can enncrypt/decrypt also "biggish" byte sequences
+# (~ 50M) in a reasonable time.
+# FIXME: having a timeout here would be better than risking to have
+# the testsuite almost hang ...
+@with_params([keys_dict['M2281_M2203'], keys_dict['styere_e19']])
+def test_encrypt_decrypt_large(n, p, q, e, d):
+    def gen_bytes():
+        for i in range(0, 5):
+            fp = open("random.bytes")
+            while True:
+                byte = fp.read(1)
+                if byte:
+                    yield byte
+                else:
+                    fp.close()
+                    break
+    encrypter = ByteSequenceEncrypter(PrivateKey(p, q, e))
+    for chunk in encrypter.encrypt(gen_bytes()): pass
 
 # vim: et sw=4 ts=4 ft=python
