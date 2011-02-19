@@ -133,6 +133,15 @@ def generate_cipher_conversion_data():
             data.append(dict(d, n=n))
     return data
 
+def generate_invalid_cipher_conversion_data():
+    data = []
+    for n_byte in (3, 4, 5, 24, 1000):
+        for n in n_with_bytes(n_byte):
+            for i in set([1, 2, n_byte / 2, n_byte - 2, n_byte - 1]):
+                for j in (0, 1, 2, 4, 23):
+                    data.append(dict(n=n, bytes='a'*i + 'b'*n_byte*j))
+    return data
+
 def generate_plain_conversion_data():
     data = []
     miscellaneous_integers_with_17_or_more_bits = [
@@ -276,8 +285,8 @@ def generate_too_small_n():
 
 plain_conversion_data = generate_plain_conversion_data()
 cipher_conversion_data = generate_cipher_conversion_data()
+invalid_cipher_conversion_data = generate_invalid_cipher_conversion_data()
 too_small_n = generate_too_small_n()
-print too_small_n
 
 class ByteSeqConverter(ByteSequenceEncrypter):
     def __init__(self, x):
@@ -315,6 +324,18 @@ def test_i2p(n, bytes, ints):
 @with_params(plain_conversion_data)
 def test_i2p_with_generator(n, bytes, ints):
     assert ''.join((ByteSeqConverter(n).i2p(seq2gen(ints)))) == bytes
+
+@with_params(invalid_cipher_conversion_data)
+def test_c2i_invalid(n, bytes):
+    converter = ByteSeqConverter(n)
+    pytest.raises(CryptoException,
+                  "for _ in converter.c2i(seq2gen(bytes)): pass")
+
+@with_params(invalid_cipher_conversion_data)
+def test_c2i_invalid_with_generator(n, bytes):
+    converter = ByteSeqConverter(n)
+    pytest.raises(CryptoException,
+                  "tuple(converter.c2i(seq2gen(bytes)))")
 
 @with_params(cipher_conversion_data)
 def test_c2i(n, bytes, ints):
