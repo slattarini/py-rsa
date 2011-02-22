@@ -18,7 +18,6 @@ rsa_test_data = [
     # Sanity checks on the implementation(s).
     dict(
         key = keys['small'],
-        encrypter_type = IntegerEncrypter,
         _ = [
             dict(
                 plain  = 0,
@@ -62,7 +61,6 @@ rsa_test_data = [
     # http://en.wikipedia.org/wiki/RSA#A_worked_example
     dict(
         key = keys['wikipedia'],
-        encrypter_type = IntegerEncrypter,
         _ = [
             dict(
                 plain = 65,
@@ -78,7 +76,6 @@ rsa_test_data = [
     # http://critto.liceofoscarini.it/critto/rsa/rsa_demo.phtml
     dict(
         key = keys['foscarini'],
-        encrypter_type = IntegerEncrypter,
         _ = [
             dict(
                 plain = 876,
@@ -173,7 +170,6 @@ rsa_test_data = [
     # Also check some corner cases.
     dict(
         key = keys['M2281_M2203'],
-        encrypter_type = IntegerEncrypter,
         _ = [
             dict(
                 plain = 1,
@@ -253,8 +249,6 @@ def unravel_rsa_test_data(lst):
             for d in list_of_plain_encrypted_couples:
                 data_entries.append(dict(data_clump, plain=d['plain'],
                                                      cipher=d['cipher']))
-        for entry in data_entries:
-            entry.setdefault('encrypter_type', BasicEncrypter)
         unravelled_test_data.extend(data_entries)
     return unravelled_test_data
 
@@ -265,18 +259,18 @@ rsa_test_data = unravel_rsa_test_data(rsa_test_data)
 # -------------------- #
 
 @with_params(rsa_test_data)
-def test_encrypt_pubkey(key, plain, cipher, encrypter_type):
-    encrypter = encrypter_type(PublicKey(key['n'], key['e']))
+def test_encrypt_pubkey(key, plain, cipher):
+    encrypter = IntegerEncrypter(PublicKey(key['n'], key['e']))
     assert encrypter.encrypt(plain) == cipher
 
 @with_params(rsa_test_data)
-def test_encrypt_privkey(key, plain, cipher, encrypter_type):
-    encrypter = encrypter_type(PrivateKey(key['p'], key['q'], key['e']))
+def test_encrypt_privkey(key, plain, cipher):
+    encrypter = IntegerEncrypter(PrivateKey(key['p'], key['q'], key['e']))
     assert encrypter.encrypt(plain) == cipher
 
 @with_params(rsa_test_data)
-def test_decrypt(key, plain, cipher, encrypter_type):
-    encrypter = encrypter_type(PrivateKey(key['p'], key['q'], key['e']))
+def test_decrypt(key, plain, cipher):
+    encrypter = IntegerEncrypter(PrivateKey(key['p'], key['q'], key['e']))
     assert encrypter.decrypt(cipher) == plain
 
 # Without the Chinise Remainder theorem optimization, this would take
