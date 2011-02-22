@@ -25,6 +25,9 @@ exceptions_info = {
     'CryptoException':  {
         'superclasses': (Exception,),
     },
+    'CryptoValueError': {
+        'superclasses': (Exception, 'CryptoException', ValueError),
+    },
     'CryptoRuntimeError': {
         'superclasses': (Exception, 'CryptoException', RuntimeError),
     },

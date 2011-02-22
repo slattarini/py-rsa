@@ -9,7 +9,7 @@ import pytest
 import random
 from tests.lib import with_params, without_duplicates, pytest_generate_tests
 from tests.lib import infinite_iteration, seq2gen, TestError
-from RSA import ByteSequenceEncrypter, CryptoException
+from RSA import ByteSequenceEncrypter, CryptoValueError, CryptoException
 
 # Return "some" random positive integers that requires, to be represented,
 # a number of bits `n_bits' with l <= nbits <= u.
@@ -345,7 +345,7 @@ def test_n_byte_length(n, n_length):
 
 @with_params(too_small_n, 'n')
 def test_plain_chunk_length_key_too_small(n):
-    pytest.raises(CryptoException, "ByteSeqConverter(n)")
+    pytest.raises(CryptoValueError, "ByteSeqConverter(n)")
 
 
 @with_params(plain_conversion_data)
@@ -385,53 +385,53 @@ def test_i2c_with_generator(n, bytes, ints):
 @with_params(unpadded_plain_integer_data)
 def test_i2p_unpadded(n, ints):
     converter = ByteSeqConverter(n)
-    pytest.raises(CryptoException,
+    pytest.raises(CryptoValueError,
                   "for _ in converter.i2p(ints): pass")
 
 @with_params(unpadded_plain_integer_data)
 def test_i2p_unpadded_with_generator(n, ints):
     converter = ByteSeqConverter(n)
-    pytest.raises(CryptoException,
+    pytest.raises(CryptoValueError,
                   "tuple(converter.i2p(seq2gen(ints)))")
 
 
 @with_params(too_big_plain_integer_data)
 def test_i2p_too_big(n, ints):
     converter = ByteSeqConverter(n)
-    pytest.raises(CryptoException,
+    pytest.raises(CryptoValueError,
                   "for _ in converter.i2p(ints): pass")
 
 @with_params(too_big_plain_integer_data)
 def test_i2p_too_big_with_generator(n, ints):
     converter = ByteSeqConverter(n)
-    pytest.raises(CryptoException,
+    pytest.raises(CryptoValueError,
                   "tuple(converter.i2p(seq2gen(ints)))")
 
 
 @with_params(unpadded_cipher_text_data)
 def test_c2i_unpadded(n, bytes):
     converter = ByteSeqConverter(n)
-    pytest.raises(CryptoException,
+    pytest.raises(CryptoValueError,
                   "for _ in converter.c2i(bytes): pass")
 
 @with_params(unpadded_cipher_text_data)
 def test_c2i_unpadded_with_generator(n, bytes):
     converter = ByteSeqConverter(n)
-    pytest.raises(CryptoException,
+    pytest.raises(CryptoValueError,
                   "tuple(converter.c2i(seq2gen(bytes)))")
 
 
 @with_params(too_big_cipher_integer_data)
 def test_i2c_too_big(n, ints):
     converter = ByteSeqConverter(n)
-    pytest.raises(CryptoException,
+    pytest.raises(CryptoValueError,
                   "for _ in converter.i2c(ints): pass")
 
 
 @with_params(too_big_cipher_integer_data)
 def test_i2c_too_big_with_generator(n, ints):
     converter = ByteSeqConverter(n)
-    pytest.raises(CryptoException,
+    pytest.raises(CryptoValueError,
                   "tuple(converter.i2c(seq2gen(ints)))")
 
 

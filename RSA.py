@@ -58,6 +58,11 @@ class CryptoRuntimeError(CryptoException, RuntimeError):
     dealing with RSA encryption (keys, encrypters and decrypters)"""
     pass
 
+class CryptoValueError(CryptoException, ValueError):
+    """ValueError exception that can be raised by classes and subroutines
+    dealing with RSA encryption (keys, encrypters and decrypters)"""
+    pass
+
 #--------------------------------------------------------------------------
 
 ## ---------------------------------------------- ##
@@ -553,11 +558,11 @@ class ByteSequenceEncrypter(BasicEncrypter):
       >>> ByteSequenceEncrypter(PrivateKey(p=53, q=67, e=17))
       Traceback (most recent call last):
        ...
-      CryptoRuntimeError: key is too small (12 bits)
+      CryptoValueError: key is too small (12 bits)
       >>> ByteSequenceEncrypter(PrivateKey(p=17, q=2667, e=59))
       Traceback (most recent call last):
        ...
-      CryptoRuntimeError: key is too small (16 bits)
+      CryptoValueError: key is too small (16 bits)
       >>> encrypter = ByteSequenceEncrypter(PrivateKey(p=67, q=997, e=19))
       >>> encrypter.key.bit_length()
       17
@@ -724,8 +729,7 @@ class ByteSequenceEncrypter(BasicEncrypter):
         self.plain_chunk_byte_length = (n.bit_length() - 1) / 8
         self.plain_chunk_byte_length -= 1 # make room for padding byte
         if self.plain_chunk_byte_length <= 0:
-            # FIXME: better error class?
-            raise CryptoRuntimeError(
+            raise CryptoValueError(
                 "key is too small (%u bits)" % n.bit_length())
 
     def _chunk_bytelen(self, is_plain):
@@ -752,8 +756,7 @@ class ByteSequenceEncrypter(BasicEncrypter):
                 digits.append(0xff)
                 yield pos_to_int(digits, 1 << 8)
             else:
-                # FIXME: better error class?
-                raise CryptoRuntimeError(
+                raise CryptoValueError(
                     "input is not aligned (%u unconverted bytes)" % count)
 
     def _i2o(self, integers, is_plain):
@@ -762,14 +765,13 @@ class ByteSequenceEncrypter(BasicEncrypter):
             if is_plain:
                 # Sanity check and remove trailing padding byte.
                 if digits[-1] != 0xff:
-                    # FIXME: better error class?
-                    raise CryptoRuntimeError(
+                    raise CryptoValueError(
                             "uncorrect padding (higher digit was 0x%x)" %
                             digits[-1])
                 del digits[-1]
             # Sanity check.
             if len(digits) > self._chunk_bytelen(is_plain):
-                    raise CryptoRuntimeError(
+                    raise CryptoValueError(
                             "too many digits: %u" % len(digits))
             if not is_plain:
                 # Pad the chunk if it's too short.
