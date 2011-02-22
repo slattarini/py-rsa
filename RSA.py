@@ -575,6 +575,7 @@ class ByteSequenceEncrypter(BasicEncrypter):
       3000
       >>> # Express the ciphertext as a single string.
       >>> ciphertext = ''.join(encrypter.encrypt(plaintext))
+      >>> # Also decrypted text is returned through a generator.
       >>> deciphertext = encrypter.decrypt(ciphertext)
       >>> deciphertext
       <generator object ...>
@@ -604,10 +605,10 @@ class ByteSequenceEncrypter(BasicEncrypter):
        >>> key = PrivateKey(p=4111, q=4703, e=127)
        >>> cipher_overhead(key, 'x')
        300%
-       >>> # Even increasing the size of the message, we won't see
-       >>> # any further improvements.
        >>> cipher_overhead(key, 'x' * 20)
        100%
+       >>> # Even increasing the size of the message, we won't see
+       >>> # any further improvements.
        >>> cipher_overhead(key, 'x' * 100)
        100%
        >>> cipher_overhead(key, 'x' * 1000)
