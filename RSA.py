@@ -404,7 +404,8 @@ class PrivateKey:
         self.q = q
         self.n = p * q
         phi_n = (p - 1) * (q - 1)
-        # TODO: check that (e, phi) = 1 and 0 < e < phi
+        if not (gcd(e, phi_n) == 1 and 0 < e < phi_n):
+            raise CryptoValueError("invalid exponent %u" % e)
         self.e = e
         self.d = modular_reciprocal(e, phi_n)
     def __eq__(self, other):
