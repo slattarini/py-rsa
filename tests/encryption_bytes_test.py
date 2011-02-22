@@ -5,7 +5,7 @@
 """Tests for our implementation of RSA applied to generic sequences
 of bytes."""
 
-from RSA import ByteSequenceEncrypter, PublicKey, PrivateKey
+from RSA import BinaryEncrypter, PublicKey, PrivateKey
 from tests.keys import keys as keys_dict
 from tests.lib import with_params, without_duplicates, pytest_generate_tests
 
@@ -88,15 +88,15 @@ plaintexts = define_texts()
 @with_params(plaintexts, 'plaintext')
 @with_params([k for k in keys_list if k['n'].bit_length() > 16])
 def test_pubkey_encrypt_privkey_decrypt(n, p, q, e, d, plaintext):
-    encrypter = ByteSequenceEncrypter(PublicKey(n, e))
-    decrypter = ByteSequenceEncrypter(PrivateKey(p, q, e))
+    encrypter = BinaryEncrypter(PublicKey(n, e))
+    decrypter = BinaryEncrypter(PrivateKey(p, q, e))
     ciphertext = ''.join(encrypter.encrypt(plaintext))
     assert plaintext == ''.join(decrypter.decrypt(ciphertext))
 
 @with_params(plaintexts, 'plaintext')
 @with_params([k for k in keys_list if k['n'].bit_length() > 16])
 def test_privkey_encrypt_privkey_decrypt(n, p, q, e, d, plaintext):
-    encrypter = ByteSequenceEncrypter(PrivateKey(p, q, e))
+    encrypter = BinaryEncrypter(PrivateKey(p, q, e))
     ciphertext = ''.join(encrypter.encrypt(plaintext))
     assert plaintext == ''.join(encrypter.decrypt(ciphertext))
 
@@ -116,7 +116,7 @@ def test_encrypt_decrypt_large(n, p, q, e, d):
                 else:
                     fp.close()
                     break
-    encrypter = ByteSequenceEncrypter(PrivateKey(p, q, e))
+    encrypter = BinaryEncrypter(PrivateKey(p, q, e))
     for chunk in encrypter.encrypt(gen_bytes()): pass
 
 # vim: et sw=4 ts=4 ft=python

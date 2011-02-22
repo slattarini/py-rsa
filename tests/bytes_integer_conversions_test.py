@@ -9,7 +9,7 @@ import pytest
 import random
 from tests.lib import with_params, without_duplicates, pytest_generate_tests
 from tests.lib import infinite_iteration, seq2gen, TestError
-from RSA import ByteSequenceEncrypter, CryptoValueError, CryptoException
+from RSA import BinaryEncrypter, CryptoValueError, CryptoException
 
 # Return "some" random positive integers that requires, to be represented,
 # a number of bits `n_bits' with l <= nbits <= u.
@@ -322,7 +322,7 @@ unpadded_cipher_text_data = generate_unpadded_cipher_text_data()
 too_big_cipher_integer_data = generate_too_big_cipher_integer_data()
 too_small_n = generate_too_small_n()
 
-class ByteSeqConverter(ByteSequenceEncrypter):
+class ByteSeqConverter(BinaryEncrypter):
     def __init__(self, x):
         self._setup_byte_lengths(x)
 

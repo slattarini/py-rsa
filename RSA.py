@@ -550,20 +550,20 @@ class IntegerEncrypter(BasicEncrypter):
         return pos_to_int(sequence, self.key.n)
 
 
-class ByteSequenceEncrypter(BasicEncrypter):
+class BinaryEncrypter(BasicEncrypter):
     """Encrypt a generic byte sequence with RSA.
 
     This class requires a key with n > 65536 (i.e., 17 or more bits
     long) in order to work correctly:
-      >>> ByteSequenceEncrypter(PrivateKey(p=53, q=67, e=17))
+      >>> BinaryEncrypter(PrivateKey(p=53, q=67, e=17))
       Traceback (most recent call last):
        ...
       CryptoValueError: key is too small (12 bits)
-      >>> ByteSequenceEncrypter(PrivateKey(p=17, q=2667, e=59))
+      >>> BinaryEncrypter(PrivateKey(p=17, q=2667, e=59))
       Traceback (most recent call last):
        ...
       CryptoValueError: key is too small (16 bits)
-      >>> encrypter = ByteSequenceEncrypter(PrivateKey(p=67, q=997, e=19))
+      >>> encrypter = BinaryEncrypter(PrivateKey(p=67, q=997, e=19))
       >>> encrypter.key.bit_length()
       17
 
@@ -571,7 +571,7 @@ class ByteSequenceEncrypter(BasicEncrypter):
     thus might return the encrypted/decrypted text a chunk at a time,
     rather than as a single string:
       >>> key = PrivateKey(p=4111, q=4703, e=127)
-      >>> encrypter = ByteSequenceEncrypter(key)
+      >>> encrypter = BinaryEncrypter(key)
       >>> plaintext = 'foobar' * 1000
       >>> ciphertext = encrypter.encrypt(plaintext)
       >>> ciphertext
@@ -588,7 +588,7 @@ class ByteSequenceEncrypter(BasicEncrypter):
     Thus, if you want to encrypt/decrypt a long byte sequence and obtain
     the result as a single string, you're advised to resort to something
     like:
-      >>> encrypter = ByteSequenceEncrypter(key)
+      >>> encrypter = BinaryEncrypter(key)
       >>> ciphertext = ''.join(encrypter.encrypt(plaintext))
       >>> deciphertext = ''.join(encrypter.decrypt(ciphertext))
       >>> deciphertext == plaintext
@@ -601,7 +601,7 @@ class ByteSequenceEncrypter(BasicEncrypter):
 
        >>> # Helper subroutine.
        >>> def cipher_overhead(key, plaintext):
-       ...     encrypter = ByteSequenceEncrypter(key)
+       ...     encrypter = BinaryEncrypter(key)
        ...     ciphertext = ''.join(encrypter.encrypt(plaintext))
        ...     overhead = float(len(ciphertext)) / len(plaintext) - 1
        ...     print "%.0f%%" % (overhead * 100)
@@ -719,7 +719,7 @@ class ByteSequenceEncrypter(BasicEncrypter):
     # of n, rounded *up*).
 
     def __init__(self, key):
-        super(ByteSequenceEncrypter, self).__init__(key)
+        super(BinaryEncrypter, self).__init__(key)
         self._setup_byte_lengths(key.n)
 
     def _setup_byte_lengths(self, n):
