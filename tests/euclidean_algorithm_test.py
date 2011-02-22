@@ -3,9 +3,9 @@
 # This file is part of RSA.py testsuite.
 
 """Unit tests for the RSA.py's implementation of euclidean algorithm"""
+
 from RSA import gcd, extended_gcd
 from tests.lib import pytest_generate_tests, with_params
-
 
 ### DATA
 
@@ -129,7 +129,6 @@ known_values.extend(handcrafted_known_values)
 gcd_args = [dict(a=x['a'], b=x['b']) for x in known_values]
 gcd_data = [dict(a=x['a'], b=x['b'], d=x['d']) for x in known_values]
 egcd_data = known_values
-
 
 ### TESTS
 

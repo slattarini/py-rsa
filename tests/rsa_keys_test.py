@@ -3,6 +3,7 @@
 # This file is part of RSA.py testsuite.
 
 """Tests for our "naive" implementation of RSA keys."""
+
 import pytest
 from RSA import PublicKey, PrivateKey, CryptoValueError
 from tests.keys import keys
