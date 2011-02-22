@@ -133,15 +133,6 @@ def generate_cipher_conversion_data():
             data.append(dict(d, n=n))
     return data
 
-def generate_invalid_cipher_conversion_data():
-    data = []
-    for n_byte in (3, 4, 5, 24, 1000):
-        for n in n_with_bytes(n_byte):
-            for i in set([1, 2, n_byte / 2, n_byte - 2, n_byte - 1]):
-                for j in (0, 1, 2, 4, 23):
-                    data.append(dict(n=n, bytes='a'*i + 'b'*n_byte*j))
-    return data
-
 def generate_plain_conversion_data():
     data = []
     miscellaneous_integers_with_17_or_more_bits = [
@@ -273,6 +264,46 @@ def generate_plain_conversion_data():
             data.append(dict(d, n=n))
     return data
 
+def generate_unpadded_plain_integer_data():
+    data = []
+    for i in range(0x00, 0xff):
+        data.append(dict(n=1<<16, ints=[i]))
+        data.append(dict(n=1<<17-1, ints=[0xff, i]))
+        data.append(dict(n=3**16, ints=[i, 0xff]))
+    data.append(dict(n=1<<24, ints=[0xfe0000, 0xff]))
+    data.append(dict(n=1<<25, ints=[0xff000,  0xf00000]))
+    data.append(dict(n=(1<<28 + 1), ints=[0x1f47a3c]))
+    return data
+
+def generate_too_big_plain_integer_data():
+    return [
+        dict(n=1<<16, ints=[0xff0000]),
+        dict(n=1<<16, ints=[0xff003a]),
+        dict(n=1<<17, ints=[0xff16a8]),
+        dict(n=1<<17, ints=[0xff358e]),
+        dict(n=(1<<24) - 1, ints=[0xffffff]),
+        dict(n=1<<24, ints=[0xff000000]),
+    ]
+
+def generate_unpadded_cipher_text_data():
+    data = []
+    for n_byte in (3, 4, 5, 24, 1000):
+        for n in n_with_bytes(n_byte):
+            for i in set([1, 2, n_byte / 2, n_byte - 2, n_byte - 1]):
+                for j in (0, 1, 2, 4, 23):
+                    data.append(dict(n=n, bytes='a'*i + 'b'*n_byte*j))
+    return data
+
+def generate_too_big_cipher_integer_data():
+    return [
+        dict(n=1<<16, ints=[1<<24]),
+        dict(n=1<<19, ints=[3**17]),
+        dict(n=(1<<24) - 1, ints=[1<<24]),
+        dict(n=1<<24, ints=[(1<<32) + 5]),
+        dict(n=1<<24, ints=[0x12ab08ff2367c]),
+        dict(n=(1<<1000) - 1, ints=[1<<1000]),
+    ]
+
 @without_duplicates
 def generate_too_small_n():
     list_of_small_n = []
@@ -284,8 +315,11 @@ def generate_too_small_n():
     return list_of_small_n
 
 plain_conversion_data = generate_plain_conversion_data()
+unpadded_plain_integer_data = generate_unpadded_plain_integer_data()
+too_big_plain_integer_data = generate_too_big_plain_integer_data()
 cipher_conversion_data = generate_cipher_conversion_data()
-invalid_cipher_conversion_data = generate_invalid_cipher_conversion_data()
+unpadded_cipher_text_data = generate_unpadded_cipher_text_data()
+too_big_cipher_integer_data = generate_too_big_cipher_integer_data()
 too_small_n = generate_too_small_n()
 
 class ByteSeqConverter(ByteSequenceEncrypter):
@@ -331,19 +365,6 @@ def test_i2p_with_generator(n, bytes, ints):
     assert ''.join((ByteSeqConverter(n).i2p(seq2gen(ints)))) == bytes
 
 
-@with_params(invalid_cipher_conversion_data)
-def test_c2i_invalid(n, bytes):
-    converter = ByteSeqConverter(n)
-    pytest.raises(CryptoException,
-                  "for _ in converter.c2i(seq2gen(bytes)): pass")
-
-@with_params(invalid_cipher_conversion_data)
-def test_c2i_invalid_with_generator(n, bytes):
-    converter = ByteSeqConverter(n)
-    pytest.raises(CryptoException,
-                  "tuple(converter.c2i(seq2gen(bytes)))")
-
-
 @with_params(cipher_conversion_data)
 def test_c2i(n, bytes, ints):
     assert list(ByteSeqConverter(n).c2i(bytes)) == ints
@@ -361,12 +382,65 @@ def test_i2c_with_generator(n, bytes, ints):
     assert ''.join((ByteSeqConverter(n).i2c(seq2gen(ints)))) == bytes
 
 
+@with_params(unpadded_plain_integer_data)
+def test_i2p_unpadded(n, ints):
+    converter = ByteSeqConverter(n)
+    pytest.raises(CryptoException,
+                  "for _ in converter.i2p(ints): pass")
+
+@with_params(unpadded_plain_integer_data)
+def test_i2p_unpadded_with_generator(n, ints):
+    converter = ByteSeqConverter(n)
+    pytest.raises(CryptoException,
+                  "tuple(converter.i2p(seq2gen(ints)))")
+
+
+@with_params(too_big_plain_integer_data)
+def test_i2p_too_big(n, ints):
+    converter = ByteSeqConverter(n)
+    pytest.raises(CryptoException,
+                  "for _ in converter.i2p(ints): pass")
+
+@with_params(too_big_plain_integer_data)
+def test_i2p_too_big_with_generator(n, ints):
+    converter = ByteSeqConverter(n)
+    pytest.raises(CryptoException,
+                  "tuple(converter.i2p(seq2gen(ints)))")
+
+
+@with_params(unpadded_cipher_text_data)
+def test_c2i_unpadded(n, bytes):
+    converter = ByteSeqConverter(n)
+    pytest.raises(CryptoException,
+                  "for _ in converter.c2i(bytes): pass")
+
+@with_params(unpadded_cipher_text_data)
+def test_c2i_unpadded_with_generator(n, bytes):
+    converter = ByteSeqConverter(n)
+    pytest.raises(CryptoException,
+                  "tuple(converter.c2i(seq2gen(bytes)))")
+
+
+@with_params(too_big_cipher_integer_data)
+def test_i2c_too_big(n, ints):
+    converter = ByteSeqConverter(n)
+    pytest.raises(CryptoException,
+                  "for _ in converter.i2c(ints): pass")
+
+
+@with_params(too_big_cipher_integer_data)
+def test_i2c_too_big_with_generator(n, ints):
+    converter = ByteSeqConverter(n)
+    pytest.raises(CryptoException,
+                  "tuple(converter.i2c(seq2gen(ints)))")
+
+
 @with_params([2 ,3, 4, 5, 100, 997], 'n_byte')
 @with_params([1, 2 ,3, 10, 97, 128], 'n_iter')
 @with_params(['p2i', 'i2p'], 'convtype')
+# FIXME: using a timeout would be better than risking to let the
+# test hang in case of failure...
 def test_p2i_or_i2p_with_infinite_generator(n_byte, n_iter, convtype):
-    # TODO: using a timeout would be better than risking to let the
-    # test hang in case of failure...
     iter_count = 0
     character = 'a'
     string = character * (n_byte - 1)

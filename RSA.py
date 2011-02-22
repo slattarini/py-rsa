@@ -760,10 +760,16 @@ class ByteSequenceEncrypter(BasicEncrypter):
             digits = int_to_pos(integer, 1 << 8)
             if is_plain:
                 # Sanity check and remove trailing padding byte.
-                assert digits[-1] == 0xff
+                if digits[-1] != 0xff:
+                    # FIXME: better error class?
+                    raise CryptoRuntimeError(
+                            "uncorrect padding (higher digit was 0x%x)" %
+                            digits[-1])
                 del digits[-1]
             # Sanity check.
-            assert len(digits) <= self._chunk_bytelen(is_plain)
+            if len(digits) > self._chunk_bytelen(is_plain):
+                    raise CryptoRuntimeError(
+                            "too many digits: %u" % len(digits))
             if not is_plain:
                 # Pad the chunk if it's too short.
                 pad_length = self._chunk_bytelen(is_plain) - len(digits)
