@@ -1,0 +1,324 @@
+% -*- LaTeX -*-
+
+\newif\ifoneside
+\onesidefalse
+
+\newif\ifuselinks
+\uselinkstrue
+
+\IfFileExists{RSA-ifuselinks.tex}{\input{RSA-ifuselinks.tex}}{}
+
+\ifoneside
+  \documentclass[pdflatex,11pt,a4paper,oneside]{article}
+\else
+  \documentclass[pdflatex,11pt,a4paper]{article}
+\fi
+
+%%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+\usepackage{fancyhdr}
+\usepackage{verbatim}
+\usepackage{amsfonts,mathrsfs,amsmath,amssymb,amstext,amsthm}
+\usepackage{xcolor}
+
+\usepackage[perpage,symbol]{footmisc}
+
+% hyperref should be the last package to be loaded.
+\ifuselinks\usepackage{hyperref}\fi
+
+%%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+\newcommand{\theauthor}[0]{Stefano Lattarini}
+\newcommand{\thetitle}[0]{Cenni teorici sul crittosistema RSA}
+
+\renewcommand{\phi}{\varphi}
+
+\let\IFF=\iff
+\let\THEN=\implies
+\renewcommand{\iff}[0]{se e solo se }
+\newcommand{\then}[0]{then }
+
+\newcommand{\bzl}{B\'ezout's lemma} %XXX
+\newcommand{\gel}{generalized Euclid's lemma} %XXX
+\newcommand{\ethm}{Teorema di Eulero}
+\newcommand{\fthm}{Teorema di Fermat}
+\newcommand{\ephif}{Funzione $\phi$ di Eulero}
+\newcommand{\crmdt}{Teorema Cinese del Resto}
+
+\newcommand{\XXX}[1][XXX]{\text{\bfseries{\color{red}{\emph{#1}}}}}
+\newcommand{\TODO}[0]{\XXX[TODO]}
+\newcommand{\FIXME}[0]{\XXX[FIXME]}
+
+\newcommand{\acro}[1]{\text{{\frenchspacing {#1} }}}
+\newcommand{\ie}[0]{\acro{i.e.}}
+\newcommand{\eg}[0]{\acro{e.g.}}
+\newcommand{\tc}[0]{\acro{t.c.}}
+\newcommand{\wrt}[0]{\acro{w.r.t}}
+
+\newcommand{\p}[1]{\left({#1}\right)}
+\newcommand{\q}[1]{\left({#1}\right)^2}
+\newcommand{\abs}[1]{\left|{#1}\right|}
+\newcommand{\card}[1]{\abs{#1}}
+\newcommand{\varcard}[2][\,]{\pmb{\#}{#1}{#2}}
+
+\newcommand{\N}[0]{\mathbb{N}}
+\newcommand{\Z}[0]{\mathbb{Z}}
+
+\newcommand{\divides}[0]{\mid}
+\newcommand{\notdivides}[0]{\nmid}
+
+\newcommand{\congruent}[0]{\equiv}
+\newcommand{\notcongruent}[0]{\not\equiv}
+\newcommand{\mmodop}[0]{\ensuremath{\operatorname{mod}}}
+\newcommand{\mmod}[1]{\ensuremath{\allowbreak\ (\mmodop\:{#1})}}
+\newcommand{\xmod}[1]{\ensuremath{\allowbreak\ \left(\mmodop\:{#1}\right)}}
+
+\newcommand{\cc}[2][m]{\ensuremath{\left[\:{#2}\,\right]_{\,#1}}}
+
+\newcommand{\iseq}[1]{\ensuremath{0,\,1,\,\ldots,\, {#1} - 1}}
+\newcommand{\set}[1]{\ensuremath{\left\{\,{#1}\,\right\}}}
+\newcommand{\setdef}[2]{\set{{#1}:\:{#2}}}
+
+\newcommand{\gcdop}[0]{\ensuremath{\operatorname{g.c.d.}}}
+\newcommand{\xgcd}[1]{\ensuremath{\gcdop\left({#1}\right)}}
+\renewcommand{\gcd}[2]{\xgcd{{#1},\,{#2}}}
+
+%%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+\numberwithin{equation}{section}
+\renewcommand{\theequation}{\arabic{section}.\arabic{equation}}
+
+\newtheorem{TheoremLike}{\XXX}[section]
+\newtheorem{algorithm}[TheoremLike]{Algorithm}
+\newtheorem{*xalgorithm}{Algorithm}
+\newtheorem{theorem}[TheoremLike]{Theorem}
+\newtheorem*{xtheorem}{Theorem}
+\newtheorem{definition}[TheoremLike]{Definition}
+\newtheorem*{xdefinition}{Definition}
+\newtheorem{lemma}[TheoremLike]{Lemma}
+\newtheorem*{xlemma}{Lemma}
+\newtheorem{corollary}[TheoremLike]{Corollary}
+\newtheorem*{xcorollary}{Corollary}
+\newtheorem{proposition}[TheoremLike]{Proposition}
+\newtheorem*{xproposition}{Proposition}
+\newtheorem{example}[TheoremLike]{Example}
+\newtheorem*{xexample}{Example}
+\newtheorem{property}[TheoremLike]{Property}
+\newtheorem*{xproperty}{Property}
+\newtheorem{remark}[TheoremLike]{Remark}
+\newtheorem*{xremark}{Remark}
+
+%%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+\pagestyle{fancy}
+\renewcommand{\sectionmark}[1]{\markright{\thesection~\:#1}}
+\fancyhf{} % clear all header fields
+\fancyhead[RO]{\bfseries\thepage}
+\fancyhead[LO]{\bfseries\rightmark}
+\ifoneside
+  \relax
+\else
+  \fancyhead[RE]{\bfseries\leftmark}
+  \fancyhead[LE]{\bfseries\thepage}
+\fi
+\fancyfoot{} % clear all footer fields
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0pt}
+\addtolength{\headheight}{0.5pt}
+\fancypagestyle{plain}{
+  \fancyhf{} % clear all header and footer fields
+  \fancyfoot[C]{\bfseries \thepage} % except the center
+  \renewcommand{\headrulewidth}{0pt}
+  \renewcommand{\footrulewidth}{0pt}
+}
+
+%%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+\DefineFNsymbols*{myftnsymbol}{%
+  \dagger%
+  \ddagger%
+  \S%
+  \sharp%
+  \clubsuit%
+  \spadesuit%
+  \P%
+}
+
+\setfnsymbol{myftnsymbol}
+
+\ifuselinks
+  \hypersetup{
+    backref,
+    pdftitle={\thetitle},
+    pdfauthor={\theauthor}
+    pdfborder={0 0 0},
+    anchorcolor=green,
+    colorlinks,
+    linkcolor=blue,
+    pdfpagelabels
+  }
+\fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\title{\thetitle}
+\author{\theauthor}
+%\date{YEAR-MONTH-DAY}
+
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{abstract}
+  Cenni di teoria circa la nostra implementazione didattica del
+  crittosistema RSA.
+
+  Si assume una conoscenza di base dell'aritmetica teorica -- e.g.,
+  definizione e semplici propriet\`a dei numeri primi e composti,
+  teorema fondamentale dell'aritmetica, divisione con resto, etc.).
+\end{abstract}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Massimo comun divisore e algoritmo di euclide}
+
+%%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+\subsection{Definizione di massimo comun divisore}
+
+\TODO: definizione.
+
+Importante propriet\`a: se $d = \gcd{a}{b}$, ed $m$ \`e un intero che
+divide sia $a$ che $b$, allora $m$ divide anche $d$%\footnote{Questa \`e
+%una conseguenza del lemma di Bezout, che dimostreremo pi\`u avanti.}.
+D'altra parte, \`e ovvio che se $m$ \`e un intero che divide $d$, allora
+esso divide sia $a$ che $b$.
+Quindi, in un certo senso, il massomo comun divisore ``contiene'' tutti
+gli altri divisori comuni.
+
+%%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+\subsection{L'algoritmo di euclide}
+
+Algoritmo di Euclide:
+
+\TODO
+
+L'ultimo resto $\neq 0$ \`e il massimo comun divisore $d$.
+
+Magari mostrare efficienza dell'algoritmo di euclide?
+
+%%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+\subsection{Lemma di Lemma di B\'ezout}
+
+Se $d = \gcd{a}{b}$, allora esistono interi $x$ e $y$ (che possono 
+anche essere negativi) tali che $ax + by = d$ (Lemma di B\'ezout).
+
+La cosa importante \`e che $x$ e $y$ possono essere calcolati
+efficientemente dall'algoritmo di euclide per $a$ e $b$.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Aritmetica modulare}
+
+%%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+\subsection{Congruenze e operazioni modulo $m$}
+
+Definizione congruenza modulo $m$.
+
+\`E una relazione di equivalenza.
+
+Altre propriet\`a ($ax \congruent bx \then a \congruent b$).
+
+Operazioni modulo $m$.
+
+%%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+\subsection{Esponenziazione modulo $m$}
+
+Algoritmo ottimizzato (``square-and-multiply''), che abbiamo usato nella
+nostra implementazion python.
+
+%%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+\section{Inverso modulo $m$}
+
+Inverso di $a$ secondo il modulo $m$: intero $x$ tale che
+$ax \congruent 1 \mmod m$.
+
+Un intero $a$ (positivo o negativo) ha un inverso modulo $m$ \iff
+$\gcd{a}{m} = 1$; \TODO: dimostrare (usare Bezout).
+
+%%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+\section{Teoremi sulle congruenze}.
+
+``Piccolo'' teorema di Fermat (due dimostrazion; la seconda non dipende
+dall'esistenza dell'inverso modulo $m$, e pu\`o offire una dimostrazione
+alternativa).
+
+Funzione $\phi$ di Eulero e teorema di Eulero.
+
+Generalizzazione utili per RSA: se $m$ \`e libero da quadrati, allora
+$a^{\phi(m)} \congruent a \mmod m$ per \emph{ogni} intero $a$ (anche
+non coprimo con $m$).  Ddimostrarlo solo per il caso $m = pq$, che \`e
+poi quello che ci interessa in pratica.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Il crittosistema RSA}
+
+\subsection{The RSA cryptosystem: theoretical foundations}
+
+\TODO: Description and theoratical fundations; what are the cleartexts,
+what are the cyphertexts, what are the keys.
+
+\subsection{A working example of RSA}
+
+\TODO: see \verb+http://en.wikipedia.org/wiki/RSA#A_working_example+
+
+\subsection{Padding schemes and known attacks to RSA}
+
+When used in practice, RSA is generally combined with some padding scheme.
+The goal of the padding scheme is to prevent a number of attacks that
+potentially work against RSA without padding:\\
+\TODO: copy from wikipedia
+
+\TODO: Very important about padding:\\
+~~~\verb+http://en.wikipedia.org/wiki/RSA#Padding_schemes+\\
+~~~\verb+http://en.wikipedia.org/wiki/Optimal_Asymmetric_Encryption_Padding+
+~~~\verb+http://en.wikipedia.org/wiki/Random_oracle_model+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Digital signatures with RSA}
+
+\TODO: all
+
+\TODO: see also:
+\verb+http://en.wikipedia.org/wiki/Cryptographic_hash_function+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Our python implementation of RSA cryptosystem}
+
+\TODO
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Analysis of employed algorithms}
+
+\TODO: analisys of extended euclidean algorithm
+
+\TODO: the ``square-and-multiply'' algorithm for modular exponentiation
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{document}
+
+% vim: ft=tex et ts=2 sw=2
