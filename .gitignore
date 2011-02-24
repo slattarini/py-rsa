@@ -1,9 +1,8 @@
 *.py[co]
 *.tmp
 *.tmpdir
-_dist
 /RSA-for-display.pdf
 /RSA-for-print.pdf
 /_texbuild_display/
 /_texbuild_print/
-
+/_dist/
