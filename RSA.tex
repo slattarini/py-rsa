@@ -264,7 +264,8 @@ alternativa).
 \TODO: Funzione $\phi$ di Eulero: defn and properties.
 
 La funzione di Eulero permette di ottenerare una nota generalizzazione
-del teorema di Fermat:
+del teorema di Fermat\footnote{La cui dimostrazione ricalca la nostra
+seconda dimostrazione del teorema di Fermat.}:
 
 \begin{theorem}[Teorema di Eulero]\label{thm:euler}
   Sia $m$ un intero positvo. Allora, per ogni $a \in \Z$ con
@@ -281,7 +282,14 @@ non coprimo con $m$).
 \end{theorem}
 %
 \begin{proof}
- \TODO
+Sia $a$ un intero qualunque.  Allora, se $p \notdivides a$, dal teorema
+di Fermat deriva che $a^{p-1} \congruent 1 \mmod p$, e quindi
+$a^{\phi(m)} = a^{(p-1)(q-1)} = {\p{a^{p-1}}}^{q-1} \congruent 1^{q-1}
+\congruent 1 \mmod p$.  D'altra parte, se $p \divides a$, allora
+$a^{\phi(m)} \congruent 0^{\phi(m)} = 0 \congruent a \mmod p$.  In ogni
+caso, $a^{\phi(m)} \congruent a \mmod p$.  Similamente, $a^{\phi(m)}
+\congruent a \mmod q$, e quindi, essendo $p$ e $q$ coprimi (in quanto
+primi distinti), $a^{\phi(m)} \congruent a \mmod{pq}$, ossia $\mmod m$.
 \end{proof}
 
 In effetti, il teorema qui sopra \`e valido per ogni intero $m$
