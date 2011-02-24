@@ -56,6 +56,11 @@ $(distdir).tar.gz: $(DIST_FILES) $(MAKEFILE)
 dist: $(distdir).tar.gz
 .PHONY: dist
 
+distcheck: distdir
+	cd $(distdir) && $(MAKE) check
+	cd $(distdir) && $(MAKE) dist
+.PHONY: distcheck
+
 # build the report in PDF format
 RSA-for-display.pdf RSA-for-print.pdf: RSA.tex $(MAKEFILE)
 	@rm -f $@
