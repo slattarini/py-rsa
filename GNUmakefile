@@ -32,17 +32,6 @@ default: pdf-display
 all: pdf-display pdf-print
 .PHONY: default all
 
-# make gzipped tarball for distribution
-$(distdir).tar.gz: $(DIST_FILES) $(MAKEFILE)
-	rm -f $@
-	$(MAKE) distdir
-	$(GNUTAR) czf $@-t $(distdir)
-	rm -rf $(distdir)
-	@echo && echo 'Archive details:' \
-	  && ls -l $@-t | sed 's/^/  /' \
-	  && $(GNUTAR) tzf $@-t | sort | sed 's/^/  /'
-	@mv -f $@-t $@
-
 distdir:
 	@set -u \
 	  && rm -rf $(distdir) \
@@ -53,6 +42,16 @@ distdir:
 	  && (cd $(distdir) && $(GNUTAR) -xf ../dist.tmp) \
 	  && rm -f dist.tmp
 .PHONY: distdir
+
+$(distdir).tar.gz: $(DIST_FILES) $(MAKEFILE)
+	rm -f $@
+	$(MAKE) distdir
+	$(GNUTAR) czf $@-t $(distdir)
+	rm -rf $(distdir)
+	@echo && echo 'Archive details:' \
+	  && ls -l $@-t | sed 's/^/  /' \
+	  && $(GNUTAR) tzf $@-t | sort | sed 's/^/  /'
+	@mv -f $@-t $@
 
 dist: $(distdir).tar.gz
 .PHONY: dist
