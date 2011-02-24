@@ -1,8 +1,10 @@
 *.py[co]
 *.tmp
 *.tmpdir
+*-t
 /RSA-for-display.pdf
 /RSA-for-print.pdf
 /_texbuild_display/
 /_texbuild_print/
-/_dist/
+/py-rsa-0.5*/
+/py-rsa-0.5*.tar.gz

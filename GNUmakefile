@@ -8,7 +8,8 @@
 .POSIX:
 .SUFFIXES:
 
-DISTNAME := RSA
+PACKAGE := py-rsa
+VERSION := 0.5a
 MAKEFILE := GNUmakefile
 
 GZIP := gzip
@@ -21,45 +22,43 @@ PDFLATEX_CMD = $(LATEXMK) </dev/null -pdf -nonstopmode
 
 DIST_FILES := \
     README TODO $(MAKEFILE) \
-    $(DISTNAME).tex sty/*.sty \
-    $(DISTNAME)-for-display.pdf $(DISTNAME)-for-print.pdf \
-    $(DISTNAME).py tests/*.py pytest.ini random.bytes
+    RSA.tex sty/*.sty \
+    RSA-for-display.pdf RSA-for-print.pdf \
+    RSA.py tests/*.py pytest.ini random.bytes
+
+distdir = $(PACKAGE)-$(VERSION)
 
 default: pdf-display
 all: pdf-display pdf-print
 .PHONY: default all
 
 # make gzipped tarball for distribution
-$(DISTNAME).tar.gz: $(DIST_FILES) $(MAKEFILE)
-	@set -u \
-	  && rm -rf $@ _dist \
-	  && mkdir _dist \
-	  && echo Creating temporary tarball... \
-	  && $(GNUTAR) -cf _dist/tmp.tar $(DIST_FILES) \
-	  && echo Populating temporary dist directory... \
-	  && cd _dist \
-	  && mkdir $(DISTNAME) \
-	  && cd $(DISTNAME) \
-	  && $(GNUTAR) -xf ../tmp.tar \
-	  && cd .. \
-	  && rm -f tmp.tar \
-	  && echo Creating real tarball... \
-	  && $(GNUTAR) -cf $(DISTNAME).tar ./$(DISTNAME) \
-	  && $(GZIP) $(DISTNAME).tar \
-	  && cd .. \
-	  && mv -f _dist/$@ $@ \
-	  && rm -rf _dist \
-	  && echo Done. \
-	  && echo \
-	  && echo 'Archive details:' \
-	  && ls -l $@ | sed 's/^/  /' \
-	  && tar tzf $@ | sort | sed 's/^/  /'
+$(distdir).tar.gz: $(DIST_FILES) $(MAKEFILE)
+	rm -f $@
+	$(MAKE) distdir
+	$(GNUTAR) czf $@-t $(distdir)
+	rm -rf $(distdir)
+	@echo && echo 'Archive details:' \
+	  && ls -l $@-t | sed 's/^/  /' \
+	  && $(GNUTAR) tzf $@-t | sort | sed 's/^/  /'
+	@mv -f $@-t $@
 
-dist: $(DISTNAME).tar.gz
+distdir:
+	@set -u \
+	  && rm -rf $(distdir) \
+	  && mkdir $(distdir) \
+	  && echo Creating temporary tarball... \
+	  && $(GNUTAR) -cf dist.tmp $(DIST_FILES) \
+	  && echo Populating dist directory... \
+	  && (cd $(distdir) && $(GNUTAR) -xf ../dist.tmp) \
+	  && rm -f dist.tmp
+.PHONY: distdir
+
+dist: $(distdir).tar.gz
 .PHONY: dist
 
 # build the report in PDF format
-$(DISTNAME)-for-display.pdf $(DISTNAME)-for-print.pdf: $(DISTNAME).tex $(MAKEFILE)
+RSA-for-display.pdf RSA-for-print.pdf: RSA.tex $(MAKEFILE)
 	@rm -f $@
 	@case $@ in \
 	   *display*) build_dir=_texbuild_display uselinks=true ;; \
@@ -68,15 +67,15 @@ $(DISTNAME)-for-display.pdf $(DISTNAME)-for-print.pdf: $(DISTNAME).tex $(MAKEFIL
 	 set -x -u -e \
 	   && { test -d "$$build_dir" || mkdir "$$build_dir"; } \
 	   && cd "$$build_dir" \
-	   && echo "\uselinks$$uselinks" > $(DISTNAME)-ifuselinks.tex \
+	   && echo "\uselinks$$uselinks" > RSA-ifuselinks.tex \
 	   && TEXINPUTS=.:..:../sty:$${TEXINPUTS+":$$TEXINPUTS"} \
-	        $(PDFLATEX_CMD) ../$(DISTNAME).tex \
+	        $(PDFLATEX_CMD) ../RSA.tex \
 	   && cd .. \
-	   && cp "$$build_dir"/$(DISTNAME).pdf $@-t \
+	   && cp "$$build_dir"/RSA.pdf $@-t \
 	   && chmod a-w $@-t && mv -f $@-t $@
 
-pdf-display: $(DISTNAME)-for-display.pdf
-pdf-print: $(DISTNAME)-for-print.pdf
+pdf-display: RSA-for-display.pdf
+pdf-print: RSA-for-print.pdf
 .PHONY: pdf-display pdf-print
 
 clean:
@@ -84,9 +83,9 @@ clean:
 	   $(XARGS) rm -f
 	$(FIND) . -name '*.tmpdir' -print | $(XARGS) rm -rf
 	$(FIND) . -name '*.py[co]' -print | $(XARGS) rm -f
-	rm -rf _dist _texbuild_display _texbuild_print
-	rm -f $(DISTNAME).tar.gz
-	rm -f $(DISTNAME)-for-display.pdf $(DISTNAME)-for-print.pdf
+	rm -rf $(distdir) _texbuild_display _texbuild_print
+	rm -f $(distdir).tar.gz
+	rm -f RSA-for-display.pdf RSA-for-print.pdf
 .PHONY: clean
 
 test check:
