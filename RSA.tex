@@ -204,12 +204,52 @@ tutti gli altri divisori comuni.
 
 \subsection{L'algoritmo di euclide}
 
-Algoritmo di Euclide:
+Dati due interi positivi\footnote{Quanto segue potrebbe essere facilmente
+generalizzato anche ad interi negativi, ma noi ci limiteremo a trattare
+interi positivi per non appesantire troppo la discussione} $a$ e $b$,
+\`e possbilie calcolare il loro massimo comun divisore con
+l'\emph{algoritmo di Euclide}, che consiste in una serie di divisioni
+\emph{intere} (cio\`e con quoziente e resto) successive:
 
-\TODO
+\begin{displaymath}
+  \begin{array}{rcll}
+      r_0  & \!=\! & a \\
+      r_1  & \!=\! & b \\
+      r_0  & \!=\! & r_1 q_0 + r_2\,, & 0 < r_2 < r_1 \\
+      r_1  & \!=\! & r_2 q_1 + r_3\,, & 0 < r_3 < r_2 \\
+    \ldots &       & \ldots \\
+   r_{n-1} & \!=\! & r_{n} q_{n-1} + r_{n+1}\,, & 0 < r_{n+1} < r_{n} \\
+     r_{n} & \!=\! & r_{n+1} q_{n}\,, & r_{n+2} = 0 \\
+  \end{array}
+\end{displaymath}
 
+Prima di tutto, siccome gli $r_i$ sono strettamente decrescenti al
+crescere di $i$, prima o poi si raggiunger\`a un $i$ con $r_i = 0$,
+quindi effettivamente l'algoritmo termina sempre.  Inoltre, \emph{l'ultimo
+resto $\neq 0$} (cio\`e $r_{n+1}$) \emph{\`e il massimo comun divisore di
+$a$ e $b$}, come ora dimostreremo.
+
+\begin{proof}
+Se $a = bq + r$, allora \`e facile vedere che ogni intero che divide
+$a$ e $b$ divide anche $r$, e similmente che ogni intero che divide $b$
+ed $r$ divide anche $a$.  Quindi l'insieme dei divisore comuni di $a$ e
+$b$ concide con l'insieme de divisori comuni di $b$ ed $r$, e perci\`o
+$\gcd{a}{b}$ (che \`e il massimo del primo insieme) \`e uguale a
+$\gcd{b}{r}$ (che \`e il massimo del secondo insieme).
+
+\smallskip
 \noindent
-L'ultimo resto $\neq 0$ \`e il massimo comun divisore $d$.
+Dunque, riprendendo la catena di divisioni dell'algoritmo, avremo:
+\begin{eqnarray*}
+  \gcd{a}{b}
+    & =
+    & \gcd{r_0}{r_1} = \gcd{r_1}{r_2} = \gcd{r_2}{r_3} = \ldots \\
+  \ldots
+    & =
+    & \gcd{r_n}{r_{n+1}} = r_{n+1}
+\end{eqnarray*}
+dove l'ultima uguaglianza deriva dal fatto che $r_{n+1} \divides r_n$.
+\end{proof}
 
 \noindent
 \TODO: Magari mostrare efficienza dell'algoritmo di euclide?
