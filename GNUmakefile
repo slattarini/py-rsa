@@ -92,7 +92,7 @@ clean:
 	rm -f RSA-for-display.pdf RSA-for-print.pdf
 .PHONY: clean
 
-test check:
+check:
 	py.test $(PYTESTFLAGS)
 .PHONY: test check
 
