@@ -20,7 +20,7 @@ LATEXMK := latexmk
 PDFLATEX_CMD = $(LATEXMK) </dev/null -pdf -nonstopmode
 
 DIST_FILES := \
-    README $(MAKEFILE) \
+    README TODO $(MAKEFILE) \
     $(DISTNAME).tex sty/*.sty \
     $(DISTNAME)-for-display.pdf $(DISTNAME)-for-print.pdf \
     $(DISTNAME).py tests/*.py
