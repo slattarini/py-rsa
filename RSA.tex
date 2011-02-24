@@ -265,12 +265,34 @@ $\gcd{a}{m} = 1$; \TODO: dimostrare (usare Bezout).
 dall'esistenza dell'inverso modulo $m$, e pu\`o offire una dimostrazione
 alternativa).
 
-Funzione $\phi$ di Eulero e teorema di Eulero.
+\TODO: Funzione $\phi$ di Eulero: defn and properties.
 
-Generalizzazione utili per RSA: se $m$ \`e libero da quadrati, allora
+La funzione di Eulero permette di ottenerare una nota generalizzazione
+del teorema di Fermat:
+
+\begin{theorem}[Teorema di Eulero]\label{thm:euler}
+  Sia $m$ un intero positvo. Allora, per ogni $a \in \Z$ con
+  $\gcd{a}{m} = 1$, risulta\, $a^{\phi(m)} \congruent 1 \mmod m$.
+\end{theorem}
+
+\noindent
+Ma a noi interessa una diversa (e meno nota) generalizzazione:
+
+\begin{theorem}[Teorema di Eulero per RSA]\label{thm:euler-rsa}
+Se $m$ \`e prodotto di due primi \emph{distinti}, allora risulta
 $a^{\phi(m)} \congruent a \mmod m$ per \emph{ogni} intero $a$ (anche
-non coprimo con $m$).  Ddimostrarlo solo per il caso $m = pq$, che \`e
-poi quello che ci interessa in pratica.
+non coprimo con $m$).
+\end{theorem}
+%
+\begin{proof}
+ \TODO
+\end{proof}
+
+In effetti, il teorema qui sopra \`e valido per ogni intero $m$
+\emph{libero da quadrati}, e la dimostrazione di ci\`o \`e una
+semplice generalizzazione di quella appena data.  Ma per i nostri
+scopi il caso $m = pq$ \`e sufficiente, quindi non ci soffermeremo
+oltre.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
