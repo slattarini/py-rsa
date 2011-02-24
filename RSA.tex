@@ -33,11 +33,6 @@
 
 \renewcommand{\phi}{\varphi}
 
-\let\IFF=\iff
-\let\THEN=\implies
-\renewcommand{\iff}[0]{se e solo se }
-\newcommand{\then}[0]{then }
-
 \newcommand{\bzl}{B\'ezout's lemma} %XXX
 \newcommand{\gel}{generalized Euclid's lemma} %XXX
 \newcommand{\ethm}{Teorema di Eulero}
@@ -84,9 +79,6 @@
 \renewcommand{\gcd}[2]{\xgcd{{#1},\,{#2}}}
 
 %%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-%\numberwithin{equation}{section}
-%\renewcommand{\theequation}{\arabic{section}.\arabic{equation}}
 
 \newtheorem{TheoremLike}{\XXX}
 \newtheorem{algorithm}[TheoremLike]{Algorithm}
@@ -236,7 +228,7 @@ Definizione congruenza modulo $m$.
 
 \`E una relazione di equivalenza.
 
-Altre propriet\`a ($ax \congruent bx \then a \congruent b$).
+Altre propriet\`a ($ax \congruent bx \implies a \congruent b$).
 
 Operazioni modulo $m$.
 
@@ -254,7 +246,7 @@ nostra implementazion python.
 Inverso di $a$ secondo il modulo $m$: intero $x$ tale che
 $ax \congruent 1 \mmod m$.
 
-Un intero $a$ (positivo o negativo) ha un inverso modulo $m$ \iff
+Un intero $a$ (positivo o negativo) ha un inverso modulo $m$ se e solo se
 $\gcd{a}{m} = 1$; \TODO: dimostrare (usare Bezout).
 
 %%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
