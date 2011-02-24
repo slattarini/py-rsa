@@ -179,18 +179,26 @@
 
 \subsection{Definizione di massimo comun divisore}
 
-\TODO: definizione.
+Si dice \emph{massimo comun divisore} di due interi $a$ e $b$ (anche
+negativi) il massimo intero positivo $d$ che divida sia $a$ che $b$.
+In tal caso si scrive $d = \gcd{a}{b}$.  Se almeno uno tra $a$ o $b$
+\`e diverso da zero, \`e chiaro che $d$ esiste (per esempio, assumendo
+$a \neq 0$, ogni divisore comune di $a$ e $b$ dev'essere minore o
+uguale ad $\abs{a}$).  D'altra parte, per evitare problemi, si pone
+per definizione $\gcd{0}{0} := 0$.
 
-Importante propriet\`a: se $d = \gcd{a}{b}$, ed $m$ \`e un intero che
-divide sia $a$ che $b$, allora $m$ divide anche $d$%
-\footnote{%
-  Questa \`e una conseguenza del lemma di Bezout, che dimostreremo
-  pi\`u avanti.%
-}.
-D'altra parte, \`e ovvio che se $m$ \`e un intero che divide $d$, allora
-esso divide sia $a$ che $b$.
-Quindi, in un certo senso, il massomo comun divisore ``contiene'' tutti
-gli altri divisori comuni.
+Una prima ovvia propriet\`a \`e che $\gcd{a}{b} = \gcd{\abs{a}}{\abs{b}}$;
+ci\`o permette spesso di fare calcoli e dimostrazioni riferendosi soltanto
+ad interi positivi, ma ottenendo risultati che valgono anche per gli
+interi negativi.
+
+Enunciamo a questo punto un'importante propriet\`a del massimo comun
+divisore: se $d = \gcd{a}{b}$, ed $m$ \`e un intero che divide sia $a$
+che $b$, allora $m$ divide anche $d$\footnote{Questa \`e una conseguenza
+del lemma di Bezout, che dimostreremo pi\`u avanti.}. D'altra parte, \`e
+ovvio che se $m$ \`e un intero che divide $d$, allora esso divide sia $a$
+che $b$. Quindi, in un certo senso, il massimo comun divisore ``contiene''
+tutti gli altri divisori comuni.
 
 %%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
