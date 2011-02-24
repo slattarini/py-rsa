@@ -16,6 +16,7 @@
 
 %%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+\usepackage[italian]{babel}
 \usepackage{fancyhdr}
 \usepackage{verbatim}
 \usepackage{amsfonts,mathrsfs,amsmath,amssymb,amstext,amsthm}
@@ -74,24 +75,24 @@
 %%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 \newtheorem{TheoremLike}{\UNEXPANDED}
-\newtheorem{algorithm}[TheoremLike]{Algorithm}
-\newtheorem{*xalgorithm}{Algorithm}
-\newtheorem{theorem}[TheoremLike]{Theorem}
-\newtheorem*{xtheorem}{Theorem}
-\newtheorem{definition}[TheoremLike]{Definition}
-\newtheorem*{xdefinition}{Definition}
+\newtheorem{algorithm}[TheoremLike]{Algoritmo}
+\newtheorem{*xalgorithm}{Algoritmo}
+\newtheorem{theorem}[TheoremLike]{Teorema}
+\newtheorem*{xtheorem}{Teorema}
+\newtheorem{definition}[TheoremLike]{Definizione}
+\newtheorem*{xdefinition}{Definizione}
 \newtheorem{lemma}[TheoremLike]{Lemma}
 \newtheorem*{xlemma}{Lemma}
-\newtheorem{corollary}[TheoremLike]{Corollary}
-\newtheorem*{xcorollary}{Corollary}
-\newtheorem{proposition}[TheoremLike]{Proposition}
-\newtheorem*{xproposition}{Proposition}
-\newtheorem{example}[TheoremLike]{Example}
-\newtheorem*{xexample}{Example}
-\newtheorem{property}[TheoremLike]{Property}
-\newtheorem*{xproperty}{Property}
-\newtheorem{remark}[TheoremLike]{Remark}
-\newtheorem*{xremark}{Remark}
+\newtheorem{corollary}[TheoremLike]{Corollario}
+\newtheorem*{xcorollary}{Corollario}
+\newtheorem{proposition}[TheoremLike]{Proposizione}
+\newtheorem*{xproposition}{Proposizione}
+\newtheorem{example}[TheoremLike]{Esempio}
+\newtheorem*{xexample}{Esempio}
+\newtheorem{property}[TheoremLike]{Propriet\`a}
+\newtheorem*{xproperty}{Propriet\`a}
+\newtheorem{remark}[TheoremLike]{Osservazione}
+\newtheorem*{xremark}{Osservazione}
 
 %%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -362,41 +363,40 @@ oltre.
 
 \section{Il crittosistema RSA}
 
-\subsection{The RSA cryptosystem: theoretical foundations}
+\subsection{Basi teoriche}
 
-\TODO: Description and theoratical fundations; what are the cleartexts,
-what are the cyphertexts, what are the keys.
+\XXX[TODO ALL]
 
-\subsection{A working example of RSA}
+\subsection{Un esempio basilare dell'uso di RSA}
 
 \TODO: see \verb+http://en.wikipedia.org/wiki/RSA#A_working_example+
 
-\subsection{Padding schemes and known attacks to RSA}
+\subsection{Schemi di padding a attachi ad RSA}
 
 When used in practice, RSA is generally combined with some padding scheme.
 The goal of the padding scheme is to prevent a number of attacks that
 potentially work against RSA without padding:\\
-\TODO: copy from wikipedia
+\TODO: copia da wikipedia?
 
-\TODO: Very important about padding:\\
+LINKS:\\
 ~~~\verb+http://en.wikipedia.org/wiki/RSA#Padding_schemes+\\
 ~~~\verb+http://en.wikipedia.org/wiki/Optimal_Asymmetric_Encryption_Padding+
 ~~~\verb+http://en.wikipedia.org/wiki/Random_oracle_model+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Digital signatures with RSA}
+\section{??? Firme digitali con RSA}
 
-\TODO: all
+\XXX[TODO ALL]
 
-\TODO: see also:
+\noindent Vedi anche:
 \verb+http://en.wikipedia.org/wiki/Cryptographic_hash_function+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Our python implementation of RSA cryptosystem}
+\section{??? La nostra implementazione del crittosistema RSA in python}
 
-\TODO
+\XXX[TODO ALL]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
