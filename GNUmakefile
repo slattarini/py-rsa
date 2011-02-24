@@ -95,6 +95,6 @@ clean:
 
 check:
 	py.test $(PYTESTFLAGS)
-.PHONY: test check
+.PHONY: check
 
 # vim: ft=make ts=4 sw=4 noet
