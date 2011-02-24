@@ -23,7 +23,7 @@ DIST_FILES := \
     README TODO $(MAKEFILE) \
     $(DISTNAME).tex sty/*.sty \
     $(DISTNAME)-for-display.pdf $(DISTNAME)-for-print.pdf \
-    $(DISTNAME).py tests/*.py
+    $(DISTNAME).py tests/*.py pytest.ini random.bytes
 
 default: pdf-display
 all: pdf-display pdf-print
