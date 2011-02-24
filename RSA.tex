@@ -36,6 +36,7 @@
 \newcommand{\XXX}[1][XXX]{\text{\bfseries{\color{red}{\emph{#1}}}}}
 \newcommand{\TODO}[0]{\XXX[TODO]}
 \newcommand{\FIXME}[0]{\XXX[FIXME]}
+\newcommand{\UNEXPANDED}[0]{\XXX[SHOULD-BE-UNEXPANDED]}
 
 \newcommand{\acro}[1]{\text{{\frenchspacing {#1} }}}
 \newcommand{\ie}[0]{\acro{i.e.}}
@@ -72,7 +73,7 @@
 
 %%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-\newtheorem{TheoremLike}{\XXX}
+\newtheorem{TheoremLike}{\UNEXPANDED}
 \newtheorem{algorithm}[TheoremLike]{Algorithm}
 \newtheorem{*xalgorithm}{Algorithm}
 \newtheorem{theorem}[TheoremLike]{Theorem}
