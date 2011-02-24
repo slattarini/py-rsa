@@ -15,7 +15,6 @@ GZIP := gzip
 GNUTAR := tar
 XARGS := xargs
 FIND := $(shell test -d .git && echo wcfind || echo find)
-PYTHON := python
 LATEXMK := latexmk
 
 PDFLATEX_CMD = $(LATEXMK) </dev/null -pdf -nonstopmode
