@@ -173,11 +173,10 @@
 
 \begin{abstract}
   Cenni di teoria circa la nostra implementazione didattica del
-  crittosistema RSA.
-
-  Si assume una conoscenza di base dell'aritmetica teorica -- e.g.,
-  definizione e semplici propriet\`a dei numeri primi e composti,
-  teorema fondamentale dell'aritmetica, divisione con resto, etc.).
+  crittosistema RSA.  Si assume una conoscenza di base dell'aritmetica
+  teorica -- e.g., definizione e semplici propriet\`a dei numeri primi
+  e composti, teorema fondamentale dell'aritmetica, divisione con resto,
+  eccetera.
 \end{abstract}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -191,8 +190,11 @@
 \TODO: definizione.
 
 Importante propriet\`a: se $d = \gcd{a}{b}$, ed $m$ \`e un intero che
-divide sia $a$ che $b$, allora $m$ divide anche $d$\footnote{Questa \`e
-una conseguenza del lemma di Bezout, che dimostreremo pi\`u avanti.}.
+divide sia $a$ che $b$, allora $m$ divide anche $d$%
+\footnote{%
+  Questa \`e una conseguenza del lemma di Bezout, che dimostreremo
+  pi\`u avanti.%
+}.
 D'altra parte, \`e ovvio che se $m$ \`e un intero che divide $d$, allora
 esso divide sia $a$ che $b$.
 Quindi, in un certo senso, il massomo comun divisore ``contiene'' tutti
@@ -206,9 +208,11 @@ Algoritmo di Euclide:
 
 \TODO
 
+\noindent
 L'ultimo resto $\neq 0$ \`e il massimo comun divisore $d$.
 
-Magari mostrare efficienza dell'algoritmo di euclide?
+\noindent
+\TODO: Magari mostrare efficienza dell'algoritmo di euclide?
 
 %%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -255,7 +259,7 @@ $\gcd{a}{m} = 1$; \TODO: dimostrare (usare Bezout).
 
 %%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-\section{Teoremi sulle congruenze}.
+\section{Teoremi sulle congruenze}
 
 ``Piccolo'' teorema di Fermat (due dimostrazion; la seconda non dipende
 dall'esistenza dell'inverso modulo $m$, e pu\`o offire una dimostrazione
@@ -307,15 +311,6 @@ potentially work against RSA without padding:\\
 \section{Our python implementation of RSA cryptosystem}
 
 \TODO
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\section{Analysis of employed algorithms}
-
-\TODO: analisys of extended euclidean algorithm
-
-\TODO: the ``square-and-multiply'' algorithm for modular exponentiation
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
