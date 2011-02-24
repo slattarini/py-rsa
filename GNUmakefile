@@ -21,9 +21,10 @@ LATEXMK := latexmk
 PDFLATEX_CMD = $(LATEXMK) </dev/null -pdf -nonstopmode
 
 DIST_FILES := \
-    README $(MAKEFILE) $(DISTNAME).tex \
+    README $(MAKEFILE) \
+    $(DISTNAME).tex sty/*.sty \
     $(DISTNAME)-for-display.pdf $(DISTNAME)-for-print.pdf \
-	$(DISTNAME).py tests/*.py
+    $(DISTNAME).py tests/*.py
 
 default: pdf-display
 all: pdf-display pdf-print
@@ -69,7 +70,7 @@ $(DISTNAME)-for-display.pdf $(DISTNAME)-for-print.pdf: $(DISTNAME).tex $(MAKEFIL
 	   && { test -d "$$build_dir" || mkdir "$$build_dir"; } \
 	   && cd "$$build_dir" \
 	   && echo "\uselinks$$uselinks" > $(DISTNAME)-ifuselinks.tex \
-	   && TEXINPUTS=.:..:$${TEXINPUTS+":$$TEXINPUTS"}: \
+	   && TEXINPUTS=.:..:../sty:$${TEXINPUTS+":$$TEXINPUTS"} \
 	        $(PDFLATEX_CMD) ../$(DISTNAME).tex \
 	   && cd .. \
 	   && cp "$$build_dir"/$(DISTNAME).pdf $@-t \
