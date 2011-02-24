@@ -59,6 +59,7 @@ dist: $(distdir).tar.gz
 distcheck: distdir
 	cd $(distdir) && $(MAKE) check
 	cd $(distdir) && $(MAKE) dist
+	rm -rf $(distdir)
 .PHONY: distcheck
 
 # build the report in PDF format
