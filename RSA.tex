@@ -283,15 +283,58 @@ efficientemente dall'algoritmo di euclide per $a$ e $b$.
 
 \subsection{Congruenze e operazioni modulo $m$}
 
-Definizione congruenza modulo $m$.
+\begin{definition}
+Dato un intero positivo $m$ e due interi qualunque $a$ e $b$, si dice che
+\emph{$a$ \`e congruente a $b$ modulo $m$}, e si scrive $a \congruent b
+\mmod m$, se $m \divides \p{a - b}$, ossia se $a = b + tm$ per qualche
+intero $t$.
+\end{definition}
 
-\`E una relazione di equivalenza.
+La relazione di congruenza modulo $m$ \`e una \emph{relazione di
+equivalenza}, ossia:
+\begin{enumerate}
+\item $a \congruent a \mmod m$
+\item $a \congruent b \mmod m \implies b \congruent a \mmod m$
+\item $a \congruent b \mmod m ~\:\textrm{e}\:~
+       b \congruent c \mmod m \implies
+       a \congruent c \mmod m$
+\end{enumerate}
+La dimostrazione di queste tre propriet\`a \`e pressoch\`e immediata.
 
-Definizione di sistema complete di residui modulo $m$.
+\smallskip
+Ugualmente importante \`e il fatto che la relazione di congruenza
+modulo $m$ \`e compatibile con le operazioni elementari:
+%
+\begin{theorem}
+Se $a \congruent b \mmod m$ e\, $c \congruent d \mmod m$, allora
+$a + c \congruent b + d \mmod m$, $a - c \congruent b - d \mmod m$,
+e\, $ac \congruent bd \mmod m$.
+\end{theorem}
+%
+\begin{proof}
+Vediamo solo il caso della moltiplicazione (gli altri sono analoghi
+e pi\`u semplici).  Siccome $a \congruent b \mmod m$, risulta
+$m \divides \p{a - b}$, quindi a fortiori $m \divides \p{a - b}c =
+ac - bc$, ossia $ac \congruent bc \mmod m$.  Similmente si prova
+che, essendo $c \congruent d \mmod m$, risulta $bc \congruent bd
+\mmod m$.  Allora, per transitivit\`a, $ac \congruent bd \mmod m$.
+\end{proof}
 
-Altre propriet\`a ($ax \congruent bx \implies a \congruent b$).
+Per la divisione abbiamo un risultato pi\`u debole, ma ugualmente
+importante:
+%
+\begin{theorem}
+Se $c$ ed $m$ sono coprimi, allora $ac \congruent bc \mmod m$ implica
+che $a \congruent b \mmod m$.
+\end{theorem}
+%
+\vspace*{-5pt}
+\noindent
+La dimostrazione segue facilmente dal teorema \XXX.
 
-Operazioni modulo $m$.
+\bigskip %XXX
+\noindent
+Definizione di sistema completo di residui modulo $m$.
 
 %%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -304,11 +347,28 @@ nostra implementazion python.
 
 \subsection{Inverso modulo $m$}
 
-Inverso di $a$ secondo il modulo $m$: intero $x$ tale che
-$ax \congruent 1 \mmod m$.
+\begin{definition}
+L'inverso di un intero $a$ secondo il modulo $m$, \`e quell'intero $b$
+tale che $ab \congruent 1 \mmod m$.  Non \`e detto che l'inverso di $a$
+esista, ma se esiste \`e unico modulo $m$ (ossia due qualunque inversi
+di $a$ sono congruenti tra loro modulo $m$).
+\end{definition}
 
+\begin{theorem}
 Un intero $a$ (positivo o negativo) ha un inverso modulo $m$ se e solo se
-$\gcd{a}{m} = 1$; \TODO: dimostrare (usare B\'ezout).
+$\gcd{a}{m} = 1$.
+\end{theorem}
+
+\begin{proof}[Prima dimostrazione]
+Usare sistema completo di residui modulo $m$.
+\end{proof}
+
+\begin{proof}[Seconda dimostrazione]
+Usare lemma di Bezout.
+\end{proof}
+
+La seconda dimostrazione ha il vantaggio di fornire un algoritmo pratico
+ed efficiente per il calcolo degli inversi modulo $m$.
 
 %%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
