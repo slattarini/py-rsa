@@ -160,9 +160,10 @@
 \begin{abstract}
   Cenni di teoria circa la nostra implementazione didattica del
   crittosistema RSA.  Si assume una conoscenza di base dell'aritmetica
-  teorica -- e.g., definizione e semplici propriet\`a dei numeri primi
-  e composti, teorema fondamentale dell'aritmetica, divisione con resto,
-  eccetera.
+  teorica -- e.g., principio di induzione e del minimo intero, definizione
+  e semplici propriet\`a dei numeri primi e composti, teorema fondamentale
+  dell'aritmetica, divisione con resto, eccetera.  Alcuni di questi
+  concetti saranno comunque brevementi richiamati.
 \end{abstract}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -269,11 +270,30 @@ dove l'ultima uguaglianza deriva dal fatto che $r_{n+1} \divides r_n$.
 
 \subsection{Il Lemma di B\'ezout}
 
-Se $d = \gcd{a}{b}$, allora esistono interi $x$ e $y$ (che possono 
-anche essere negativi) tali che $ax + by = d$ (Lemma di B\'ezout).
+\begin{theorem}[Lemma di B\'ezout]\label{thm:lemma-bezout}
+Se $d = \gcd{a}{b}$, allora esistono interi $x$ e $y$ (che possono
+anche essere negativi) tali che $ax + by = d$.
+\end{theorem}
+%
+\begin{proof}
+Dimostriamo per induzione su $m$ che ogni resto $r_m$ nell'algoritmo
+di Euclide \`e rappresentabile come $ax_m + by_m$ per opportuni interi
+$x_m$, $y_m$. Ci\`o \`e evidente nei casi $m = 0$ ($r_0 = a = a \cdot 1 +
+b \cdot 0$) e $m = 1$ ($r_1 = b = a \cdot 0 + b \cdot 1$). Assumendo poi
+che la tesi sia vera per $m - 2$ ed $m - 1$, abbiamo:
+\begin{eqnarray*}
+r_m & = & r_{m-2} - r_{m-1} q_{m-2} = ax_{m-2} + by_{m-2} -
+                                      \p{ax_{m-1} + by_{m-1}} q_{m-2} \\
+& = &
+a\p{x_{m-2} - q_{m-2}x_{m-1}} + b\p{y_{m-2} - q_{m-2}y_{m-1}}
+\end{eqnarray*}
+coiscch\`e la tesi \`e vera anche per $m$.  Poich\`e $\gcd{a}{b} =
+r_{n+1}$, abbiamo finito.
+\end{proof}
 
-La cosa importante \`e che $x$ e $y$ possono essere calcolati
-efficientemente dall'algoritmo di euclide per $a$ e $b$.
+Si noti che la dimostrazione precedente offre in effetti un algoritmo
+pratico (iterativo) per il calcolo di  $x$ ed $y$ (algoritmo che \`e in
+effetti un'estensione dell'algoritmo di Euclide applicato ad $a$ e $b$).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
