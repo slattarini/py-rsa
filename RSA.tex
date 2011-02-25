@@ -171,17 +171,51 @@
 \section{Nozioni preliminari}
 
 Le nozioni qui riportate dovrebbero essere ben note, quindi le
-passeremo in rassegna molto velocemente, solo per avere rifrimenti
+passeremo in rassegna molto velocemente, solo per avere riferimenti
 facilmente accessibile nel seguito.
 
-Teorema di divisione: quoziente e resto.
+\begin{theorem}[Teorema di divisione]
+Dati due interi (non necessariamente positivi) $a$ e $b$ con $b \neq 0$,
+esistono due interi $q$ ed $r$ tali che $a = bq + r$ e $0 \leq r
+< \abs{b}$. Essi sono unici, e sono chiamati rispettivamente
+\emph{quoziente} e \emph{resto} della divisione di $a$ per $b$.
+\end{theorem}
 
-Numeri primi e numeri composti.  Numeri coprimi ovvero primi tra loro.
+\begin{definition}[Numeri primi e composti]
+Un intero $p > 1$ che sia divisibile soltanto per s\`e stesso e per
+l'unit\`a \`e detto \emph{numero primo}.  Un intero $m > 1$ che non
+sia primo \`e detto \emph{composto}; in tal caso esistono due interi
+$m_1$, $m_2$ con $1 < m_i < m$ tali che $m = m_1 m_2$.
+\end{definition}
 
-Teorema fondamentale dell'aritmetica e risulati correlati (se $p$ \`e
-primo e $p \divides ab$ allora $p \divides a$ o $p \divides b$; se
-$m \divides ab$ e $m$ ed $a$ sono coprimi, allora $m \divides b$; se
-$a$ e $b$ sono coprimi ed entrambi dividono $c$, allora $ab \divides c$).
+\begin{definition}[Interi coprimi]
+Due interi si dicono \emph{coprimi} (ovvero \emph{primi tra loro}) se
+non hanno divisori comuni al di fuori dell'unit\`a.
+\end{definition}
+
+\begin{theorem}[Teorema fondamentale dell'aritmetica]
+Ogni intero positivo possiede una fattorizzazione in numeri primi, e
+tale fattorizzazione \`e unica (a meno di un riordinamento dei fattori).
+\end{theorem}
+
+Valgono inoltre i seguenti risulati, che sono conseguenze pressoch\`e
+immediate del teorema fondamentale dell'aritmentica\footnote{In effetti,
+si pu\`o facilmente vedere che essi sono \emph{equivalenti} a tale
+teorema.}:
+
+\begin{theorem}\label{thm:TFA-c1}
+Se $p$ \`e primo e \,$p \divides ab$, allora \,$p \divides a$\, o
+\,$p \divides b$.
+\end{theorem}
+
+\begin{theorem}\label{thm:TFA-c2}
+Se $m \divides ab$, ed\, $m$ ed\, $a$ sono coprimi, allora $m \divides b$.
+\end{theorem}
+
+\begin{theorem}\label{thm:TFA-c3}
+Se $a$, $b$ sono coprimi ed entrambi dividono $c$, allora
+anche $ab$ divide $c$.
+\end{theorem}
 
 %%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -349,9 +383,11 @@ Se $c$ ed $m$ sono coprimi, allora $ac \congruent bc \mmod m$ implica
 che $a \congruent b \mmod m$.
 \end{theorem}
 %
-\vspace*{-5pt}
-\noindent
-La dimostrazione segue facilmente dal teorema \XXX.
+\begin{proof}
+Abbiamo che $ac \congruent bc \mmod m$, ossia $m \divides \p{a -b}c$.
+Poich\`e $c$ ed $m$ sono coprimi, dal teorema~\eqref{thm:TFA-c2}
+segue che $m \divides \p{a -b}c$, \ie $a \congruent b \mmod m$.
+\end{proof}
 
 \begin{definition}
 Un insieme di $m$ interi si dice \emph{sistema completo di residui modulo
