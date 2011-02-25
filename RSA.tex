@@ -213,9 +213,46 @@ Se $m \divides ab$, ed\, $m$ ed\, $a$ sono coprimi, allora $m \divides b$.
 \end{theorem}
 
 \begin{theorem}\label{thm:TFA-c3}
-Se $a$, $b$ sono coprimi ed entrambi dividono $c$, allora
-anche $ab$ divide $c$.
+Se $b$, $c$ sono coprimi ed entrambi dividono $a$, allora
+anche $bc$ divide $a$.
 \end{theorem}
+
+\medskip
+Usando il teorema di divisione ed il principio di induzione, possiamo
+offrire una dimostrazione dell'ultimo teorema rimarchevolmente semplice,
+ed indipendente dal teorema fondamentale dell'aritmetica.
+%
+\begin{proof}[Dimostrazione del teorema~\eqref{thm:TFA-c3}]
+%
+Procediamo per induzione su $a$.  La tesi \`e immediata per $a = 0$ o
+$a = 1$.  Supponendo ora $a > 1$, siano $b$ e $c$ due interi coprimi
+che dividano entrambi $a$:%
+  \vspace*{-5pt}%
+\begin{equation}\label{b|a e c|a}
+a = br \qquad\textrm{e}\qquad a = cs
+  \vspace*{-5pt}%
+\end{equation}
+
+\noindent
+Vogliamo innanzitutto dimostrare che $bc \leq a$. Procediamo per assurdo
+assumendo $bc > a$.  Dal teorema di divisione abbiamo che $bc = aq + r$
+con $0 \leq r < a$.  Poich\`e $b \divides a$, abbiamo anche $b \divides
+bc - aq = r$, e similmente $c \divides r$.  Per induzione (essendo
+$r < a$) si ha dunque $bc \divides r$. Ma $bc > a > r$, quindi
+necessariamente $r = 0$. Allora $bc = aq$, da cui, usando~%
+\eqref{b|a e c|a}, otteniamo $c = rq$ e $b = sq$.  Ma allora $q$ divide
+sia $b$ che $c$, ed essendo questi coprimi, $q$ dev'essere $= 1$, da
+cui $bc = aq = a$, in contraddizione con l'assunto $bc > a$.
+
+Dunque $bc \leq a$. Usando ancora il teorema di divisione, possiamo
+scrivere $a = (bc)q + r$, con $0 \leq r < bc$\footnote{Si noti che $q$
+ed $r$ non sono pi\`u gli stessi di prima, ma preferiamo riutilizzare
+comunque gli stessi simboli, per evitare inutili appesantimenti.}.
+Poch\`e $b$ e $c$ dividono entrambi $a$, abbiamo che essi dividono
+entrambi $r = a - bcq$, quindi per induzione (che si pu\`o applicare
+essendo $r < bc \leq a$) si ha $bc \divides r$, da cui $bc \divides
+bcq + r = a$.
+\end{proof}
 
 %%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
