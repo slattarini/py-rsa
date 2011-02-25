@@ -68,7 +68,7 @@
 \newcommand{\set}[1]{\ensuremath{\left\{\,{#1}\,\right\}}}
 \newcommand{\setdef}[2]{\set{{#1}:\:{#2}}}
 
-\newcommand{\gcdop}[0]{\ensuremath{\operatorname{g.c.d.}}}
+\newcommand{\gcdop}[0]{\ensuremath{\small\texttt{g\!.c\!.d\!.}}}
 \newcommand{\xgcd}[1]{\ensuremath{\gcdop\left({#1}\right)}}
 \renewcommand{\gcd}[2]{\xgcd{{#1},\,{#2}}}
 
@@ -203,13 +203,13 @@ ci\`o permette spesso di fare calcoli e dimostrazioni riferendosi soltanto
 ad interi positivi, ma ottenendo risultati che valgono anche per gli
 interi negativi.
 
-Enunciamo a questo punto un'importante propriet\`a del massimo comun
-divisore: se $d = \gcd{a}{b}$, ed $m$ \`e un intero che divide sia $a$
-che $b$, allora $m$ divide anche $d$\footnote{Questa \`e una conseguenza
-del lemma di B\'ezout, che dimostreremo pi\`u avanti.}. D'altra parte, \`e
-ovvio che se $m$ \`e un intero che divide $d$, allora esso divide sia $a$
-che $b$. Quindi, in un certo senso, il massimo comun divisore ``contiene''
-tutti gli altri divisori comuni.
+Un'importantissima propriet\`a del massimo comun divisore \`e che, se
+$m$ \`e un intero che divide sia $a$ che $b$, allora $m$ divide anche
+$\gcd{a}{b}$\footnote{Questa \`e una conseguenza del lemma di B\'ezout,
+che dimostreremo pi\`u avanti.}. D'altra parte, \`e ovvio che se $m$ \`e 
+un intero che divide $d = \gcd{a}{b}$, allora esso divide sia $a$ che $b$
+(poich\`e $d$ \`e un divisore comune ad essi).  Quindi, in un certo senso,
+il massimo comun divisore ``contiene'' tutti gli altri divisori comuni.
 
 %%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
