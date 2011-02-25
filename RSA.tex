@@ -293,7 +293,8 @@ r_{n+1}$, abbiamo finito.
 
 Si noti che la dimostrazione precedente offre in effetti un algoritmo
 pratico (iterativo) per il calcolo di  $x$ ed $y$ (algoritmo che \`e in
-effetti un'estensione dell'algoritmo di Euclide applicato ad $a$ e $b$).
+effetti un'estensione dell'algoritmo di Euclide applicato ad $a$ e $b$,
+ed \`e perci\`o noto col nome di \emph{algoritmo di Euclide esteso}).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -343,7 +344,7 @@ che, essendo $c \congruent d \mmod m$, risulta $bc \congruent bd
 Per la divisione abbiamo un risultato pi\`u debole, ma ugualmente
 importante:
 %
-\begin{theorem}
+\begin{theorem}\label{thm:simplify-modulo-m}
 Se $c$ ed $m$ sono coprimi, allora $ac \congruent bc \mmod m$ implica
 che $a \congruent b \mmod m$.
 \end{theorem}
@@ -363,7 +364,7 @@ l'insieme $\set{0,\: 1,\: \ldots\: m - 1}$.
 \smallskip
 Vale il seguente risultato (che ci torner\`a utile pi\`u avanti):
 %
-\begin{theorem}
+\begin{theorem}\label{thm:complete-residue-system}
 Se $A$ \`e un sistema completo di residui modulo $m$, allora per ogni
 $i$ con $0 \leq i < m$ esiste uno ed uno solo $a_i \in A$ tale che
 $a_i \congruent i \mmod m$.
@@ -403,27 +404,52 @@ nostra implementazion python.
 \subsection{Inverso modulo $m$}
 
 \begin{definition}
-L'inverso di un intero $a$ secondo il modulo $m$, \`e quell'intero $b$
-tale che $ab \congruent 1 \mmod m$.  Non \`e detto che l'inverso di $a$
-esista, ma se esiste \`e unico modulo $m$ (ossia due qualunque inversi
-di $a$ sono congruenti tra loro modulo $m$).
+Dato un intero $a$, il suo inverso secondo il modulo $m$, \`e quell'intero
+$b$ (se esiste) tale che $ab \congruent 1 \mmod m$.
 \end{definition}
+
+Non \`e detto che l'inverso di $a$ esista, ma se esiste \`e unico modulo $m$
+(ossia due qualunque inversi di $a$ sono congruenti tra loro modulo $m$).
+Precisamente, abbiamo il seguente risultato:
 
 \begin{theorem}
 Un intero $a$ (positivo o negativo) ha un inverso modulo $m$ se e solo se
-$\gcd{a}{m} = 1$.
+$\gcd{a}{m} = 1$.  In tal caso, tale inverso \`e unico modulo $m$.
 \end{theorem}
 
-\begin{proof}[Prima dimostrazione]
-Usare sistema completo di residui modulo $m$.
+\`E chiaro che $a$ dev'esse coprimo con $m$ per avere un inverso, poich\`e
+l'avere $ab \congruent 1 \mmod m$ implica che ogni divisore comune di $a$
+ed $m$ divide anche $1$, e pu\`o quindi essere solo l'unit\`a stessa.
+
+\medskip\noindent
+Vediamo ora di dimostrare le altre parti del teorema.
+
+\begin{proof}[Dimostrazione di unicit\`a]
+Siano $x, y$ tali che $ax \congruent 1 \mmod m$ e $ay \congruent 1
+\mmod m$; allora $ax \congruent ay \mmod m$, e quindi per il
+teorema~\eqref{thm:simplify-modulo-m} abbiamo che $x \congruent y
+\mmod m$.
 \end{proof}
 
-\begin{proof}[Seconda dimostrazione]
-Usare lemma di Bezout.
+\begin{proof}[Prima dimostrazione di esistenza]
+Sia $a$ un intero coprimo con $m$, e sia $X := \setdef{ab}{b = 0,\: 1,\:
+\ldots\: m - 1}$. $X$ \`e chiaramente un sistema completo di residui modulo
+$m$, in quanto contiene $m$ elementi, e nessuno di essi \`e congruente ad
+un altro modulo $m$ (in virt\`u del teorema~\eqref{thm:simplify-modulo-m}).
+Dal teorema~\eqref{thm:complete-residue-system} segue quindi che esiste un
+$x \in X$ con $x \congruent 1 \mmod m$; poich\`e $x = ab$, $b$ \`e inverso
+di $a$ modulo $m$.
 \end{proof}
 
-La seconda dimostrazione ha il vantaggio di fornire un algoritmo pratico
-ed efficiente per il calcolo degli inversi modulo $m$.
+\begin{proof}[Seconda dimostrazione di esistenza]
+Sia $a$ un intero coprimo con $m$.  Allora $\gcd{a}{m} = 1$, quindi per il
+lemma di B\'ezout esistono due interi $x$ ed $y$ tali che $ax + my = 1$,
+da cui $ax \congruent 1 \mmod m$.
+\end{proof}
+
+La seconda dimostrazione di esistenza ha il vantaggio di fornire un
+algoritmo pratico ed efficiente per il calcolo degli inversi modulo $m$
+(poich\`e $x$ pu\`o essere calcolato con l'algoritmo di Euclide esteso).
 
 %%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
