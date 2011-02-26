@@ -565,12 +565,42 @@ Infatti, $a^p \congruent a \mmod m$ implica $a\p{a^{p-1} - 1} \congruent
 $a$ e $p$ sono coprimi, cosicch\`e il teorema~\eqref{thm:TFA-div} ci
 permette di concludere che $a^{p-1} - 1 \congruent 0 \mmod m$.
 
-\medskip
+\bigskip
 \noindent
 Offriremo ora due dimostrazioni alternative della prima parte della tesi.
 
-\begin{proof}[Dimostrazione con sistema complete di residui]
-\TODO
+\begin{proof}[Dimostrazione ``standard'' del teorema di Fermat]
+%
+Innanzitutto, dal corollario~\eqref{cor:complete-residue-system-basic}
+e dal teorema~\eqref{thm:modular-operation}, segue facilmente che se
+$R$ ed $S$ sono due sistemi completi di residui modulo $p$ si ha:
+\begin{equation}\label{eq:product-complete-residue-system}
+  \prod_{\substack{r \in R\\ r \not\congruent 0 \mmod p}}\!\!\!\! r
+  \quad\congruent
+  \prod_{\substack{s \in S\\ s \not\congruent 0 \mmod p}}\!\!\!\! s
+  \quad\mmod p
+\end{equation}
+
+Sia ora $a$ un intero non divisibile per $p$. Allora $a$ \`e primo con
+$p$, da cui segue che $ax \not\congruent ay \mmod a$ se $x \not\congruent
+y \mmod m$. Dunque l'insieme $\setdef{ax}{0 \leq x \leq p}$ \`e un
+sistema completo di residui modulo $m$, cosicch\`e
+da~\eqref{eq:product-complete-residue-system} deriva:
+\begin{displaymath}
+  \prod_{1 \leq x \leq p} ax \congruent \prod_{1 \leq x \leq p} a \mmod m
+\end{displaymath}
+ossia:
+\begin{displaymath}
+  (p-1)!\: a^{p-1} \congruent (p-1)! \mmod m
+\end{displaymath}
+da cui essendo $(p - 1)!$\, primo con $p$ (in quanto prodotto di numeri
+tutti primi con p) si ottiene che $a^{p-1} \congruent 1 \mmod m$, da cui
+$a^p \congruent a \mmod m$.
+
+D'altra parte, se $a$ \`e invece un intero divisibile per $p$, si ha
+$a^p \congruent 0^p = 0 \congruent a \mmod p$, e la tesi \`e vera anche
+in questo caso.
+%
 \end{proof}
 
 \noindent
@@ -580,19 +610,19 @@ Per la seconda dimostrazione, ci serve un lemma preliminare:
 Se $p$ \`e primo e, $0 < k < p$, allora $p \divides \binom{p}{k}$.
 \end{xlemma}
 %
-\begin{proof}[Dimostrazione del lemma]
+\begin{proof}
 Sappiamo che:
   $$\binom{p}{k} = \frac{p!}{k! (p - k)!}$$
-\`e un intero, cosicch\`e $k! (p - k)! \divides p! = p \cdot (p - 1)!$\,.
-Essendo $p$ primo, $k! (p - k)!$ \`e prodotto di interi positivi tutti
-$< p$, e quindi primi con $p$; dunque $k! (p - k)!$ \`e anch'esso primo
+\`e un intero, cosicch\`e $k!\,(p - k)! \divides p! = p \cdot (p - 1)!$\,.
+Essendo $p$ primo, $k!\,(p - k)!$ \`e prodotto di interi positivi tutti
+$< p$, e quindi primi con $p$; dunque $k!\,(p - k)!$ \`e anch'esso primo
 con $p$ in virt\`u del teorema dal teorema~\eqref{thm:TFA-mul-1}.
 Allora dal teorema~\eqref{thm:TFA-div} deriva che $k! (p - k)! \divides
-(p - 1)!$, quindi, detto $\frac{(p - 1)!}{k!(p - k)!}= m$, si ha
+(p - 1)!$, quindi, detto $\frac{(p - 1)!}{k!\,(p - k)!}= m$, si ha
 $\binom{p}{k} = pm$, e quindi $p \divides \binom{p}{k}$.
 \end{proof}
 
-\begin{proof}[Dimostrazione per induzione]
+\begin{proof}[Dimostrazione induttiva del Teorema di Fermat]
 \`E chiaro che ci basta dimostrare la tesi per $a \geq 0$.  Procediamo
 dunque per induzione su $a$, i casi $a = 0$ e $a = 1$ essendo banali.
 Usando il teorema binomiale abbiamo:
