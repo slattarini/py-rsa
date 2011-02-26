@@ -232,7 +232,7 @@ Procediamo per induzione su $a$.  La tesi \`e immediata per $a = 0$ o
 $a = 1$.  Supponendo ora $a > 1$, siano $b$ e $c$ due interi coprimi
 che dividano entrambi $a$:%
   \vspace*{-5pt}%
-\begin{equation}\label{b|a e c|a}
+\begin{equation}\label{eq: b|a e c|a}
 a = bu \qquad\textrm{e}\qquad a = cv
   \vspace*{-5pt}%
 \end{equation}
@@ -242,7 +242,7 @@ $bc = aq + r$, con $0 \leq r < a$.  Poich\`e $b \divides a$, abbiamo
 anche $b \divides bc - aq = r$, e similmente $c \divides r$.  Per
 induzione (essendo $r < a$) si ha dunque $bc \divides r$. Ma $bc \geq
 a > r$, quindi necessariamente $r = 0$. Allora $bc = aq$, da cui,
-usando~\eqref{b|a e c|a}, otteniamo $c = uq$ e $b = vq$.  Dunque $q$
+usando~\eqref{eq: b|a e c|a}, otteniamo $c = uq$ e $b = vq$.  Dunque $q$
 divide sia $b$ che $c$, ed essendo questi coprimi, necessariamente
 $q = 1$, da cui $bc = aq = a$, ossia \emph{a~fortiori}
 \,$bc \divides a$.
@@ -421,7 +421,7 @@ La dimostrazione di queste tre propriet\`a \`e pressoch\`e immediata.
 Ugualmente importante \`e il fatto che la relazione di congruenza
 modulo $m$ \`e compatibile con le operazioni elementari:
 %
-\begin{theorem}
+\begin{theorem}\label{thm:modular-operation}
 Se $a \congruent b \mmod m$ e\, $c \congruent d \mmod m$, allora
 $a + c \congruent b + d \mmod m$, $a - c \congruent b - d \mmod m$,
 e\, $ac \congruent bd \mmod m$.
@@ -483,7 +483,7 @@ L'unicit\`a di $a_i$ \`e poi ovvia.
 Il precedente teorema pu\`o essere usato facilmente per ottenere la
 seguente generalizzazione:
 %
-\begin{corollary}
+\begin{corollary}\label{cor:complete-residue-system-basic}
 Se $A$ e $B$ sono due sistemi completi di residui modulo $m$, allora per
 ogni $a \in A$ esiste uno ed uno solo $b \in B$ tale che $a \congruent b
 \mmod m$.
