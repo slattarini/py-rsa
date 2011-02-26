@@ -32,6 +32,8 @@
 \newcommand{\theauthor}[0]{Stefano Lattarini}
 \newcommand{\thetitle}[0]{Cenni teorici sul crittosistema RSA}
 
+\newcommand{\TFA}{teorema fondamentale dell'aritmetica}
+
 \renewcommand{\phi}{\varphi}
 
 \newcommand{\XXX}[1][XXX]{\text{\bfseries{\color{red}{\emph{#1}}}}}
@@ -161,9 +163,9 @@
   Cenni di teoria circa la nostra implementazione didattica del
   crittosistema RSA.  Si assume una conoscenza di base dell'aritmetica
   teorica -- e.g., principio di induzione e del minimo intero, definizione
-  e semplici propriet\`a dei numeri primi e composti, teorema fondamentale
-  dell'aritmetica, divisione con resto, eccetera.  Alcuni di questi
-  concetti saranno comunque brevementi richiamati.
+  e semplici propriet\`a dei numeri primi e composti, \TFA, divisione con
+  resto, eccetera.  Alcuni di questi concetti saranno comunque brevemente
+  richiamati.
 \end{abstract}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -199,9 +201,8 @@ tale fattorizzazione \`e unica (a meno di un riordinamento dei fattori).
 \end{theorem}
 
 Valgono inoltre i seguenti risulati, che sono conseguenze pressoch\`e
-immediate del teorema fondamentale dell'aritmentica\footnote{In effetti,
-si pu\`o facilmente vedere che essi sono \emph{equivalenti} a tale
-teorema.}:
+immediate del \TFA\footnote{In effetti, essi sono \emph{equivalenti}
+a tale teorema, come vedremo tra poco.}:
 
 \begin{theorem}\label{thm:TFA-c1}
 Se $p$ \`e primo e \,$p \divides ab$, allora \,$p \divides a$\, o
@@ -219,8 +220,8 @@ anche $bc$ divide $a$.
 
 \medskip
 Usando il teorema di divisione ed il principio di induzione, possiamo
-offrire una dimostrazione dell'ultimo teorema rimarchevolmente semplice,
-ed indipendente dal teorema fondamentale dell'aritmetica.
+offrire una dimostrazione di ques'ultimo teorema rimarchevolmente semplice
+ed indipendente dal \TFA.
 %
 \begin{proof}[Dimostrazione del teorema~\eqref{thm:TFA-c3}]
 %
@@ -229,7 +230,7 @@ $a = 1$.  Supponendo ora $a > 1$, siano $b$ e $c$ due interi coprimi
 che dividano entrambi $a$:%
   \vspace*{-5pt}%
 \begin{equation}\label{b|a e c|a}
-a = br \qquad\textrm{e}\qquad a = cs
+a = bu \qquad\textrm{e}\qquad a = cv
   \vspace*{-5pt}%
 \end{equation}
 
@@ -240,7 +241,7 @@ con $0 \leq r < a$.  Poich\`e $b \divides a$, abbiamo anche $b \divides
 bc - aq = r$, e similmente $c \divides r$.  Per induzione (essendo
 $r < a$) si ha dunque $bc \divides r$. Ma $bc > a > r$, quindi
 necessariamente $r = 0$. Allora $bc = aq$, da cui, usando~%
-\eqref{b|a e c|a}, otteniamo $c = rq$ e $b = sq$.  Ma allora $q$ divide
+\eqref{b|a e c|a}, otteniamo $c = uq$ e $b = vq$.  Dunque $q$ divide
 sia $b$ che $c$, ed essendo questi coprimi, $q$ dev'essere $= 1$, da
 cui $bc = aq = a$, in contraddizione con l'assunto $bc > a$.
 
@@ -249,9 +250,20 @@ scrivere $a = (bc)q + r$, con $0 \leq r < bc$\footnote{Si noti che $q$
 ed $r$ non sono pi\`u gli stessi di prima, ma preferiamo riutilizzare
 comunque gli stessi simboli, per evitare inutili appesantimenti.}.
 Poch\`e $b$ e $c$ dividono entrambi $a$, abbiamo che essi dividono
-entrambi $r = a - bcq$, quindi per induzione (che si pu\`o applicare
-essendo $r < bc \leq a$) si ha $bc \divides r$, da cui $bc \divides
-bcq + r = a$.
+entrambi $r = a - bcq$, quindi per induzione (essendo $r < bc \leq a$)
+si ha $bc \divides r$, da cui $bc \divides \p{bcq + r} = a$.
+%
+\end{proof}
+
+Inoltre, dato il teorema~\eqref{thm:TFA-c3}, \`e possibile derivarne
+facilmente il teorema~\eqref{thm:TFA-c2}; da questo il
+teorema~\eqref{thm:TFA-c1} segue come semplice corollario, e il
+\TFA{} segue a sua volta quasi immediatamente da questo.
+
+\begin{proof}[Dimostrazione del teorema~\eqref{thm:TFA-c2}]
+Chiaramente $a \divides ab$, ed inoltre $m \divides ab$ per ipotesi.
+Allora, essendo $a$ ed $m$ coprimi, per il teorema~\eqref{thm:TFA-c3}
+si ha che $am \divides ab$, da cui si ricava facilmente $m \divides b$.
 \end{proof}
 
 %%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
