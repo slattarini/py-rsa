@@ -424,16 +424,18 @@ modulo $m$ \`e compatibile con le operazioni elementari:
 \begin{theorem}\label{thm:modular-operation}
 Se $a \congruent b \mmod m$ e\, $c \congruent d \mmod m$, allora
 $a + c \congruent b + d \mmod m$, $a - c \congruent b - d \mmod m$,
-e\, $ac \congruent bd \mmod m$.
+$ac \congruent bd \mmod m$ e\, $a^n \congruent b^n \mmod m$.
+
 \end{theorem}
 %
 \begin{proof}
-Vediamo solo il caso della moltiplicazione (gli altri sono analoghi
-e pi\`u semplici).  Siccome $a \congruent b \mmod m$, risulta
-$m \divides \p{a - b}$, quindi a fortiori $m \divides \p{a - b}c =
-ac - bc$, ossia $ac \congruent bc \mmod m$.  Similmente si prova
-che, essendo $c \congruent d \mmod m$, risulta $bc \congruent bd
-\mmod m$.  Allora, per transitivit\`a, $ac \congruent bd \mmod m$.
+Vediamo solo il caso della moltiplicazione (l'esponenziazione ne \`e
+un corollario, addizione e sottrazione sono analoghi e pi\`u semplici).
+Siccome $a \congruent b \mmod m$, risulta $m \divides \p{a - b}$,
+quindi a fortiori $m \divides \p{a - b}c = ac - bc$, ossia
+$ac \congruent bc \mmod m$.  Similmente si prova che, essendo
+$c \congruent d \mmod m$, risulta $bc \congruent bd \mmod m$.
+Allora, per transitivit\`a, $ac \congruent bd \mmod m$.
 \end{proof}
 
 Per la divisione abbiamo un risultato pi\`u debole, ma ugualmente
@@ -594,7 +596,7 @@ ossia:
   (p-1)!\: a^{p-1} \congruent (p-1)! \mmod m
 \end{displaymath}
 da cui essendo $(p - 1)!$\, primo con $p$ (in quanto prodotto di numeri
-tutti primi con p) si ottiene che $a^{p-1} \congruent 1 \mmod m$, da cui
+tutti primi con $p$) si ottiene che $a^{p-1} \congruent 1 \mmod m$, da cui
 $a^p \congruent a \mmod m$.
 
 D'altra parte, se $a$ \`e invece un intero divisibile per $p$, si ha
