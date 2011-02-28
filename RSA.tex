@@ -58,11 +58,14 @@
 \newcommand{\divides}[0]{\mid}
 \newcommand{\notdivides}[0]{\nmid}
 
+\newcommand{\floor}[1]{\left\lfloor{#1}\right\rfloor}
+
 \newcommand{\congruent}[0]{\equiv}
 \newcommand{\notcongruent}[0]{\not\equiv}
 \newcommand{\mmodop}[0]{\ensuremath{\operatorname{mod}}}
 \newcommand{\mmod}[1]{\ensuremath{\allowbreak\ (\mmodop\:{#1})}}
 \newcommand{\xmod}[1]{\ensuremath{\allowbreak\ \left(\mmodop\:{#1}\right)}}
+\newcommand{\rem}[2]{\ensuremath{{#1}\:\mmodop\:{#2}}}
 
 \newcommand{\cc}[2][m]{\ensuremath{\left[\:{#2}\,\right]_{\,#1}}}
 
@@ -181,7 +184,7 @@ Dati due interi (non necessariamente positivi) $a$ e $b$ con $b \neq 0$,
 esistono due interi $q$ ed $r$ tali che $a = bq + r$ e $0 \leq r
 < \abs{b}$. Essi sono unici, e sono chiamati rispettivamente
 \emph{quoziente} e \emph{resto} della divisione di $a$ per $b$.
-Il resto si indica, dove conveniente, come \,$r = a\:\mmodop\:b$.
+Il resto si indica, dove conveniente, come \,$r = \rem{a}{b}$.
 \end{theorem}
 
 \begin{definition}[Numeri primi e composti]
@@ -514,10 +517,10 @@ moltiplicazioni.
 Un metedo assai pi\`u efficiente deriva dalle seguenti relazioni
 (pressoch\`e immediate, se non banali, da dimostrare):
 \begin{eqnarray}
-  a^{2n}   & \congruent & \p{a^2\:\mmodop\:m}^m \mmod m
+  a^{2n}   & \congruent & \p{\rem{a^2}{m}}^m \mmod m
     \label{eq:sq-mul-even}
   \\
-  a^{2n+1} & \congruent & a \p{a^2\:\mmodop\:m}^m \mmod m
+  a^{2n+1} & \congruent & a \p{\rem{a^2}{m}}^m \mmod m
     \label{eq:sq-mul-odd}
 \end{eqnarray}
 %
@@ -531,11 +534,11 @@ tre sequenze di numeri $b_i$, $e_i$, ed $f_i$ come segue:
     b_0 := a &
     f_0 := 1
   \\
-    e_{i+1} := \left\lfloor{\frac{e_i}{2}}\right\rfloor ~~ &
-    b_{i+1} := {b_i}^2\:\mmodop\:m ~~ &
+    e_{i+1} := \floor{\frac{e_i}{2}} ~~ &
+    b_{i+1} := \rem{{b_i}^2}{m} ~~ &
     f_{i+1} := \begin{cases}
              f_i & \text{se $e_i$ pari} \\
-             f_i b_i \:\mmodop\: m & \text{se $e_i$ dispari}
+             \rem{f_i b_i}{m} & \text{se $e_i$ dispari}
            \end{cases}
   \end{array}
 \end{displaymath}
