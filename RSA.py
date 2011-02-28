@@ -298,6 +298,9 @@ class IntegerMod(object):
                 # and thus we can't know if exponent % phi(modulo) == 0.
                 # Just return 0 for the moment.
                 return self.__class__(0)
+        # Implementatione of the "square and multiply" algorithm described
+        # in our latex document.  The `partial1' and `partial2' variables
+        # correspond respectively to the "parameters" b and f used there.
         partial1 = partial2 = self.__class__(1)
         while exponent > 0:
             if exponent % 2 == 1:

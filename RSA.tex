@@ -181,6 +181,7 @@ Dati due interi (non necessariamente positivi) $a$ e $b$ con $b \neq 0$,
 esistono due interi $q$ ed $r$ tali che $a = bq + r$ e $0 \leq r
 < \abs{b}$. Essi sono unici, e sono chiamati rispettivamente
 \emph{quoziente} e \emph{resto} della divisione di $a$ per $b$.
+Il resto si indica, dove conveniente, come \,$r = a\:\mmodop\:b$.
 \end{theorem}
 
 \begin{definition}[Numeri primi e composti]
@@ -493,10 +494,66 @@ ogni $a \in A$ esiste uno ed uno solo $b \in B$ tale che $a \congruent b
 
 %%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-\subsection{Esponenziazione modulo $m$}
+\subsection{Un algoritmo per l'esponenziazione modulo $m$}
 
-Algoritmo ottimizzato (``square-and-multiply''), che abbiamo usato nella
-nostra implementazion python.
+Il metodo pi\`u ``ingenuo'' per calcolare $a^n$ modulo $m$ consiste
+semplicemente nell'effetuare $n$ moltiplicazioni e riduzioni modulo $n$
+succesive, come espresso nel seguente pseudocodice (in cui \verb|x % y|
+indica il resto della divisione intera di \verb|x| per \verb|y|):
+%
+\begin{verbatim}
+    result = 1
+    for i = 1, ... n:
+        result = (result * a) % m
+\end{verbatim}
+
+Ma \`e chiaro che questo algoritmo \`e piuttosto inefficiente, e risulta
+inutilizzabile quando $n$ \`e grande, in quanto esso richiede $n$
+moltiplicazioni.
+
+Un metedo assai pi\`u efficiente deriva dalle seguenti relazioni
+(pressoch\`e immediate, se non banali, da dimostrare):
+\begin{eqnarray}
+  a^{2n}   & \congruent & \p{a^2\:\mmodop\:m}^m \mmod m
+    \label{eq:sq-mul-even}
+  \\
+  a^{2n+1} & \congruent & a \p{a^2\:\mmodop\:m}^m \mmod m
+    \label{eq:sq-mul-odd}
+\end{eqnarray}
+%
+Eccolo in dettaglio:
+\begin{algorithm}[Elevazione a potenza con metodo ``square and multiply'']
+Dati un intero $a$ ed un esponente $n > 0$, definiamo ricorsivamente le
+tre sequenze di numeri $b_i$, $e_i$, ed $f_i$ come segue:
+\begin{displaymath}
+  \begin{array}{lll}
+    e_0 := n &
+    b_0 := a &
+    f_0 := 1
+  \\
+    e_{i+1} := \left\lfloor{\frac{e_i}{2}}\right\rfloor ~~ &
+    b_{i+1} := {b_i}^2\:\mmodop\:m ~~ &
+    f_{i+1} := \begin{cases}
+             f_i & \text{se $e_i$ pari} \\
+             f_i b_i \:\mmodop\: m & \text{se $e_i$ dispari}
+           \end{cases}
+  \end{array}
+\end{displaymath}
+Le sequenze si fermano all'ultimo indice $k$ con $e_k > 0$.  Per tale
+$k$, risulta $e_k = 1$ e $a^m \congruent b_k f_k \mmod m$.  Inoltre,
+$k \leq log_2 n$.
+\end{algorithm}
+
+\begin{proof}
+Usando~\eqref{eq:sq-mul-even} e~\eqref{eq:sq-mul-odd}, si dimostra
+facilmente per induzione che, ad ogni passo, $a^m \congruent b_i f_i
+\mmod m$, da cui la prima parte della tesi ponendo $i = k$.  Inoltre,
+se fosse $e_k \geq 2$, avremmo $e_{k+1} \geq 1$, e $k$ non sarebbe
+l'ultimo indice con $e_k > 0$, assurdo.  Infine, \`e evidente che
+per ogni indice $i$ si ha $e_{i+1} \leq \frac{e_i}{2}$, da cui segue
+facilmente per induzione che $2^i e_i \leq e_0 = n$, e quindi che
+$2^k = 2^k e_k \leq n \implies k \leq log_2 n$.
+\end{proof}
 
 %%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
