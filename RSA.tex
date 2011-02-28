@@ -34,8 +34,6 @@
 
 \newcommand{\TFA}{teorema fondamentale dell'aritmetica}
 
-\renewcommand{\phi}{\varphi}
-
 \newcommand{\XXX}[1][XXX]{\text{\bfseries{\color{red}{\emph{#1}}}}}
 \newcommand{\TODO}[0]{\XXX[TODO]}
 \newcommand{\FIXME}[0]{\XXX[FIXME]}
@@ -51,6 +49,9 @@
 \newcommand{\abs}[1]{\left|{#1}\right|}
 \newcommand{\card}[1]{\abs{#1}}
 \newcommand{\varcard}[2][\,]{\pmb{\#}{#1}{#2}}
+
+\renewcommand{\phi}{\varphi}
+\newcommand{\ephi}[1]{\ensuremath{\phi\p{#1}}}
 
 \newcommand{\N}[0]{\mathbb{N}}
 \newcommand{\Z}[0]{\mathbb{Z}}
@@ -713,7 +714,7 @@ seconda dimostrazione del teorema di Fermat.}:
 
 \begin{theorem}[Teorema di Eulero]\label{thm:euler}
   Sia $m$ un intero positvo. Allora, per ogni $a \in \Z$ con
-  $\gcd{a}{m} = 1$, risulta\, $a^{\phi(m)} \congruent 1 \mmod m$.
+  $\gcd{a}{m} = 1$, risulta\, $a^{\ephi{m}} \congruent 1 \mmod m$.
 \end{theorem}
 
 \noindent
@@ -722,19 +723,19 @@ Ma a noi interessa una diversa (e meno nota) generalizzazione:
 \begin{theorem}[Teorema di Eulero per RSA]\label{thm:euler-rsa}
 Se $m$ \`e prodotto di due primi \emph{distinti} ed $a$ un intero
 qualunque (anche non coprimo con $m$), allora risulta:
-  $$ a^{k\,\phi(m) + 1} \congruent a \mmod m $$
+  $$ a^{k\,\ephi{m} + 1} \congruent a \mmod m $$
 per ogni intero $k$.
 \end{theorem}
 %
 \begin{proof}
 Sia $a$ un intero qualunque.  Allora, se $p \notdivides a$, dal teorema
 di Fermat deriva che $a^{p-1} \congruent 1 \mmod p$, e quindi
-$a^{k\phi(m)} = a^{k(p-1)(q-1)} = {\p{a^{p-1}}}^{k(q-1)} \congruent
+$a^{k\ephi{m}} = a^{k(p-1)(q-1)} = {\p{a^{p-1}}}^{k(q-1)} \congruent
 1^{k(q-1)} \congruent 1 \mmod p$.  D'altra parte, se $p \divides a$,
-allora $a^{k\phi(m) + 1} \congruent 0^{k\phi(m) + 1} = 0 \congruent a
-\mmod p$. In ogni caso, $a^{k\phi(m) + 1} \congruent a \mmod p$.
-Similamente, $a^{k\phi(m) + 1} \congruent a \mmod q$, e quindi, essendo
-$p$ e $q$ coprimi (in quanto primi distinti), $a^{k\phi(m) + 1}
+allora $a^{k\ephi{m} + 1} \congruent 0^{k\ephi{m} + 1} = 0 \congruent a
+\mmod p$. In ogni caso, $a^{k\ephi{m} + 1} \congruent a \mmod p$.
+Similamente, $a^{k\ephi{m} + 1} \congruent a \mmod q$, e quindi, essendo
+$p$ e $q$ coprimi (in quanto primi distinti), $a^{k\ephi{m} + 1}
 \congruent a \mmod{pq}$,
 ossia$\mmod m$. % *deliberately* no space after "ossia"!
 \end{proof}
@@ -764,8 +765,8 @@ corollario del teorema di Eulero, la cui dimostrazione \`e immediata:
 
 \begin{corollary}
 Sia $n = pq$ prodotto di due primi distinti, sia $e$ un intero primo con
-$\phi(n) = (p-1)(q-1)$, e sia $d$ il suo inverso modulo $\phi(n)$.  Allora
-$m^{ed} \congruent m \mmod n$ per ogni intero $m$.
+$\ephi{n} = (p-1)(q-1)$, e sia $d$ il suo inverso modulo $\ephi{n}$.
+Allora $m^{ed} \congruent m \mmod n$ per ogni intero $m$.
 \end{corollary}
 
 \TODO: come criptare/decriptare un intero con RSA.
