@@ -706,7 +706,30 @@ e la tesi \`e dunque vera anche per $a + 1$.
 
 \subsection{Funzione $\phi$ e teoremi di Eulero}
 
-\TODO: Funzione $\phi$ di Eulero: defn and properties.
+\begin{definition}[Funzione $\phi$ di Eulero.]
+Dato un intero positivo $m$, indichiamo con $\ephi{m}$ il numero di interi
+positivi $\leq m$ e primi con $m$.
+\end{definition}
+
+\noindent
+La funzione di Eulero gode delle seguenti propriet\`a\footnote{Poich\`e
+RSA richiede l'uso della funzione di Eulero solo nel caso $m = pq$ (con
+$p$, $q$ primi distinti), non avremo bisogno di utilizzare le propriet\`a
+propriet\`a non banali qui enunciate, quindi evitiamo di dimostrarle o di
+soffermarci oltre.}:
+\begin{enumerate}
+  \item
+    Si ha $\ephi{1} = 1$.
+  \item
+    Se $p$ \`e primo, $\ephi{p^n} = p^{n-1} (p - 1)$; in particolare,
+    $\ephi{p} = p - 1$.
+  \item
+    Se $m_1$ ed $m_2$ sono coprimi, risulta
+    $\ephi{m_1 m_2} = \ephi{m_1} \ephi{m_2}$.
+  \item
+    Ogni sistema completo di residui modulo $m$ contiene esattamente
+    $\ephi{m}$ interi primi con $m$.
+\end{enumerate}
 
 La funzione di Eulero permette di ottenerare una nota generalizzazione
 del teorema di Fermat\footnote{La cui dimostrazione ricalca la nostra
