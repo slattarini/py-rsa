@@ -720,20 +720,22 @@ seconda dimostrazione del teorema di Fermat.}:
 Ma a noi interessa una diversa (e meno nota) generalizzazione:
 
 \begin{theorem}[Teorema di Eulero per RSA]\label{thm:euler-rsa}
-Se $m$ \`e prodotto di due primi \emph{distinti}, allora risulta
-$a^{\phi(m) + 1} \congruent a \mmod m$ per \emph{ogni} intero $a$
-(anche non coprimo con $m$).
+Se $m$ \`e prodotto di due primi \emph{distinti} ed $a$ un intero
+qualunque (anche non coprimo con $m$), allora risulta:
+  $$ a^{k\,\phi(m) + 1} \congruent a \mmod m $$
+per ogni intero $k$.
 \end{theorem}
 %
 \begin{proof}
 Sia $a$ un intero qualunque.  Allora, se $p \notdivides a$, dal teorema
 di Fermat deriva che $a^{p-1} \congruent 1 \mmod p$, e quindi
-$a^{\phi(m)} = a^{(p-1)(q-1)} = {\p{a^{p-1}}}^{q-1} \congruent 1^{q-1}
-\congruent 1 \mmod p$.  D'altra parte, se $p \divides a$, allora
-$a^{\phi(m) + 1} \congruent 0^{\phi(m) + 1} = 0 \congruent a \mmod p$.
-In ogni caso, $a^{\phi(m) + 1} \congruent a \mmod p$.  Similamente,
-$a^{\phi(m) + 1} \congruent a \mmod q$, e quindi, essendo $p$ e $q$ coprimi
-(in quanto primi distinti), $a^{\phi(m) + 1} \congruent a \mmod{pq}$,
+$a^{k\phi(m)} = a^{k(p-1)(q-1)} = {\p{a^{p-1}}}^{k(q-1)} \congruent
+1^{k(q-1)} \congruent 1 \mmod p$.  D'altra parte, se $p \divides a$,
+allora $a^{k\phi(m) + 1} \congruent 0^{k\phi(m) + 1} = 0 \congruent a
+\mmod p$. In ogni caso, $a^{k\phi(m) + 1} \congruent a \mmod p$.
+Similamente, $a^{k\phi(m) + 1} \congruent a \mmod q$, e quindi, essendo
+$p$ e $q$ coprimi (in quanto primi distinti), $a^{k\phi(m) + 1}
+\congruent a \mmod{pq}$,
 ossia$\mmod m$. % *deliberately* no space after "ossia"!
 \end{proof}
 
