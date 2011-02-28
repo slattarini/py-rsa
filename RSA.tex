@@ -760,10 +760,17 @@ eligibili per essere processati da RSA.
 \subsection{Basi teoriche}
 
 Il fondamento del crittosistem \'e offerto dal seguente semplice
-corollario del teorema di Eulero:
+corollario del teorema di Eulero, la cui dimostrazione \`e immediata:
+
+\begin{corollary}
+Sia $n = pq$ prodotto di due primi distinti, sia $e$ un intero primo con
+$\phi(n) = (p-1)(q-1)$, e sia $d$ il suo inverso modulo $\phi(n)$.  Allora
+$m^{ed} \congruent m \mmod n$ per ogni intero $m$.
+\end{corollary}
 
 \TODO: come criptare/decriptare un intero con RSA.
-\TODO: simmetria fra criptazione e decriptazione.
+
+\TODO: simmetria fra criptazione e decriptazione (utile in firme digitali).
 
 \subsection{Un esempio basilare dell'uso di RSA}
 
