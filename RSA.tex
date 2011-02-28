@@ -545,7 +545,7 @@ tre sequenze di numeri $b_i$, $e_i$, ed $f_i$ come segue:
 \end{displaymath}
 Le sequenze si fermano all'ultimo indice $k$ con $e_k > 0$.  Per tale
 $k$, risulta $e_k = 1$ e $a^m \congruent b_k f_k \mmod m$.  Inoltre,
-$k \leq log_2 n$.
+$k \leq \log_2 n$.
 \end{algorithm}
 
 \begin{proof}
@@ -556,7 +556,7 @@ se fosse $e_k \geq 2$, avremmo $e_{k+1} \geq 1$, e $k$ non sarebbe
 l'ultimo indice con $e_k > 0$, assurdo.  Infine, \`e evidente che
 per ogni indice $i$ si ha $e_{i+1} \leq \frac{e_i}{2}$, da cui segue
 facilmente per induzione che $2^i e_i \leq e_0 = n$, e quindi che
-$2^k = 2^k e_k \leq n \implies k \leq log_2 n$.
+$2^k = 2^k e_k \leq n \implies k \leq \log_2 n$.
 \end{proof}
 
 %%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
