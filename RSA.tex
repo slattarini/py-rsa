@@ -1,18 +1,11 @@
 % -*- LaTeX -*-
 
-\newif\ifoneside
-\onesidetrue
-
 \newif\ifuselinks
 \uselinkstrue
 
 \IfFileExists{RSA-ifuselinks.tex}{\input{RSA-ifuselinks.tex}}{}
 
-\ifoneside
-  \documentclass[pdflatex,11pt,a4paper,oneside]{article}
-\else
-  \documentclass[pdflatex,11pt,a4paper]{article}
-\fi
+\documentclass[pdflatex,11pt,a4paper,oneside]{article}
 
 %%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -107,12 +100,6 @@
 \fancyhf{} % clear all header fields
 \fancyhead[RO]{\bfseries\thepage}
 \fancyhead[LO]{\bfseries\rightmark}
-\ifoneside
-  \relax
-\else
-  \fancyhead[RE]{\bfseries\leftmark}
-  \fancyhead[LE]{\bfseries\thepage}
-\fi
 \fancyfoot{} % clear all footer fields
 \renewcommand{\headrulewidth}{0.5pt}
 \renewcommand{\footrulewidth}{0pt}
