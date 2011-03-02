@@ -13,9 +13,12 @@
 \usepackage{fancyhdr}
 \usepackage{verbatim}
 \usepackage{amsfonts,mathrsfs,amsmath,amssymb,amstext,amsthm}
+\usepackage{graphicx}
 \usepackage{xcolor}
 
 \usepackage[perpage,symbol]{footmisc}
+
+\DeclareGraphicsExtensions{.png,.pdf,.jpg,.jpeg}
 
 % hyperref should be the last package to be loaded.
 \ifuselinks\usepackage{hyperref}\fi
@@ -830,23 +833,87 @@ oltre.
 
 \section{Il crittosistema RSA}
 
-\subsection{Generalit\`a}
+\subsection{Generalit\`a sulla crittografia asimmetrica}
 
-Crittografia a chiave pubblica (trap function? Diffie-Hellmann?).
+Il carettere distintivo della \emph{crittografia asimmetrica} (o
+\emph{crittografia a chiave pubblica}) consiste nell'uso di algoritmi
+basati sull'uso di \emph{chiavi asimmetriche}, in cui la chiave usata
+per criptare un messaggio non \`e la stessa chiave necessaria poi a
+decriptarlo.  La chiave di criptazione \`e resa pubblica, metre la chiave
+di decrittazione deve rimanere privata, ossia nota solo al destinatario
+dei messagi criptati. In genere, le due chiavi nella coppia
+pubblica/privata sono matematicamente correlate, ma \`e ovviamente
+\emph{imperativo} che la chiave privata non sia nella pratica ottenibile
+dalla chiave pubblica.
+
+\medskip
+L'idea base della crittografia asimmetrica pu\`o essere resa pi\`u
+intuitiva con l'uso di un'analogia ``postale'', in cui il mittente \`e
+Alice, il destinatario \`e Bob, i lucchetti fanno le veci delle chiavi,
+pubbliche e le chiavi recitano la parte delle chiavi private.
+
+Alice chiede a Bob di spedirle il suo lucchetto, gi\`a aperto. La chiave
+dello stesso verr\`a per\`o gelosamente conservata da Bob. Alice riceve
+il lucchetto e, con esso, chiude il pacco e lo spedisce a Bob. Bob riceve
+il pacco e pu\`o aprirlo con la chiave di cui \`e l'unico proprietario.
+Similamente, se adesso Bob volesse mandare un altro pacco ad Alice,
+dovrebbe farlo chiudendolo con il lucchetto di Alice (che lei dovrebbe
+aver preventivamente dato a Bob) che solo lei potrebbe aprire.
+
+\begin{figure}[!h]
+  \centering
+    \includegraphics[scale=0.5]{pubkey-postal-analogy}
+    \caption{Analogia ``postale'' della crittografia a chiave pubblica}
+    \label{fig:pubkey-postal-analogy}
+\end{figure}
+
+
+Si pu\`o notare come per mettere in sicurezza il contenuto dei pacchi
+ci sia bisogno del lucchetto del destinatario, mentre per aprirli viene
+usata esclusivamente la propria chiave segreta, rendendo l'intero processo
+di cifratura/decifratura asimmetrico (una chiave per cifrare ed una
+differente per decifrare). Chiunque intercettasse il lucchetto (aperto)
+o il messaggio chiuso con il lucchetto non potrebbe leggerne il contenuto
+poich\`e non ha la chiave.
+
+\medskip
+Uno dei vantaggi della crittografia asimmetrica sta nel fatto che le
+chiavi pubbliche possono essere scambiate anche utilizzando canali di
+trasmissione insicuri (come ad esmpio una connessione ad Internet non
+protetta). Nella crittografia simmetrica invece si rende necessario
+utilizzare un canale sicuro per la trasmissione della chiave, poich\`e
+l'intercettazione della stessa da parte di terzi vanificherebbe la
+sicurezza del sistema stesso.
+
+\medskip
+\`E evidente che gli algoritmi asimmetrici devono essere realizzati in
+modo tale da assicurare che la conoscenza della chiave pubblica e
+dell'algoritmo stesso non siano sufficienti per risalire (in modo
+pratico) alla chiave privata. Inoltre, poich\`e chiunque (compreso
+un attaccante) \`e in grado di criptare messaggi arbitrari con la
+chiave pubblica, gli algoritmi asimmetrici non devono essere
+suscettibili ad attacchi di tipo ``chosen-plaintext'', in cui cio\`e
+un attaccante pu\`o scegliere un messaggio (o pi\`u messaggi) in
+chiaro $M$, ottenerne il rispettivo messaggio crittato $C$, e usare
+questa corrispondenza per dedurne la chiave di decriptazione (o
+informazioni su di essa).
+
+\subsection{Generalit\`a sulla crittosistem RSA}
+
 RSA: basato su semplici operazioni di aritmetica modulare. Opera su
 interi di grandezza limitata; spiegare come generiche sequenze di
 bytes possono essere convertite da/a proprie sequenze di interi
 eligibili per essere processati da RSA.
 
-\subsection{Basi teoriche}
+\subsection{Basi teoriche di RSA}
 
 Il fondamento del crittosistem \'e offerto dal seguente semplice
 corollario del teorema di Eulero, la cui dimostrazione \`e immediata:
 
 \begin{corollary}
 Sia $n = pq$ prodotto di due primi distinti, sia $e$ un intero primo con
-$\ephi{n} = (p-1)(q-1)$, e sia $d$ il suo inverso modulo $\ephi{n}$.
-Allora $m^{ed} \congruent m \mmod n$ per ogni intero $m$.
+$\ephi{n}$, e sia $d$ il suo inverso modulo $\ephi{n}$. Allora $m^{ed}
+\congruent m \mmod n$ per ogni intero $m$.
 \end{corollary}
 
 \TODO: come criptare/decriptare un intero con RSA.
