@@ -43,6 +43,7 @@
 \newcommand{\card}[1]{\abs{#1}}
 \newcommand{\varcard}[2][\,]{\pmb{\#}{#1}{#2}}
 
+\let\gold=\phi
 \renewcommand{\phi}{\varphi}
 \newcommand{\ephi}[1]{\ensuremath{\phi\p{#1}}}
 
@@ -350,8 +351,78 @@ Dunque, riprendendo la catena di divisioni dell'algoritmo, avremo:
 dove l'ultima uguaglianza deriva dal fatto che $r_{n+1} \divides r_n$.
 \end{proof}
 
+%%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+\subsection{Efficienza dell'algoritmo di Euclide}
+
+\begin{theorem}[Efficienza dell'algoritmo di Euclide]
+Siano $a > b > 0$ due interi; allora l'algoritmo di Euclide
+applicato al calcolo di $\gcd{a}{b}$ termina in al pi\`u
+\,$1 + \floor{5 \log_{11} b}$\, passi.
+\end{theorem}
+
+\smallskip
 \noindent
-\TODO: Magari mostrare efficienza dell'algoritmo di Euclide?
+Per la dimostrazione, utilizzeremo la ben nota \emph{serie di Fibonacci}.
+
+\begin{definition}[Serie di Fibonacci]
+La serie dei numeri di Fibonacci \`e definita per ricorsione come segue:
+  \begin{itemize}
+    \item $F_0 := 1$,~~$F_1 := 1$
+    \item $F_{i+1} := F_i + F_{i-1}$
+  \end{itemize}
+\end{definition}
+
+\begin{lemma}
+Per ogni $n \geq 0$ si ha $F_n \geq \gold^{n-1}$, ove $\gold :=
+\frac{1 + \sqrt{5}}{2}$ \`e la sezione aurea.
+\end{lemma}
+%
+\begin{proof}
+Procediamo per induzione su $n$, i casi $n = 0$ ed $n = 1$ essendo banali.
+Un semplice calcolo diretto mostra che $\gold^2 = \gold + 1$, cosicch\`e
+$\gold^{n} = \gold^{n-1} + \gold^{n-2}$.  Allora, assumendo la tesi vera
+per tutti gli interi $\leq n$, si ottiene:
+  $$F_{n+1} = F_n + F_{n-1} \geq \gold^{n-1} + \gold^{n-2} = \gold^{n}$$
+cosicch\`e la tesi \`e vera anche per $n + 1$.
+\end{proof}
+
+\begin{lemma}\label{lem:euclid-least-number-of-passes}
+I pi\`u piccoli interi $a$, $b$ con $a > b > 0$ per cui l'algoritmo di
+Euclide richiede $N$ passi sono rispettivamente i numeri di Fibonacci
+$F_{N+1}$ ed $F_{N}$.
+\end{lemma}
+%
+\begin{proof}
+Innanzitutto, \`e facile verificare direttamente (per induzione) che
+l'algoritmo di Euclide applicato ai numeri di Fibonacci $F_{N+1}$ ed
+$F_{N}$ richiede effettivamente $N$ passi.
+
+Dobbiamo quindi solo dimostrare che $a \geq F_{N+1}$ e $b \geq F_N$.
+Procediamo per induzione su $N$. Se $N = 1$, la tesi si riduce ad
+$a \geq 2$ e $b \geq 1$, che \`e banalmente vero essendo $a > b > 0$.
+Supponiamo ora la tesi vera per un certo $N$, e siano $a > b$ tali da
+richiedere $N + 1$ passi. Il primo passo dell'algoritmo si ci d\`a
+$a = qb + r$ con $q > 0$ ed $0 < r < b$; \`e dunque chiaro che $b$ ed
+$r$ sono tali che $b > r$ e l'algoritmo applicato ad essi richiede
+$N$ passi; cosicch\`e $b \geq F_{N+1}$ e $r \geq F_N$ per l'ipotesi
+induttiva. Ma allora:
+ $$ a = qb + r \geq b + r \geq F_{N+1} + F_N = F_{N+2}$$
+e abbiamo finito.
+\end{proof}
+
+\begin{proof}[Dimostrazione dell'efficienza dell'algoritmo di Euclide]
+Supponiamo che $a > b > 0$ richiedano $N$ passi.  Allora dal
+lemma~\eqref{lem:euclid-least-number-of-passes} deriva che $b \geq F_N$,
+da cui \emph{a fortiori} $b \geq \gold^{N-1}$.  Ora, si verifica
+facilmente con calcoli diretti che $\gold^5 > 11$, cosicch\`e:
+\begin{displaymath}
+ b^5 \geq \gold^{5(N-1)} > 11^{N-1}
+   \implies N - 1 < 5 \log_{11} b
+   \implies N - 1 \leq \floor{5 \log_{11} b}
+\end{displaymath}
+ed abbiamo finito.
+\end{proof}
 
 %%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
