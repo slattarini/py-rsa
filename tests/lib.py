@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
 # This file is part of RSA.py testsuite.
 
 """Helper subroutines and classes for the RSA.py's testsuite"""

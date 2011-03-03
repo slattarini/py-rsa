@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
 # This file is part of RSA.py testsuite.
 
 """Tests for our implementation of RSA applied to generic sequences
