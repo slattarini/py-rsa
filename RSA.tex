@@ -587,6 +587,7 @@ Un metedo assai pi\`u efficiente deriva dalle seguenti relazioni
 %
 Eccolo in dettaglio:
 \begin{algorithm}[Elevazione a potenza con metodo ``square and multiply'']
+\label{alg:square-and-multiply}
 Dati un intero $a$ ed un esponente $n > 0$, definiamo ricorsivamente le
 tre sequenze di numeri $b_i$, $e_i$, ed $f_i$ come segue:
 \begin{displaymath}
@@ -898,16 +899,14 @@ chiaro $M$, ottenerne il rispettivo messaggio criptato $C$, e usare
 questa corrispondenza per dedurne la chiave di decriptazione (o
 informazioni su di essa).
 
-\subsection{Generalit\`a sulla crittosistem RSA}
+\subsection{Generalit\`a e basi teoriche del crittosistem RSA}
 
-RSA: basato su semplici operazioni di aritmetica modulare. Opera su
-interi di grandezza limitata; spiegare come generiche sequenze di
-bytes possono essere convertite da/a proprie sequenze di interi
-eligibili per essere processati da RSA.
+RSA \`e un crittosistema a chiave pubblica i cui algoritmi sono basati
+su semplici operazioni di aritmetica modulare (in particolare,
+l'esponenziazione).
 
-\subsection{Basi teoriche di RSA}
-
-Il fondamento del crittosistem \'e offerto dal seguente semplice
+\smallskip
+Il fondamento del crittosistem \`e offerto dal seguente semplice
 corollario del teorema di Eulero, la cui dimostrazione \`e immediata:
 
 \begin{corollary}
@@ -916,9 +915,49 @@ $\ephi{n}$, e sia $d$ il suo inverso modulo $\ephi{n}$. Allora $m^{ed}
 \congruent m \mmod n$ per ogni intero $m$.
 \end{corollary}
 
-\TODO: come criptare/decriptare un intero con RSA.
+\smallskip\noindent\TODO: RSA punto per punto.
+
+La chiave pubblica consiste della coppia $(n,\ e)$, e la chiave privata
+consiste della terna $(p,q,e)$.
+
+\TODO: immediato ricavare pubblica da privata; l'opposto deve essere
+infattibile in pratica!
+
+\subsection{RSA per messaggi binari qualunque}
+
+Dalla precedente sezione deriva chiaramente che l'algoritmo RSA
+``semplice'' \`e in grado di operare solo su numer interi limitati,
+ossia i possibili ``messaggi'' sono tutti e soli gli interi $m$ tali che
+$0 \leq m < n$ (la loro massima grandezza dipende quindi dal modulo $n$
+della chiave).
+
+Tuttavia, nella pratica, si \`e generalemnte interessati a criptare
+generiche sequenze di bytes\footnote{Con le quali, nei moderni sistemi
+informativi, tutto \`e rappresentabile.}.  Il metedo pi\`u semplice per
+far ci\`o consiste nel complementare l'algoritmo RSA con protocolli e
+algoritmi in grado di convertire efficientemente input ed output binari
+\emph{da} ed \emph{in} sequenze di interi di grandezza massima prestabilita.
+
+Descriviamo di seguito i semplici algoritmi di conversioni di tale tipo
+utilizzati nella nostra implementazione di RSA.
+
+\begin{algorithm}[Conversioni tra plaintext e sequenze di interi]
+\TODO
+\end{algorithm}
+
+\begin{algorithm}[Conversioni tra ciphertext e sequenze di interi]
+\TODO
+\end{algorithm}
+
+\subsection{Propriet\`a basilari di RSA}
 
 \TODO: simmetria fra criptazione e decriptazione (utile in firme digitali).
+\\
+\TODO: ragionevole efficienza, dovuta all'uso
+       dell'algoritmo~\eqref{alg:square-and-multiply}
+       ``square and multiply'' per l'esponenziazone modulare
+\\
+\TODO: ottimizzazione con teorema cinese del resto
 
 \subsection{Un esempio basilare dell'uso di RSA}
 
