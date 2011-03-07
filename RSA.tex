@@ -909,7 +909,7 @@ l'esponenziazione).
 Il fondamento del crittosistem \`e offerto dal seguente semplice
 corollario del teorema di Eulero, la cui dimostrazione \`e immediata:
 
-\begin{corollary}
+\begin{corollary}\label{cor:euler-for-rsa}
 Sia $n = pq$ prodotto di due primi distinti, sia $e$ un intero primo con
 $\ephi{n}$, e sia $d$ il suo inverso modulo $\ephi{n}$. Allora, per ogni
 intero $m$, risulta\, $m^{ed} \congruent m \mmod n$.
@@ -918,18 +918,47 @@ intero $m$, risulta\, $m^{ed} \congruent m \mmod n$.
 \smallskip\noindent
 Ecco ora il procedimento con cui determinare coppied di chiavi per RSA%
 \footnote{Non descriveremo con precisione gli algoritmi collegati a tale
-rocedimento, poich\`e essi non sono stati implementati nel nostro modulo
-pythone.}:
+procedimento, poich\`e essi non sono stati implementati nel nostro modulo
+python.}:
 \begin{enumerate}\label{enum:rsa-keys}
-\item \TODO
-\item \TODO
+ \item Si scelgono due numeri primi $p$ e $q$.
+ \item Si calcola $n := pq$.
+ \item Si calcola $\ephi{n} =  (p - 1) (q - 1) = n - p - q + 1$.
+ \item Si sceglie un intero $e$ con \,$0 < e < \ephi{n}$\, e\,
+       $\gcd{e}{\ephi{n}} = 1$.
+ \item Si calcola l'intero $d$ tale che $0 < d < \ephi{n}$ e
+       $ed \congruent 1 \mmod {\ephi{n}}$.
+ \item La coppia $(n,\,e)$ costituisce la chiave pubblica.
+ \item La terna $(p,\,q,\,d)$ costituisce la chiave privata.
 \end{enumerate}
 
-La chiave pubblica consiste della coppia $(n,\,e)$, e la chiave
-privata consiste della terna $(p,\,q,\,e)$.
+Si noti che, grazie all'algoritmo di Euclide esteso, ricavare la
+chiave privata a partire dalla dalla chiava pubblica \`e facile ed
+efficiente. D'altra parte, come visto nella precedente sezione,
+affinc\`e il crittosistema RSA funzioni, \`e necessario che il
+viceversa (ossia ricavare la chiave privata dalla chiave pubblica)
+sia pressoch\`e impossibile in pratica. Diremo di pi\`u a questo
+proposito nella successiva sezione~\eqref{subset:rsa-properties}.
 
-\TODO: immediato ricavare pubblica da privata; l'opposto deve essere
-infattibile in pratica!
+\begin{algorithm}[Criptazione e decriptazione con RSA]
+I messaggi che \`e possibile criptare e/o decriptare con una coppia
+di chiavi RSA $(p,\,q,\,d)$ e $(n,\,e)$ consistono degli interi positivi
+$m$ con $0 \leq m < n$. Per \emph{criptare} un intero ``in chiaro'' $m$,
+si calcola:
+\begin{equation}\label{eq:rsa-crypt}
+  c = \rem{m^e}{n}
+\end{equation}
+mentre per \emph{decriptare} un intero ``criptato'' $c$ si calcola:
+\begin{equation}\label{eq:rsa-decrypt}
+  m = \rem{c^d}{n}
+\end{equation}
+\end{algorithm}
+
+La correttezza dell'algoritmo deriva facilmente dal
+corollario~\eqref{cor:euler-for-rsa}.  Infatti, se $c$ \`e il
+risultato della criptazione di $m$, si ha:
+  $$c^d \congruent {\p{m^e}}^d \congruent m^{ed} \congruent m \mmod n$$
+cosicch\`e decrittando $c$ si ri-ottiene davvero $m$.
 
 \subsection{RSA per messaggi binari qualunque}
 
@@ -957,7 +986,7 @@ utilizzati nella nostra implementazione di RSA.
 \TODO
 \end{algorithm}
 
-\subsection{Propriet\`a basilari di RSA}
+\subsection{Propriet\`a basilari di RSA}\label{subset:rsa-properties}
 
 \TODO: simmetria fra criptazione e decriptazione (utile in firme digitali).
 \\
