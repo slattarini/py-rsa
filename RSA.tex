@@ -911,14 +911,22 @@ corollario del teorema di Eulero, la cui dimostrazione \`e immediata:
 
 \begin{corollary}
 Sia $n = pq$ prodotto di due primi distinti, sia $e$ un intero primo con
-$\ephi{n}$, e sia $d$ il suo inverso modulo $\ephi{n}$. Allora $m^{ed}
-\congruent m \mmod n$ per ogni intero $m$.
+$\ephi{n}$, e sia $d$ il suo inverso modulo $\ephi{n}$. Allora per ogni
+intero $m$ risulta $m^{ed} \congruent m \mmod n$.
 \end{corollary}
 
-\smallskip\noindent\TODO: RSA punto per punto.
+\smallskip\noindent
+Ecco ora il procedimento con cui determinare coppied di chiavi per RSA%
+\footnote{Non descriveremo con precisione gli algoritmi collegati a tale
+rocedimento, poich\`e essi non sono stati implementati nel nostro modulo
+pythone.}:
+\begin{enumerate}\label{enum:rsa-keys}
+\item \TODO
+\item \TODO
+\end{enumerate}
 
-La chiave pubblica consiste della coppia $(n,\ e)$, e la chiave privata
-consiste della terna $(p,q,e)$.
+La chiave pubblica consiste della coppia $(n,\,e)$, e la chiave
+privata consiste della terna $(p,\,q,\,e)$.
 
 \TODO: immediato ricavare pubblica da privata; l'opposto deve essere
 infattibile in pratica!
