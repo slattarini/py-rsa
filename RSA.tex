@@ -993,7 +993,116 @@ scopi.
 
 \subsection{Un esempio basilare dell'uso di RSA}
 
-\TODO: see \verb+http://en.wikipedia.org/wiki/RSA#A_working_example+
+Presentiamo qui un semplice esempio dell'uso di RSA\footnote{Questo
+esempio \`e in effetti spudoratamente copiato da Wikipedia, ma visto
+che \`e usato anche nei nostri test python, non ci facciamo scrupolo
+a ``ripresentarlo''.}. Si noti che i parametri qui utilizzati sono
+artificialmente piccoli, per evitare che dettagli e calcoli complessi
+oscurino l'esposizione. Nella pratica, i parametri coinvolti hanno
+in genere centinaia di cifre decimali.
+
+Iniziamo generando una coppia di chiavi. Scegliamo innanzitutto due numeri
+primi distinti $p = 61$ e $q = 53$, e calcoliamo $n = 61 \cdot 53 = 3233$
+e $\ephi{n} = (61 − 1)(53 − 1) = (61 − 1)(53 − 1) = 3120$. Dobbiamo ora
+scegliere un numero $1 < e < 3120$ che sia coprime con $3120$; sia dunque
+ $e = 17$, che come si vede facilmente \`e primo con $3120$.
+
+\noindent
+Usiamo ora l'algoritmo di Euclide esteso per calcolare l'inverso
+moltiplicativo modulo $3120$ di $17$:
+
+\begin{displaymath}
+  \begin{array}{r@{~=~}r@{\:\cdot\:}r@{~+~}r}
+  3120 & 183 & 17 & 9, \\
+    17 &   1 &  9 & 8, \\
+     9 &   1 &  8 & 1, \\
+  \end{array}
+\end{displaymath}
+da cui:
+\begin{eqnarray*}
+    1 & = & 1 \cdot 9 - 8 ~= \\
+      & = & 1 \cdot 9 - \p{ 17 - 1 \cdot 9 }
+      ~ = ~ 2 \cdot 9 - 17 ~= \\
+      & = & 2 \cdot \p{ 3120 - 183 \cdot 17 } - 17
+      ~ = ~ 2 \cdot 3120 - 367 \cdot 17
+\end{eqnarray*}
+e quindi $d = \p{\rem{-367}{3120}} = 3120 - 367 = 2753$.
+
+\smallskip\noindent
+Dunque la chiave pubblica \`e \,$(3233,\;17)$\, e la chiave privata
+\`e \,$(61,\;53,\;2753)$.
+
+\medskip\noindent
+Possiamo ora criptare il numero $m = 65$, ossia calcolare
+$\rem{{65}^{17}}{3233}$. Per far ci\`o, utilizzeremo l'algoritmo ``square
+and multiply'', il che ricalca la nostra implementazione in python del
+processo di criptazione RSA. Operando modulo $3233$ abbiamo:
+\begin{eqnarray*}
+c & \congruent\!\! &
+    65^{17} = {\p{{65^2}}}^8 \cdot 65 = 4225^8 \cdot 65
+    \congruent 992^8 \cdot 65 = 984064^4 \cdot 65 \congruent
+  \\
+  & \congruent\!\! &
+    1232^4 \cdot 65 = 1517824^2 \cdot 65 = 1547^2 \cdot 65
+    = 2393209 \cdot 65 \congruent
+  \\
+  & \congruent\!\! &
+    789 \cdot 65 = 51285 \congruent 2790
+\end{eqnarray*}
+
+\noindent
+Vorremo poi decriptare $c = 2790$, e verificare che il risulato \`e
+proprio $m = 65$ come ci si aspetterebbe. A tale scopo dobbiamo
+effettuare il pi\`u complesso calcolo $\rem{2790^{2753}}{3233}$.
+Sempre seguendo da vicino la nostra implementazione python, calcoliamo
+innanzitutto $\rem{2790^{2753}}{61}$ e $\rem{2790^{2753}}{53}$.
+
+\noindent
+Essendo $2790 \congruent 45 \mmod{61}$ e $2753 \congruent 53 \mmod{60}$,
+operando modulo $61$ abbiamo:
+\begin{eqnarray*}
+m_{61}
+  & \congruent\!\! &
+    2790^{2753} \congruent {45}^{53} = \p{{45}^2}^{26} \cdot 45
+    = 1764^{26} \cdot 45  \congruent 12^{26} \cdot 45 =
+  \\
+  & =\!\! &
+    144^{13} \cdot 45 \congruent 22^{13} \cdot 45
+    = 22^{12} \cdot \p{22 \cdot 45} = {484}^6 \cdot 990
+    \congruent {57}^6 \cdot 14 \congruent
+  \\
+  &\congruent\!\! &
+    16^3 \cdot 14 = 16^2 \cdot \p{16 \cdot 14} = 256 \cdot 224
+    \congruent 12 \cdot 41 = 492 \congruent 4 \mmod{61}
+\end{eqnarray*}
+
+\noindent
+Similamente, essendo $2790 \congruent 34 \mmod{53}$ e
+$2753 \congruent 49 \mmod{52}$, operando modulo $53$ abbiamo:
+\begin{eqnarray*}
+m_{53}
+  & \congruent\!\! &
+    2790^{2753} \congruent {34}^{49} = \p{{34}^2}^{24} \cdot 34 =
+    1156^{24} \cdot 34 \congruent 43^{24} \cdot 34 =
+  \\
+  & =\!\! &
+    1849^{12} \cdot 34 \congruent 47^{12} \cdot 34 = {2209}^6 \cdot 34
+    \congruent 36^6 \cdot 34 = 1296^3 \cdot 34 \congruent
+  \\
+  & \congruent\!\! &
+    24^3 \cdot 34 = 24^2 \cdot \p{24 \cdot 34} = 576 \cdot 816 = 470016
+    \congruent 12 \mmod{53}
+\end{eqnarray*}
+
+\noindent
+Quindi, poich\`e $61 \cdot 20 - 53 \cdot 23 = 1$\footnote{Ci\`o deriva
+ancora dall'algoritmo di Euclide esteso, ma questa volta omettiamo i
+dettagli}, dal teorema{\XXX} ricaviamo infine:
+\begin{displaymath}
+  m \congruent m_{61} + 61 \cdot \p{m_{53} - m_{61}} \cdot 20
+    = 4 + 61 \cdot \p{12 - 4} \cdot 20 = 9764 \congruent 65
+\end{displaymath}
+come ci si aspettava.
 
 \subsection{Schemi di padding a attachi ad RSA}
 
