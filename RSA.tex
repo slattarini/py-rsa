@@ -962,29 +962,24 @@ cosicch\`e decrittando $c$ si ri-ottiene davvero $m$.
 
 \subsection{RSA per messaggi binari qualunque}
 
-Dalla precedente sezione deriva chiaramente che l'algoritmo RSA
-``semplice'' \`e in grado di operare solo su numer interi limitati,
-ossia i possibili ``messaggi'' sono tutti e soli gli interi $m$ tali che
-$0 \leq m < n$ (la loro massima grandezza dipende quindi dal modulo $n$
-della chiave).
+Come visto nella precedente sezione, l'algoritmo RSA ``semplice'' \`e
+in grado di operare solo su numer interi limitati, ossia i possibili
+``messaggi'' sono tutti e soli gli interi $m$ tali che $0 \leq m < n$
+(la loro massima grandezza dipende quindi dal modulo $n$ della chiave).
 
-Tuttavia, nella pratica, si \`e generalemnte interessati a criptare
-generiche sequenze di bytes\footnote{Con le quali, nei moderni sistemi
-informativi, tutto \`e rappresentabile.}.  Il metedo pi\`u semplice per
-far ci\`o consiste nel complementare l'algoritmo RSA con protocolli e
-algoritmi in grado di convertire efficientemente input ed output binari
-\emph{da} ed \emph{in} sequenze di interi di grandezza massima prestabilita.
+Tuttavia, nella pratica, si \`e generalmente interessati a criptare
+generiche sequenze di bytes.  Il metodo pi\`u semplice per far ci\`o
+consiste nel complementare l'algoritmo RSA con protocolli e algoritmi
+in grado di convertire efficientemente input ed output binari \emph{da}
+ed \emph{in} sequenze di interi di grandezza massima prestabilita
+(cossicch\`e sia poi possibile criptare/decriptare questi interi uno
+ad uno).
 
-Descriviamo di seguito i semplici algoritmi di conversioni di tale tipo
-utilizzati nella nostra implementazione di RSA.
-
-\begin{algorithm}[Conversioni tra plaintext e sequenze di interi]
-\TODO
-\end{algorithm}
-
-\begin{algorithm}[Conversioni tra ciphertext e sequenze di interi]
-\TODO
-\end{algorithm}
+La nostra implementazione di RSA in python fornisce tali metodi, ed
+offre commenti approfonditi circa il loro funzionamento. Sebbene
+l'implementazione e gli algoritmi da noi scelti siano probabilmente
+non ottimali, essi sono corretti, testati, e sufficienti per i nostri
+scopi.
 
 \subsection{Propriet\`a basilari di RSA}\label{subset:rsa-properties}
 
