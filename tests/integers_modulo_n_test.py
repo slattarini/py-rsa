@@ -746,9 +746,10 @@ def test_integermod_reciprocal_func(modulo, residue, reciprocal):
 
 @with_params([integers_mod], 'factory')
 @with_params(noncoprime_modulo_and_residue_data)
-def test_integermod_invalid_reciprocal_pow(modulo, residue, factory):
+@with_params([1,2,3,10,1023], 'exp')
+def test_integermod_invalid_reciprocal_pow(modulo, residue, exp, factory):
     cls = factory(modulo)
-    pytest.raises(RSA.IMValueError, "cls(%d)**(-1)" % residue)
+    pytest.raises(RSA.IMValueError, "cls(%d)**(-%u)" % (residue, exp))
 
 @with_params([integers_mod], 'factory')
 @with_params(noncoprime_modulo_and_residue_data)
