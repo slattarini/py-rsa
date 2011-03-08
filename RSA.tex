@@ -1054,9 +1054,8 @@ e $\ephi{n} = (61 − 1)(53 − 1) = (61 − 1)(53 − 1) = 3120$. Dobbiamo ora
 scegliere un numero $1 < e < 3120$ che sia coprime con $3120$; sia dunque
  $e = 17$, che come si vede facilmente \`e primo con $3120$.
 
-\noindent
 Usiamo ora l'algoritmo di Euclide esteso per calcolare l'inverso
-moltiplicativo modulo $3120$ di $17$:
+moltiplicativo si $17$ modulo $3120$:
 
 \begin{displaymath}
   \begin{array}{r@{~=~}r@{\:\cdot\:}r@{~+~}r}
@@ -1075,11 +1074,11 @@ da cui:
 \end{eqnarray*}
 e quindi $d = \p{\rem{-367}{3120}} = 3120 - 367 = 2753$.
 
-\smallskip\noindent
+\medskip\noindent
 Dunque la chiave pubblica \`e \,$(3233,\;17)$\, e la chiave privata
 \`e \,$(61,\;53,\;2753)$.
 
-\medskip\noindent
+\medskip
 Possiamo ora criptare il numero $m = 65$, ossia calcolare
 $\rem{{65}^{17}}{3233}$. Per far ci\`o, utilizzeremo l'algoritmo ``square
 and multiply'', il che ricalca la nostra implementazione in python del
@@ -1097,14 +1096,13 @@ c & \congruent\!\! &
     789 \cdot 65 = 51285 \congruent 2790
 \end{eqnarray*}
 
-\noindent
+\medskip
 Vorremo poi decriptare $c = 2790$, e verificare che il risulato \`e
 proprio $m = 65$ come ci si aspetterebbe. A tale scopo dobbiamo
 effettuare il pi\`u complesso calcolo $\rem{2790^{2753}}{3233}$.
 Sempre seguendo da vicino la nostra implementazione python, calcoliamo
 innanzitutto $\rem{2790^{2753}}{61}$ e $\rem{2790^{2753}}{53}$.
 
-\noindent
 Essendo $2790 \congruent 45 \mmod{61}$ e $2753 \congruent 53 \mmod{60}$,
 operando modulo $61$ abbiamo:
 \begin{eqnarray*}
