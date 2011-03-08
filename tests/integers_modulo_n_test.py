@@ -488,7 +488,7 @@ def define_noncoprime_modulo_and_residue_data():
         dict(modulo=100000, residue=222),
         dict(modulo=(3 ** 5 * 17**2 * 23**3), residue=(3 * 11)),
         dict(modulo=(3 ** 5 * 17**2 * 23**3), residue=(2**8 * 17**3)),
-        # try also with big modules
+        # try also with big modulos
         dict(modulo=2**10000,          residue=2**4000),
         dict(modulo=3**10000*47**1000, residue=3**12000*37**1000),
     ]:
