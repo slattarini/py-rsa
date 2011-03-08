@@ -1100,53 +1100,59 @@ c & \congruent\!\! &
 Vorremo poi decriptare $c = 2790$, e verificare che il risulato \`e
 proprio $m = 65$ come ci si aspetterebbe. A tale scopo dobbiamo
 effettuare il pi\`u complesso calcolo $\rem{2790^{2753}}{3233}$.
-Sempre seguendo da vicino la nostra implementazione python, calcoliamo
-innanzitutto $\rem{2790^{2753}}{61}$ e $\rem{2790^{2753}}{53}$.
+Sempre seguendo da vicino la nostra implementazione python, sfrutteremo a
+tale scopo il teorema~\eqref{thm:modular-exponentation-rsa-optimization}
 
+\smallskip
 Essendo $2790 \congruent 45 \mmod{61}$ e $2753 \congruent 53 \mmod{60}$,
 operando modulo $61$ abbiamo:
-\begin{eqnarray*}
-m_{61}
-  & \congruent\!\! &
-    2790^{2753} \congruent {45}^{53} = \p{{45}^2}^{26} \cdot 45
-    = 1764^{26} \cdot 45  \congruent 12^{26} \cdot 45 =
-  \\
-  & =\!\! &
-    144^{13} \cdot 45 \congruent 22^{13} \cdot 45
-    = 22^{12} \cdot \p{22 \cdot 45} = {484}^6 \cdot 990
-    \congruent {57}^6 \cdot 14 \congruent
-  \\
-  &\congruent\!\! &
-    16^3 \cdot 14 = 16^2 \cdot \p{16 \cdot 14} = 256 \cdot 224
-    \congruent 12 \cdot 41 = 492 \congruent 4 \mmod{61}
-\end{eqnarray*}
-
-\noindent
-Similamente, essendo $2790 \congruent 34 \mmod{53}$ e
-$2753 \congruent 49 \mmod{52}$, operando modulo $53$ abbiamo:
-\begin{eqnarray*}
-m_{53}
-  & \congruent\!\! &
-    2790^{2753} \congruent {34}^{49} = \p{{34}^2}^{24} \cdot 34 =
-    1156^{24} \cdot 34 \congruent 43^{24} \cdot 34 =
-  \\
-  & =\!\! &
-    1849^{12} \cdot 34 \congruent 47^{12} \cdot 34 = {2209}^6 \cdot 34
-    \congruent 36^6 \cdot 34 = 1296^3 \cdot 34 \congruent
-  \\
-  & \congruent\!\! &
-    24^3 \cdot 34 = 24^2 \cdot \p{24 \cdot 34} = 576 \cdot 816 = 470016
-    \congruent 12 \mmod{53}
-\end{eqnarray*}
-
-\noindent
+{
+  \setlength\arraycolsep{2pt}
+  \begin{eqnarray}
+  2790^{2753}
+    & \congruent &
+      {45}^{53} \p{{45}^2}^{26} \cdot 45 = 1764^{26} \cdot 45 \congruent
+      12^{26} \cdot 45 = 144^{13} \cdot 45 \congruent
+    \nonumber\\
+    & \congruent &
+      22^{13} \cdot 45 = 22^{12} \cdot \p{22 \cdot 45} = {484}^6 \cdot 990
+      \congruent {57}^6 \cdot 14 =
+    \nonumber\\
+    & = &
+      3249^3 \cdot 14 \congruent 16^3 \cdot 14 = 16^2 \cdot \p{16 \cdot 14}
+      = 256 \cdot 224 \congruent 12 \cdot 41 =
+    \nonumber\\
+    \label{eq:m_61}
+    & = &
+      492 \congruent 4 \mmod{61}
+  \end{eqnarray}
+  Similamente, essendo $2790 \congruent 34 \mmod{53}$ e
+  $2753 \congruent 49 \mmod{52}$, operando modulo $53$ abbiamo:
+  \begin{eqnarray}
+  2790^{2753}
+    & \congruent &
+      {34}^{49} = \p{{34}^2}^{24} \cdot 34 = 1156^{24} \cdot 34
+      \congruent 43^{24} \cdot 34 =
+    \nonumber\\
+    & = &
+      1849^{12} \cdot 34 \congruent 47^{12} \cdot 34 = {2209}^6 \cdot 34
+      \congruent 36^6 \cdot 34 =
+    \nonumber\\
+    & = &
+      1296^3 \cdot 34 \congruent 24^3 \cdot 34 = 24^2 \cdot \p{24 \cdot 34}
+      = 576 \cdot 816 =
+    \nonumber\\
+    \label{eq:m_53}
+    & = &
+      470016 \congruent 12 \mmod{53}
+  \end{eqnarray}
+}% end localize \arraycolsep
 Quindi, poich\`e $61 \cdot 20 - 53 \cdot 23 = 1$\footnote{Ci\`o deriva
 ancora dall'algoritmo di Euclide esteso --- ma questa volta omettiamo i
 dettagli!}, dal teorema~\eqref{thm:modular-exponentation-rsa-optimization}
-ricaviamo infine:
+e dalle~\eqref{eq:m_61} e~\eqref{eq:m_53} ricaviamo infine:
 \begin{displaymath}
-  m \congruent m_{61} + 61 \cdot \p{m_{53} - m_{61}} \cdot 20
-    = 4 + 61 \cdot \p{12 - 4} \cdot 20 = 9764 \congruent 65
+  m \congruent 4 + 61 \cdot \p{12 - 4} \cdot 20 = 9764 \congruent 65
 \end{displaymath}
 come ci si aspettava.
 
