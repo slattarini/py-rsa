@@ -30,6 +30,9 @@
 
 \newcommand{\TFA}{teorema fondamentale dell'aritmetica}
 
+\let\OldEmph\emph
+\renewcommand{\emph}[1]{\OldEmph{#1\/}}
+
 \newcommand{\XXX}[1][XXX]{\text{\bfseries{\color{red}{\emph{#1}}}}}
 \newcommand{\TODO}[0]{\XXX[TODO]}
 \newcommand{\FIXME}[0]{\XXX[FIXME]}
