@@ -345,14 +345,17 @@ $\gcd{b}{r}$ (che \`e il massimo del secondo insieme).
 \smallskip
 \noindent
 Dunque, riprendendo la catena di divisioni dell'algoritmo, avremo:
-\begin{eqnarray*}
-  \gcd{a}{b}
-    & =
-    & \gcd{r_0}{r_1} = \gcd{r_1}{r_2} = \gcd{r_2}{r_3} = \ldots \\
-  \ldots
-    & =
-    & \gcd{r_n}{r_{n+1}} = r_{n+1}
-\end{eqnarray*}
+{
+  \setlength\arraycolsep{2pt}
+  \begin{eqnarray*}
+    \gcd{a}{b}
+      & =
+      & \gcd{r_0}{r_1} = \gcd{r_1}{r_2} = \gcd{r_2}{r_3} = \ldots \\
+    \ldots
+      & =
+      & \gcd{r_n}{r_{n+1}} = r_{n+1}
+  \end{eqnarray*}
+}% end localize \arraycolsep
 dove l'ultima uguaglianza deriva dal fatto che $r_{n+1} \divides r_n$.
 \end{proof}
 
