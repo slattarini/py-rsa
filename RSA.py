@@ -293,10 +293,10 @@ class IntegerMod(object):
         else:
             base = self
             if self.residue == 0:
-                # FIXME: what about e.g. 0**0? not easy to detect in the general
-                # case, since we can't easily know the value of phi(modulo),
-                # and thus we can't know if exponent % phi(modulo) == 0.
-                # Just return 0 for the moment.
+                # NOTE: for the optimized RSA decryption to work correctly,
+                # it must be assumed that 0**0 = 0 (mod p) for any prime p.
+                # Thus, for consistency, we  set 0**0 = (mod m) for any
+                # integer m.
                 return self.__class__(0)
         # Implementatione of the "square and multiply" algorithm described
         # in our latex document.  The `partial1' and `partial2' variables
@@ -363,7 +363,7 @@ class IntegerModPQ(IntegerMod):
             raise IMTypeError("exponent %r is not an integer", exponent)
         a = (self.mod_p ** (exponent % (self.p - 1))).residue
         b = (self.mod_q ** (exponent % (self.q - 1))).residue
-        result = a + self.p * (b - a) * self.p_reciprocal_mod_q
+        result = a + self.p * self.p_reciprocal_mod_q * (b - a)
         return self.__class__(result)
 
 

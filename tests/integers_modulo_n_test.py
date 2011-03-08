@@ -499,6 +499,18 @@ def define_noncoprime_modulo_and_residue_data():
         data.extend([d0, d1])
     return data
 
+@without_duplicates
+def define_zero_to_zero_exponentiation_modulos():
+    return [
+        2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 15, 77,
+        (5 * 61 * 73 * 997**2),
+        2**40, 3**52, 5**67 + 9**88,
+        # courtesy of random.randint()
+        403731883648333276571018734984,
+        749654503803373586604417883823,
+        659136802105841435692337340107,
+        981011350153246581134061420502,
+    ]
 
 init_known_values = define_init_known_values()
 stringify_data = define_stringify_data()
@@ -510,6 +522,7 @@ additive_inversion_data = define_additive_inversion_data()
 multiplicative_inversion_data = define_multiplicative_inversion_data()
 exponentiation_data = define_exponentiation_data()
 noncoprime_modulo_and_residue_data = define_noncoprime_modulo_and_residue_data()
+zero_to_zero_exponentiation_modulos = define_zero_to_zero_exponentiation_modulos()
 
 
 ### TESTS
@@ -775,6 +788,11 @@ def test_integermod_exponentiation(modulo, base, exponent, result, factory):
     cls = factory(modulo)
     check_integermod_result(cls, result, cls(base)**exponent)
 
+@with_params([integers_mod], 'factory')
+@with_params(zero_to_zero_exponentiation_modulos, 'modulo')
+def test_integermod_zero_to_zero_exponentiation(modulo, factory):
+    cls = factory(modulo)
+    check_integermod_result(cls, 0, cls(0)**0)
 
 @with_params([1.0, '1', [1], (1,), {1:1}, DummyClass(), object()], 'other')
 @with_params(['+', '-', '*', '/', '**'], 'operation')

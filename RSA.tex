@@ -988,8 +988,49 @@ scopi.
 \TODO: ragionevole efficienza, dovuta all'uso
        dell'algoritmo~\eqref{alg:square-and-multiply}
        ``square and multiply'' per l'esponenziazone modulare
-\\
-\TODO: ottimizzazione con teorema cinese del resto
+
+\medskip\noindent
+Infine, la \emph{decriptazione} di un messaggio criptato con RSA pu\`o
+essere velocizzata con l'uso del seguente risultato\footnote{Si noti che
+la \emph{criptazione} con RSA non pu\`o sfortunatamente usufruire della
+stessa ottimizzazione, poich\`e quest'ultima richiede la conoscenza dei
+fattori $p$ e $q$ di $n$, il che equivale all conoscenza della chiave
+privata -- che come noto non pu\`o essere resa nota al pubblico.}:
+%
+\begin{theorem}
+Sia $n = pq$ prodotto di due primi distinti, e siano $m$, $k$ due
+interi con $k > 0$.  Siano poi \,$k_p := \rem{k}{(p-1)}$,
+\,$k_q := \rem{k}{(q-1)}$, e sia $x$ intero tale che
+$px \congruent 1 \mmod q$., \,$m_p \congruent  \mmod p$\,
+e \,$m_q \congruent m^{k_q} \mmod q$. Risulta allora
+$m^k \congruent m^{k_p} + px\p{m^{k_q} - m^{k_p}}\mmod n$.
+\end{theorem}
+%
+\begin{proof}
+Poniamo $a = m^{k_p} + px\p{m^{k_q} - m^{k_p}}$.  In virt\`u del
+teorema~\eqref{thm:TFA-mul-2}, per provare la tesi dobbiamo solo
+dimostrare che $m^k \congruent a \mmod p$ e $m^k \congruent a \mmod q$.
+Ma \`e immediato verificare che:
+\begin{displaymath}
+  a \congruent m^{k_p} \mmod p
+    \text{\quad e \quad}
+  a \congruent m^{k_q} \mmod q
+\end{displaymath}
+e dunque ci basta dimostrare che $m^k \congruent m^{k_p} \mmod p$ e
+$m^k \congruent m^{k_q} \mmod q$. Se $p \divides m$ si ha banalmente:
+\begin{displaymath}
+  m^k \congruent m^{k_p} \congruent 0 \mmod p
+\end{displaymath}
+mentre se $p \notdivides m$, posto $k = (p - 1)t_p + k_p$ con $t_p$ intero
+opportuno, si ha per il teorema di Fermat (applicato nel secondo
+passaggio):
+\begin{displaymath}
+  m^k = \p{m^{p-1}}^{t_p} \cdot m^{k_p} \congruent 1^{t_p} \cdot m^{k_p}
+      \congruent m^{k_p} \mmod m
+\end{displaymath}
+coicch\`e in ogni caso $m^k \congruent m^{k_p} \mmod p$. Analogamente si
+dimostra che $m^k \congruent m^{k_q} \mmod q$, e la tesi \`e provata.
+\end{proof}
 
 \subsection{Un esempio basilare dell'uso di RSA}
 
