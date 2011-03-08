@@ -941,7 +941,7 @@ efficiente. D'altra parte, come visto nella precedente sezione,
 affinc\`e il crittosistema RSA funzioni, \`e necessario che il
 viceversa (ossia ricavare la chiave privata dalla chiave pubblica)
 sia pressoch\`e impossibile in pratica. Diremo di pi\`u a questo
-proposito nella successiva sezione~\eqref{subset:rsa-properties}.
+proposito nella successiva sezione~\eqref{subsect:keys-and-factorization}.
 
 \begin{algorithm}[Criptazione e decriptazione con RSA]
 I messaggi che \`e possibile criptare e/o decriptare con una coppia
@@ -984,24 +984,37 @@ l'implementazione e gli algoritmi da noi scelti siano probabilmente
 non ottimali, essi sono corretti, testati, e sufficienti per i nostri
 scopi.
 
-\subsection{Propriet\`a basilari di RSA}\label{subset:rsa-properties}
+\subsection{Propriet\`a basilari di RSA}
+
+\medskip
+\subsubsection{Parametri, chiavi private e algoritmi di
+               fattorizzazione}\label{subsect:keys-and-factorization}
+
+Si noti innanzitutto che la conoscenza della fattorizzazione da $n$
+permette di calcolare facilmente $d$, e quindi la chiave privata.
 
 \TODO: conoscere uno qualunque tra $\ephi{n}$, $p$, $q$ o $d$ equivale
 a conoscere tutta la chiave privata.
-\\
-\TODO: simmetria fra criptazione e decriptazione (utile in firme digitali).
-\\
+
+La sicurezza del crittosistema RSA deriva quindi dall'impossibilit\`a
+pratica di fattorizzare efficientemente numeri ``grandi'' che siano
+dati dal prodotto di dune numeri primi ``grandi''.  Diremo di pi\`u su
+questo argomento pi\`u avanti, nella sezione~\eqref{sect:rsa-attacks}.
+
+\subsubsection{Ragionevole efficienza di RSA}
 \TODO: ragionevole efficienza, dovuta all'uso
        dell'algoritmo~\eqref{alg:square-and-multiply}
        ``square and multiply'' per l'esponenziazone modulare
 
-\medskip\noindent
-Infine, la \emph{decriptazione} di un messaggio criptato con RSA pu\`o
-essere velocizzata con l'uso del seguente risultato\footnote{Si noti che
-la \emph{criptazione} con RSA non pu\`o sfortunatamente usufruire della
-stessa ottimizzazione, poich\`e quest'ultima richiede la conoscenza dei
-fattori $p$ e $q$ di $n$, il che equivale all conoscenza della chiave
-privata -- che come noto non pu\`o essere resa nota al pubblico.}:
+\subsubsection{Esponenziazione modulare ottimizzata per RSA.}
+
+La \emph{decriptazione} di un messaggio criptato con RSA pu\`o essere
+ulteriormente velocizzata con l'uso del seguente risultato\footnote{Si
+noti che la \emph{criptazione} con RSA non pu\`o sfortunatamente
+usufruire della stessa ottimizzazione, poich\`e quest'ultima richiede
+la conoscenza dei fattori $p$ e $q$ di $n$, il che equivale alla
+conoscenza della chiave privata -- che come noto non pu\`o essere resa
+nota al pubblico.}:
 %
 \begin{theorem}\label{thm:modular-exponentation-rsa-optimization}
 Sia $n = pq$ prodotto di due primi distinti, e siano $m$, $k$ due
@@ -1157,7 +1170,7 @@ e dalle~\eqref{eq:m_61} e~\eqref{eq:m_53} ricaviamo infine:
 \end{displaymath}
 come ci si aspettava.
 
-\subsection{Schemi di padding a attachi ad RSA}
+\subsection{Schemi di padding a attachi ad RSA}\label{sect:rsa-attacks}
 
 When used in practice, RSA is generally combined with some padding scheme.
 The goal of the padding scheme is to prevent a number of attacks that
