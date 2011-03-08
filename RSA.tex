@@ -993,12 +993,22 @@ scopi.
 Si noti innanzitutto che la conoscenza della fattorizzazione da $n$
 permette di calcolare facilmente $d$, e quindi la chiave privata.
 
-\TODO: conoscere uno qualunque tra $\ephi{n}$, $p$, $q$ o $d$ equivale
-a conoscere tutta la chiave privata.
+\medskip\noindent
+In effetti, si pu\`o provare il seguente risultato ancor pi\`u forte:
+\begin{theorem}
+Sia data una chiave RSA pubblica $(n,\, e)$ la cui chiave privata
+(ignota!) sia $(p,\, q,\, d)$.  Allora conoscere uno qualunque tra
+$\ephi{n}$, $p$, $q$ o $d$ equivale a conoscere tutti gli altri, e
+quindi \emph{a fortiori} tutta la chiave privata.
+\end{theorem}
+%
+\begin{proof}[Dimostrazione parziale]
+\TODO
+\end{proof}
 
 La sicurezza del crittosistema RSA deriva quindi dall'impossibilit\`a
 pratica di fattorizzare efficientemente numeri ``grandi'' che siano
-dati dal prodotto di dune numeri primi ``grandi''.  Diremo di pi\`u su
+dati dal prodotto di due numeri primi ``grandi''.  Diremo di pi\`u su
 questo argomento pi\`u avanti, nella sezione~\eqref{sect:rsa-attacks}.
 
 \subsubsection{Ragionevole efficienza di RSA}
