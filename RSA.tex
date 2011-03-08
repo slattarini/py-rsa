@@ -1003,7 +1003,7 @@ stessa ottimizzazione, poich\`e quest'ultima richiede la conoscenza dei
 fattori $p$ e $q$ di $n$, il che equivale all conoscenza della chiave
 privata -- che come noto non pu\`o essere resa nota al pubblico.}:
 %
-\begin{theorem}
+\begin{theorem}\label{thm:modular-exponentation-rsa-optimization}
 Sia $n = pq$ prodotto di due primi distinti, e siano $m$, $k$ due
 interi con $k > 0$.  Siano poi \,$k_p := \rem{k}{(p-1)}$,
 \,$k_q := \rem{k}{(q-1)}$, e sia $x$ intero tale che
@@ -1142,7 +1142,8 @@ m_{53}
 \noindent
 Quindi, poich\`e $61 \cdot 20 - 53 \cdot 23 = 1$\footnote{Ci\`o deriva
 ancora dall'algoritmo di Euclide esteso, ma questa volta omettiamo i
-dettagli}, dal teorema{\XXX} ricaviamo infine:
+dettagli}, dal teorema~\eqref{thm:modular-exponentation-rsa-optimization}
+ricaviamo infine:
 \begin{displaymath}
   m \congruent m_{61} + 61 \cdot \p{m_{53} - m_{61}} \cdot 20
     = 4 + 61 \cdot \p{12 - 4} \cdot 20 = 9764 \congruent 65
