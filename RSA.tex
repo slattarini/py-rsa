@@ -1005,8 +1005,28 @@ $\ephi{n}$, $p$, $q$ o $d$ equivale a conoscere tutti gli altri, e
 quindi \emph{a fortiori} tutta la chiave privata.
 \end{theorem}
 %
-\begin{proof}[Dimostrazione parziale]
-\TODO
+\begin{proof}[Dimostrazione (parziale)]
+Se uno tra $p$ o $q$ \`e noto, l'altro pu\`o essere ricavato banalmente
+dividendo $n$ per esso; a tal punto, \`e immediato ricavare $\ephi{n} =
+(p - 1) (q - 1) = n - p - q + 1$.  D'altra parte, se $\ephi{n}$ \`e
+noto, abbiamo che $pq = n$ e $p + q = n - \ephi{n} + 1$ sono anch'essi
+noti, e quindi $p$ e $q$ sono le due soluzioni dell'equazione di secondo
+grado:
+  $$ x^2 - \p{n - \ephi{n} + 1} x + n = 0 $$
+che si pu\`o risolvere elementarmente.
+
+Dunque, conoscere uno qualunque tra $p$, $q$ e $\ephi{n}$ equivale a
+conoscerli tutti. Inotre, quando $\ephi{n}$ \`e noto, $d$ si pu\`o
+ricavare da $e$ applicando l'algoritmo di Euclide esteso (che \`e
+efficiente) a $\ephi{n}$ ed $e$.
+
+Rimane soltanto il caso in cui solo $d$ \`e noto.  Ebbene, si pu\`o
+dimostrare\footnote{Omettiamo la dimostrazione, che sebbene non difficile
+richiederebbe altri lemmi e risultati preliminari la cui esposizione ci
+porterebbe troppo fuori strada.} che esiste un algoritmo
+\emph{probabilistico\/} che permette di fattorizzare $n$ \emph{in maniera
+efficiente} a partire dalla conoscenza di $e$ e $d$, cosicch\`e  $p$ e $q$
+(e con essi anche $\ephi{n}$) sono rivelati.
 \end{proof}
 
 La sicurezza del crittosistema RSA deriva quindi dall'impossibilit\`a
