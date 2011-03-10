@@ -905,7 +905,8 @@ chiaro $M$, ottenerne il rispettivo messaggio criptato $C$, e usare
 questa corrispondenza per dedurne la chiave di decriptazione (o
 informazioni su di essa).
 
-\subsection{Generalit\`a e basi teoriche del crittosistem RSA}
+\subsection{Generalit\`a e basi teoriche del crittosistem RSA}%
+           \label{sect:rsa-basic}
 
 RSA \`e un crittosistema a chiave pubblica i cui algoritmi sono basati
 su semplici operazioni di aritmetica modulare (in particolare,
@@ -1203,17 +1204,39 @@ e dalle~\eqref{eq:m_61} e~\eqref{eq:m_53} ricaviamo infine:
 \end{displaymath}
 come ci si aspettava.
 
-\subsection{Schemi di padding a attachi ad RSA}\label{sect:rsa-attacks}
+\subsection{Schemi di padding a attachi ad RSA}\label{sect:rsa-padding}
 
-When used in practice, RSA is generally combined with some padding scheme.
-The goal of the padding scheme is to prevent a number of attacks that
-potentially work against RSA without padding:\\
-\TODO: copia da wikipedia?
+L'algoritmo RSA ``semplice'', come descritto non nella precedente sezione%
+~\eqref{sect:rsa-basic}, non \`e purtroppo veramente sicuro.  In effetti,
+alcune delle sue eleganti propriet\`a matematiche possono essere sfruttate
+da un attaccante per decriptare particilari messaggi cifrati \emph{senza
+dover venire in possesso della chiave privata}.  Ecco alcuni possibili
+attacchi di questo tipo:
+\begin{itemize}
+  \item \TODO
+  \item \TODO
+\end{itemize}
 
-LINKS:\\
-~~~\verb+http://en.wikipedia.org/wiki/RSA#Padding_schemes+\\
-~~~\verb+http://en.wikipedia.org/wiki/Optimal_Asymmetric_Encryption_Padding+
-~~~\verb+http://en.wikipedia.org/wiki/Random_oracle_model+
+Perci\`o, quando usata in applicazioni pratiche, la criptazione con RSA
+deve essere integrata con appropriati \emph{schemi di padding}, ossia
+appropriate trasformazioni preliminari del testo in chiaro che rendano
+gli attacchi appenda descritti (ed altri simili) impraticabili.
+
+Daremo qui una sommaria descrizione dello schema di padding pi\`u
+usato in congiunzione con RSA. \TODO: DESCRIVILO!
+
+Si noti che la nostra implementazione in python di RSA non offre
+attualmente alcuna funzionalit\`a di padding, ed \`e quindi totalmente
+inappropriata per ogni uso pratico.  Tuttavia, essendo l'implementazione
+deliberatamente progettata per essere estesa in modo semplice e naturale,
+non dovrebbe essere difficile adattarla per introdurvi schemi di
+padding.
+
+~~\XXX\verb+http://en.wikipedia.org/wiki/Optimal_Asymmetric_Encryption_Padding+
+
+\subsection{Cenni ad altri attachi ad RSA}\label{sect:rsa-attacks}
+
+\TODO
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
