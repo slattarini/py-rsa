@@ -1203,17 +1203,52 @@ e dalle~\eqref{eq:m_61} e~\eqref{eq:m_53} ricaviamo infine:
 \end{displaymath}
 come ci si aspettava.
 
-\subsection{Schemi di padding a attachi ad RSA}\label{sect:rsa-padding}
+\subsection{Attachi ad RSA e schemi di padding}\label{sect:rsa-padding}
 
 L'algoritmo RSA ``semplice'', come descritto non nella precedente sezione%
 ~\eqref{sect:rsa-basic}, non \`e purtroppo veramente sicuro.  In effetti,
-alcune delle sue eleganti propriet\`a matematiche possono essere sfruttate
-da un attaccante per decriptare particilari messaggi cifrati \emph{senza
-dover venire in possesso della chiave privata}.  Ecco alcuni possibili
-attacchi di questo tipo:
+la sua elegante semplicit\`a e alcune delle sue interessanti propriet\`a
+matematiche possono essere sfruttate da un attaccante per decriptare
+particolari messaggi cifrati \emph{senza dover venire in possesso della
+chiave privata}.  Ecco alcuni possibili attacchi di questo tipo:
 \begin{itemize}
-  \item \TODO
-  \item \TODO
+\item
+  Quando l'esponente $e$ delle chiave pubblica \`e piccolo (per esempio,
+  $e = 3$), per valori ``piccoli'' del messaggio in chiaro $m$, (i.e.,
+  $m < \sqrt[e]{n}$) il risultato di $m^e$ \`e strettamente minore del
+  modulo $n$. In questo caso, \`e sufficiente estrarre la radice
+  $e$-esima del testo cifrato \emph{operando sui numeri reali} per
+  ottenere il testo in chiaro.
+\item
+  Poich\`e RSA \`e un algoritmo di criptazione deterministico, il medesimo
+  testo in chiaro viene sempre trasforamato nello stesso testo criptato.
+  RSA \`e dunque suscettibile ad attacchi di tipo ``chosen plaintext'':
+  l'attaccante cripta possibili testi in chiaro\footnote{Si ricordi che
+  la chiave pubblica permette ad ognuno di \emph{criptare} (ma non
+  decriptare!) messaggi.}, confrontando poi i risultati con il messaggio
+  criptato che vuole violare --- se c'\`e una corrispondanza, il testo in
+  chiaro ``tirato a indovinare'' \`e quello corretto.
+\item
+  Il prodotto di due numeri cifrati risulta essere uguale al risultato
+  cifratura del prodotto dei corrispettivi testi in chiaro.  La
+  dimostrazione \`e immediata: se $c_1 \congruent {m_1}^e \mmod n$ e
+  $c_2 \congruent {m_2}^e \mmod n$, si ha:
+  \vspace*{-3pt}
+  \begin{displaymath}
+    \p{m_1 m_2}^e = {m_1}^e {m_2}^e \congruent c_1 c_2 \mmod m
+  \vspace*{-3pt}
+  \end{displaymath}
+  Questa propriet\`a in apparenza elegante si presta purtroppo ad essere
+  abusata dal seguente attacco di tipo ``chosen ciphertext''.   Supponiamo
+  che un attaccante voglia decrittare il testo cifrato $c = \rem{m^e}{n}$,
+  il cui corrispondente testo in chiaro (ovviamente ignoto \emph{a priori})
+  \`e $m$.  L'attacante pu\`o ``chiedere'' (probabilmente in maniera
+  indiretta) al possessore della chiave privata la decriptazione del
+  differente, ed apparantemente innocuo, testo cifrato $c' = \rem{cr^e}{n}$
+  (ove il valore di $r$ \`e noto all'attacante).  Se il corrispondente
+  testo in chiaro \`e $m'$, allora per la propriet\`a moltiplicativa di
+  RSA descritta prima risulter\`a che $m' \congruent  mr \mmod n$; dunque,
+  noto $m'$, l'attacante pu\`o facilmente ricavare $m$.
 \end{itemize}
 
 Perci\`o, quando usata in applicazioni pratiche, la criptazione con RSA
@@ -1224,7 +1259,10 @@ gli attacchi appenda descritti (ed altri simili) impraticabili.
 Daremo qui una sommaria descrizione dello schema di padding pi\`u
 usato in congiunzione con RSA, ossia \emph{OAEP}\footnote{Che sta
 per ``Optimal Asymmetric Encryption Padding''.}.
-\TODO: DESCRIVILO!
+
+~~\TODO: DESCRIVILO!
+
+~~\XXX\verb+http://en.wikipedia.org/wiki/Optimal_Asymmetric_Encryption_Padding+
 
 Si noti che la nostra implementazione in python di RSA non offre
 attualmente alcuna funzionalit\`a di padding, ed \`e quindi totalmente
@@ -1233,11 +1271,17 @@ deliberatamente progettata per essere estesa in modo semplice e naturale,
 non dovrebbe essere difficile adattarla per introdurvi schemi di
 padding.
 
-~~\XXX\verb+http://en.wikipedia.org/wiki/Optimal_Asymmetric_Encryption_Padding+
-
 \subsection{Cenni ad altri attachi ad RSA}\label{sect:rsa-attacks}
 
-\TODO
+\begin{itemize}
+  \item
+     If the same clear text message is sent to $e$ or more recipients
+     in an encrypted way, and the receivers share the same exponent $e$,
+     but different p, q, and n, then it is easy to decrypt the original
+     clear text message via the Chinese remainder theorem.
+  \item
+    \TODO
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
