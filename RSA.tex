@@ -945,7 +945,7 @@ efficiente. D'altra parte, come visto nella precedente sezione,
 affinc\`e il crittosistema RSA funzioni, \`e necessario che il
 viceversa (ossia ricavare la chiave privata dalla chiave pubblica)
 sia pressoch\`e impossibile in pratica. Diremo di pi\`u a questo
-proposito nella successiva sezione~\eqref{subsect:keys-and-factorization}.
+proposito nella successiva sezione~\eqref{sect:keys-and-factorization}.
 
 \begin{algorithm}[Criptazione e decriptazione con RSA]
 I messaggi che \`e possibile criptare e/o decriptare con una coppia
@@ -966,6 +966,13 @@ corollario~\eqref{cor:euler-for-rsa}.  Infatti, se $c$ \`e il
 risultato della criptazione di $m$, si ha:
   $$c^d \congruent {\p{m^e}}^d \congruent m^{ed} \congruent m \mmod n$$
 cosicch\`e decrittando $c$ si riottiene davvero $m$.
+
+\medskip
+Altrettato importante \`e la possibilit\`a di produrre facilmente
+implementazioni ``ragionevolmente efficienti'' di RSA. Esse si
+avvantaggiano dell'uso dell'algoritmo~\eqref{alg:square-and-multiply}
+``square and multiply'' per l'esponenziazone modulare (o di algoritmi
+simili, ma ancor pi\`u efficienti).
 
 \subsection{RSA per messaggi binari qualunque}
 
@@ -988,11 +995,8 @@ l'implementazione e gli algoritmi da noi scelti siano probabilmente
 non ottimali, essi sono corretti, testati, e sufficienti per i nostri
 scopi.
 
-\subsection{Propriet\`a basilari di RSA}
-
-\medskip
-\subsubsection{Parametri, chiavi private e algoritmi di
-               fattorizzazione}\label{subsect:keys-and-factorization}
+\subsection{Parametri, chiavi private e algoritmi di fattorizzazione}%
+           \label{sect:keys-and-factorization}
 
 Si noti innanzitutto che la conoscenza della fattorizzazione da $n$
 permette di calcolare facilmente $d$, e quindi la chiave privata.
@@ -1035,12 +1039,7 @@ pratica di fattorizzare efficientemente numeri ``grandi'' che siano
 dati dal prodotto di due numeri primi ``grandi''.  Diremo di pi\`u su
 questo argomento pi\`u avanti, nella sezione~\eqref{sect:rsa-attacks}.
 
-\subsubsection{Ragionevole efficienza di RSA}
-\TODO: ragionevole efficienza, dovuta all'uso
-       dell'algoritmo~\eqref{alg:square-and-multiply}
-       ``square and multiply'' per l'esponenziazone modulare
-
-\subsubsection{Esponenziazione modulare ottimizzata per RSA.}
+\subsection{Esponenziazione modulare ottimizzata per RSA.}
 
 La \emph{decriptazione} di un messaggio criptato con RSA pu\`o essere
 ulteriormente velocizzata con l'uso del seguente risultato\footnote{Si
