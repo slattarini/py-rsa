@@ -21,7 +21,7 @@ LATEXMK := latexmk
 PDFLATEX_CMD = $(LATEXMK) </dev/null -pdf -nonstopmode
 
 DIST_FILES := \
-    README TODO $(MAKEFILE) \
+    README TODO Links.txt $(MAKEFILE) \
     RSA.tex sty/*.sty \
     RSA-for-display.pdf RSA-for-print.pdf \
     RSA.py tests/*.py pytest.ini random.bytes

@@ -1,0 +1,6 @@
+ftp://ftp.rsa.com/pub/rsalabs/rsa_algorithm/rsa-oaep_spec.pdf
+http://scienceblogs.com/goodmath/2009/01/cryptographic_padding_in_rsa.php
+http://en.wikipedia.org/wiki/Optimal_asymmetric_encryption_padding
+http://en.wikipedia.org/wiki/Cryptographic_hash_function
+http://en.wikipedia.org/wiki/RSA
+http://www.ietf.org/rfc/rfc2437.txt
