@@ -1256,14 +1256,62 @@ deve essere integrata con appropriati \emph{schemi di padding}, ossia
 appropriate trasformazioni preliminari del testo in chiaro che rendano
 gli attacchi appenda descritti (ed altri simili) impraticabili.
 
+Lo scopo di uno schema di padding \`e triplice. Innanzitutto, esso aumenta
+la dimensione del messaggio fino ad una soglia minima standard,
+assicurando cos\`i che il messaggio criptato sia grande a sufficienza da
+rendere eventuali attacchi pi\`u difficili.  Inoltre, il padding causa
+``interferenze'' deliberate nelle propriet\`a matematiche di RSA che
+potrebbero essere sfruttate in un attacco --- aiutando cos\`i a prevenire
+attacchi di tipo ``chosen ciphertext''. Infine, il padding inframmezza il
+messaggio in chiaro con dati (pseudo)causali, assicurando cos\`i che lo
+\emph{stesso} messaggio sia codificato ogni volta in modo diverso ---
+aiutando in tal modo a prevenire attacchi di tipo ``chosen plaintext''.
+
+\subsubsection{Lo schema di padding OAEP}
+%
 Daremo qui una sommaria descrizione dello schema di padding pi\`u
 usato in congiunzione con RSA, ossia \emph{OAEP}\footnote{Che sta
 per ``Optimal Asymmetric Encryption Padding''.}.
 
-~~\TODO: DESCRIVILO!
+\medskip\noindent
+Ci serve innazitutto una definizione preliminare:
+\begin{definition}[Funzione di hash crittografica]
+Una \emph{funzione di hash crittografica} \`e una procedura deterministica
+che prende come input una arbitrario blocco di dati (in genere, con ci\`o
+si intende un'arbitraria sequenza di bytes), detto \emph{messaggio}, e
+ritorna come output una stringa di bit di lungezza fissata, detta
+\emph{valore di hash} (o semplicemente \emph{hash}) del messaggio, tale
+che un cambiamento anche minimo del messaggio cambi drammaticamente il
+corrispondente valore di hash.  Il valore di hash \`e talvolta chiamato
+anche \emph{digest} del messaggio.
+\end{definition}
 
-~~\XXX\verb+http://en.wikipedia.org/wiki/Optimal_Asymmetric_Encryption_Padding+
+\begin{remark}
+Una funzione crittografica ideale dovrebbe possedere almeno le seguenti
+quattro propriet\`a:
+\begin{enumerate}
+\item
+  Dato un qualunque messaggio, il calcolo del suo hash dev'essere
+  semplice ed efficiente.
+\item
+  Trovare un messaggio che abbia un hash predeterminato dev'essere
+  infattibile in pratica.
+\item
+  Modificare un messaggio noto in modo che il suo hash non cambi
+  dev'essere infattibile in pratica.
+\item
+  Trovare due messaggi distinti aventi lo stesso hash dev'essere
+  infattibile in pratica.
+\end{enumerate}
+\end{remark}
 
+\smallskip\noindent
+Possiamo ora descrivere in breve l'algoritmo OAEP.
+
+\bigskip
+\noindent\XXX\verb+http://en.wikipedia.org/wiki/Optimal_Asymmetric_Encryption_Padding+
+
+\bigskip
 Si noti che la nostra implementazione in python di RSA non offre
 attualmente alcuna funzionalit\`a di padding, ed \`e quindi totalmente
 inappropriata per ogni uso pratico.  Tuttavia, essendo l'implementazione
