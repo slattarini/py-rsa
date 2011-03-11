@@ -2,6 +2,9 @@ TODO list for py-rsa
 
  * make py-rsa work with padding
 
+ * make py-rsa (more) compatible with RFC-2437:
+   <http://www.ietf.org/rfc/rfc2437.txt>
+
  * make py-rsa work with data encoded in base64
 
  * implement digital signature (using sha-512 and md5 provided by
