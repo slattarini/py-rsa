@@ -1275,7 +1275,13 @@ usato in congiunzione con RSA, ossia \emph{OAEP}\footnote{Che sta
 per ``Optimal Asymmetric Encryption Padding''.}.
 
 \medskip\noindent
-Ci serve innazitutto una definizione preliminare:
+In quanto segue, denoteremo con ``$\oplus$'' l'operazione di
+\emph{disgiunzione esclusiva} (ovvero \emph{xor}).  Quando riferita
+a stringhe di bits o bytes, essa sar\`a da intendersi come
+un'operazione \emph{bit a bit}.
+
+\medskip\noindent
+Ci servir\`a anche una definizione preliminare:
 \begin{definition}[Funzione di hash crittografica]
 Una \emph{funzione di hash crittografica} \`e una procedura deterministica
 che prende come input una arbitrario blocco di dati (in genere, con ci\`o
@@ -1307,10 +1313,24 @@ quattro propriet\`a:
 \end{remark}
 
 \smallskip\noindent
-Possiamo ora descrivere in breve l'algoritmo OAEP.
+Il protocollo OAEP opera attraverso una combinazione di permutazioni del
+testo in chiaro e aggiunte di ``rumore'' pseudo-casuale ad esso.  La
+trasformazione effettuata \`e completamente reversibile, cosicch\`e il
+destinatario del messaggio criptato \`e in grado, una volta decifratolo,
+di applicare la trasformazione inversa di OAEP ed ottenere cos\`i
+l'originale testo in chiaro.
 
-\bigskip
-\noindent\XXX\verb+http://en.wikipedia.org/wiki/Optimal_Asymmetric_Encryption_Padding+
+\begin{algorithm}
+ \XXX\verb+http://en.wikipedia.org/wiki/Optimal_Asymmetric_Encryption_Padding+
+\end{algorithm}
+
+The way to understand this is that you've got some random bits in $R$,
+which you're shuffling up (using $G$ and $H$) and mixing with the bits
+of the original message. The resulting message is longer, and has a
+random element mixed into it, which defeats the numerical properties
+that make some attacks against RSA work. It's easy to compute $X$ and
+$Y$ given $M$ and $r$. And given $X$ and $Y$, if you know $G$ and $H$
+it's easy to compute $M$ and $r$.
 
 \bigskip
 Si noti che la nostra implementazione in python di RSA non offre
