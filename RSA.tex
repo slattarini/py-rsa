@@ -1282,6 +1282,7 @@ un'operazione \emph{bit a bit}.
 
 \medskip\noindent
 Ci servir\`a anche una definizione preliminare:
+\vspace*{-5pt}
 \begin{definition}[Funzione di hash crittografica]
 Una \emph{funzione di hash crittografica} \`e una procedura deterministica
 che prende come input una arbitrario blocco di dati (in genere, con ci\`o
@@ -1320,25 +1321,112 @@ destinatario del messaggio criptato \`e in grado, una volta decifratolo,
 di applicare la trasformazione inversa di OAEP ed ottenere cos\`i
 l'originale testo in chiaro.
 
-\begin{algorithm}
- \XXX\verb+http://en.wikipedia.org/wiki/Optimal_Asymmetric_Encryption_Padding+
+\medskip\noindent
+Vediamo i dettagli:
+\begin{algorithm}[Protocollo di codifica OAEP]
+%
+Siano:
+\begin{itemize}
+ \item $(N,\,E)$ una chiave pubblica RSA;
+ \item $n + 1$ il numero di bit nel modulo $N$;
+ \item $k_0$ e $k_1$ due interi fissati dal protocollo;
+ \item $m$ il testo in chiaro, ossia una stringa di bit di lunghezza
+       $\p{n - k_0 - k_1}$\footnote{Il protocollo deve dunque assumersi
+       la responsabilit\`a di frammentare un generico testo in chiaro in
+       sottostringhe di lunghezza appropriata.};
+ \item $G$ una funzione di hash crittografica che espande stringhe di bit
+       di lunghezza $k_0$ in stringhe di bit di lunghezza $n - k_0$ (in
+       effetti, ci\`o varr\`a in genere per stringhe di input di ogni
+       lunghezza);
+ \item $H$ una funzione di hash crittografica che espande stringhe di bit
+       di lunghezza $n - k_0$ in stringhe di bit di lunghezza $k_0$ (in
+       effetti, ci\`o varr\`a in genere per stringhe di input di ogni
+       lunghezza);
+\end{itemize}
+%
+La procedura di codifica di un messaggio $m$ consiste allora dei seguenti
+passi:
+\begin{enumerate}
+\item
+  ad $m$ si concatenano $k_1$ bit uguali zero; il risultato $m00\ldots0$
+  avr\`a quindi una lunghezza di $n - k_0$ bit;
+\item
+  si costruisce una stringa di bit \emph{casuale} $r$, di lunghezza
+  $k_0$;
+\item
+  si applica la funzione di hash $G$ ad $r$, ottenendo una stringa di
+  bit $G(r)$ di lunghezza $n - k_0$;
+\item
+  si calcola $X = m00\ldots0 \oplus G(r)$ (il che ha senso poich\`e le
+  stringhe coinvolte hanno entrambe una lunghezza di $n - k_0$ bit);
+\item
+  si applica la funzione di hash $H$ alla stringa $X$ appena ottenuta,
+  ottenendo cos\`i una stringa di bit $H(X)$ di lunghezza $k_0$;
+\item
+  si calcola $Y = r \oplus H(X)$ (il che ha senso poich\`e le stringhe
+  coinvolte hanno entrambe una lunghezza di $k_0$ bit);
+\item
+  a questo punto, il risultato finale $P$ \`e semplicemente costituito
+  dalla concatenazione delle stringhe di bit $X$ ed $Y$.
+\end{enumerate}
+Si noti che il risultato finale $P$, avendo un bit in meno del modulo
+$N$ della chiave pubblica, pu\`o essere visto come la rappresentazione
+in base $2$ di un intero \emph{strettamente} minore di $N$ --- che \`e
+quindi criptabile con RSA usando la chiave $(N,\,E)$.
+
+\medskip\noindent
+La procedura di decodifica consiste dei seguenti passi:
+\begin{enumerate}
+\item
+  si spezza il messaggio codificato\footnote{Il che \emph{non} \`e il
+  messaggio criptato!} $P$ in due parti $X$ e $Y$ di lunghezza
+  rispettivamente $n - k_0$ e $k_0$ bit;
+\item
+  si applica la funzione di hash $H$ alla prima stringa $X$,
+  ottenendo cos\`i una stringa di bit $H(X)$ di lunghezza $k_0$;
+\item
+  si recupera quindi la stringa casuale $r$, facendo $r = Y \oplus H(X)$
+  (l'operazione di disgiunzione esclusiva bit a bit ha qui senso poich\`e
+  le stringhe coinvolte hanno entrambe una lunghezza di $k_0$ bit);
+\item
+  si applica la funzione di hash $G$ alla stringa $r$ appena ricavata,
+  ottenendo cos\`i una stringa di bit $G(r)$ di lunghezza $n - k_0$ bit;
+\item
+  si recupera quindi il messaggio ``esteso'' $m00\ldots0 = X \oplus G(r)$
+  (l'operazione di disgiunzione esclusiva bit a bit ha qui senso poich\`e
+  le stringhe coinvolte hanno entrambe una lunghezza di $n - k_0$ bit);
+\item
+  si rimuovono infine gli ultimi $k_1$ bit (tutti $= 0$) dal messaggio
+  appena ricavato, ottenendo cos\`i l'originale messaggio in chiaro $m$.
+\end{enumerate}
 \end{algorithm}
 
-The way to understand this is that you've got some random bits in $R$,
-which you're shuffling up (using $G$ and $H$) and mixing with the bits
-of the original message. The resulting message is longer, and has a
-random element mixed into it, which defeats the numerical properties
-that make some attacks against RSA work. It's easy to compute $X$ and
-$Y$ given $M$ and $r$. And given $X$ and $Y$, if you know $G$ and $H$
-it's easy to compute $M$ and $r$.
+\noindent
+Il procedimento di codifica \`e illustrato in
+figura~\eqref{fig:OAEP-diagram}.
+\vspace*{-10pt}
+\begin{figure}[!h]
+  \centering
+    \includegraphics[scale=0.5]{OAEP-diagram}
+    \caption{Diagramma dello schema di padding OAEP}
+    \label{fig:OAEP-diagram}
+\end{figure}
 
-\bigskip
-Si noti che la nostra implementazione in python di RSA non offre
+Ricapitolando: il punto delle trasformazioni effettuate dal protocollo
+OEAP \`e che i dati casuali in $r$ sono, attraverso l'uso di $G$ ed $H$,
+mischiati ``a fondo'' con i bit del messaggio originale; il messaggio
+risultante \`e cos\`i pi\`u lungo e possiede ora un notevole grado di
+casualit\`a e impredicibilit\`a, il che rende le propriet\`a numeriche
+di RSA inutilizzabili in un eventuale attacco.
+
+\begin{remark}
+La nostra implementazione in python di RSA non offre
 attualmente alcuna funzionalit\`a di padding, ed \`e quindi totalmente
-inappropriata per ogni uso pratico.  Tuttavia, essendo l'implementazione
-deliberatamente progettata per essere estesa in modo semplice e naturale,
-non dovrebbe essere difficile adattarla per introdurvi schemi di
-padding.
+inappropriata per ogni uso pratico.  Tuttavia, essendo tale
+implementazione deliberatamente progettata per essere estesa in modo
+semplice e naturale, non dovrebbe essere difficile adattarla per
+introdurvi schemi di padding.
+\end{remark}
 
 \subsection{Cenni ad altri attachi ad RSA}\label{sect:rsa-attacks}
 
