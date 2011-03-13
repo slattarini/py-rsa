@@ -59,6 +59,7 @@
 \newcommand{\notdivides}[0]{\nmid}
 
 \newcommand{\floor}[1]{\left\lfloor{#1}\right\rfloor}
+\newcommand{\ceil}[1]{\left\lceil{#1}\right\rceil}
 
 \newcommand{\congruent}[0]{\equiv}
 \newcommand{\notcongruent}[0]{\not\equiv}
@@ -76,6 +77,8 @@
 \newcommand{\gcdop}[0]{\ensuremath{\mathtt{g.c.d.}}}
 \newcommand{\xgcd}[1]{\ensuremath{\gcdop\left({#1}\right)}}
 \renewcommand{\gcd}[2]{\xgcd{{#1},\,{#2}}}
+
+\newcommand{\csqrtn}[0]{\big\lceil{\sqrt{n\,}}\big\rceil}
 
 %%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -1430,8 +1433,8 @@ introdurvi schemi di padding.
 
 \subsection{Cenni ad altri attachi ad RSA}\label{sect:rsa-attacks}
 
-In chiusura, citeremo rapidamente (e superficialmente) alcuni altri
-possibili attacchi ad RSA. Di essi si devrebbe tener conto in ogni
+In chiusura, citeremo rapidamente (e piuttosto superficialmente) alcuni
+altri possibili attacchi ad RSA. Di essi si devrebbe tener conto in ogni
 implementazione di RSA, ed in ogni scelta di chiavi.
 
 \subsubsection{Numeri facili da fattorizzare}
@@ -1453,19 +1456,100 @@ nessuna di tali propriet\`a, altrimenti un attaccante potrebbe essere in
 grado di fattorizzare $n$ in un tempo ragionevole, ed ottenere quindi
 la chiave privata.
 
-\medskip
-Vediamo di approfondire l'attacco delineato nel
-punto~\eqref{item:fermat-vulnerable}.  Esso \`e basato sul seguente:
+\subsubsection{Metodo di fattorizzazione di Fermat}
+
+L'attacco delineato nel punto~\eqref{item:fermat-vulnerable} della
+precedente sezione \`e basato sul coddetto \emph{metodo di fattorizzazione
+di Fermat}, un algoritmo piuttosto elementare che si pu\` applicare a tutti
+gli interi dispari, e che risulta particolarmente efficace per numeri aventi
+fattori non banali ``vicini'' tra loro.
+
+Il metodo si basa sull'osservazione che se un intero $n$ \`e rappresentabile
+come una differenza di quadrati interi:
+ $$ n = a^2 - b^2 $$
+allora esso si pu\`o fattorizzare (per via puramente algebrica) come:
+ $$ n = (a + b)(a - b) $$
+e ci\`o, se $a - b > 1$, offre una fattorizzazione non banale di $n$.
+
+La cosa notevole, che rende valido il metodo in generale, \`e che se $n$ \`e
+dispari, e fattorizzabile come $n = cd$ con $c > 1$ e $d > 1$, allora esso
+\`e rappresentabile come differenza di quadrati dei numeri interi
+$a = \frac{c + d}{2}$ e $b = \frac{c - d}{2}$:
+ $$ n = \p{\frac{c + d}{2}}^2 - \p{\frac{c - d}{2}}^2 $$
+con $a - b = \frac{c + d}{2} - \frac{c - d}{2} = d > 1$.
 
 \begin{algorithm}[Algoritmo di fattorizzazione di Fermat]
-\TODO
+Si pone inizialmente:
+\begin{eqnarray*}
+ a_0 & := & \csqrtn\vspace*{1pt}\\
+ B_0 & := & {a_0}^2 - n
+\end{eqnarray*}
+Finch\`e $B$ non \`e un quadrato perfetto, si procede con la seguente
+iterazione:
+\begin{eqnarray*}
+  a_{i+1} & := & a_i + 1 \\
+  B_{i+1} & := & {a_{i+1}}^2 - n
+\end{eqnarray*}
+o equivalentemente:
+\begin{eqnarray*}
+  a_{i+1} & := & a_i + 1 \\
+  B_{i+1} & := & B_i + 2 a_i + 1
+\end{eqnarray*}
+Dopo l'ultima interazione, si ha che $b := \sqrt{B}$ \`e intero, che
+$a - b$ \`e un fattore non banale di $n$, e che $n = (a - b)(a + b)$.
 \end{algorithm}
 
+Per esempio, per fattorizzare $n = 5959$ con il metodo di Fermat, si
+calcolano in ordine:
+\begin{eqnarray*}
+a_0 = 78, & \quad & B_0 = 125; \\
+a_1 = 79, & \quad & B_1 = 282; \\
+a_2 = 80, & \quad & B_2 = 441;
+\end{eqnarray*}
+L'ultimo valore di $B$ \`e un quadrato perfetto, precisamente $B = 21^2$;
+allora $n = (80 - 21)\cdot(80 + 21) = 59 \cdot 101$ \`e una fattorizzazione
+non banale di $n = 5959$.
 
-\TODO: Ottimizzazione del crivello. Avere un fattore
-che differisce meno di ${\p{4n}}^{1/4}$ da $\sqrt n$ significa
-fattorizzazione certa in un passo. Nel nostro caso, ci\`o significa che
-$p$ e $q$ devono distare almeno $\XXX$.
+\medskip
+Una propriet\`a del metodo di Fermat particolarmente importante per RSA
+\`e che esso termina in fretta quando applicato agli interi che sono
+prodotto di due primi distinti \emph{relativamente} vicini:
+\begin{theorem}
+Sia $n = pq$, con $p$ e $q$ primi dispari distinti e $p > q$, e sia
+$t$ intero tale che $p - q \leq \sqrt{2t}\sqrt[4]{n}$. Allora il metodo
+di Fermat applicato ad $n$ termina in al pi\`u $t$ passi.
+\end{theorem}
+\begin{proof}
+Poich\`e il metodo di Fermat offre sempre una fattorizzazione non banale,
+poich\`e $n$ ammette un'unica fattorizzazione non banale, e poich\`e,
+$p > q$, avremo che $p = \frac{a + b}{2}$ e $q = \frac{a - b}{2}$, dove
+$a$ e $b$ sono ricavati dal metodo di Fermat.
+
+\medskip\noindent
+Abbiamo poi:
+\begin{displaymath}
+  b = p - q \leq \sqrt{2t}\sqrt[4]{n} \implies b^2 \leq 2t\sqrt{n}
+\end{displaymath}
+da cui:
+\begin{displaymath}
+  a^2 = b^2 + n \leq n + 2t\sqrt{n} <  n + 2t\sqrt{n} + t^2 =
+        \p{\sqrt{n} + t}^2
+\end{displaymath}
+ossia:
+ $$ a < \sqrt{n} + t $$
+
+Ma si vede facilmente che il numero $P$ di passi richiesti per arrivare a
+fattorizzare $n$ con il metodo di Fermat \`e $a - \csqrtn + 1$,
+cosicch\`e:
+\begin{displaymath}
+ P = a - \csqrtn + 1 < t + \sqrt{n} - \csqrtn + 1 \leq t + 1
+ \implies
+ P \leq t
+\end{displaymath}
+come voluto.
+\end{proof}
+
+\TODO: Ottimizzazione del crivello.
 
 \subsubsection{Esponente privato $d$ ``piccolo''}
 
