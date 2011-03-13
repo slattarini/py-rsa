@@ -32,7 +32,7 @@ default: pdf-display
 all: pdf-display pdf-print
 .PHONY: default all
 
-distdir:
+distdir: $(DIST_FILES)
 	@set -u \
 	  && rm -rf $(distdir) \
 	  && mkdir $(distdir) \
