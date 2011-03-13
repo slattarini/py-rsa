@@ -1430,15 +1430,51 @@ introdurvi schemi di padding.
 
 \subsection{Cenni ad altri attachi ad RSA}\label{sect:rsa-attacks}
 
-\begin{itemize}
-  \item
-     If the same clear text message is sent to $e$ or more recipients
-     in an encrypted way, and the receivers share the same exponent $e$,
-     but different p, q, and n, then it is easy to decrypt the original
-     clear text message via the Chinese remainder theorem.
-  \item
-    \TODO
-\end{itemize}
+In chiusura, citeremo rapidamente (e superficialmente) alcuni altri
+possibili attacchi ad RSA. Di essi si devrebbe tener conto in ogni
+implementazione di RSA, ed in ogni scelta di chiavi.
+
+\subsubsection{Numeri facili da fattorizzare}
+
+Esistono algoritmi di fattorizzazione piuttosto efficienti nei casi
+in cui il numero $n$ da fattorizzare abbia una (o pi\`u) delle seguenti
+propriet\`a:
+
+\begin{enumerate}
+\item $n$ abbia fattori primi piccoli;
+\item $n + 1$ ed $n - 1$ siano entrambi composti da soli fattori primi
+      piccoli;
+\item $n$ abbia fattori (non necessariamente primi) tra loro ``vicini''.
+\label{item:fermat-vulnerable}
+\end{enumerate}
+
+Dunque il modulo $n$ di una chiave privata $(n,\,e)$ non deve possedere
+nessuna di tali propriet\`a, altrimenti un attaccante potrebbe essere in
+grado di fattorizzare $n$ in un tempo ragionevole, ed ottenere quindi
+la chiave privata.
+
+\medskip
+Vediamo di approfondire l'attacco delineato nel
+punto~\eqref{item:fermat-vulnerable}.  Esso \`e basato sul seguente:
+
+\begin{algorithm}[Algoritmo di fattorizzazione di Fermat]
+\TODO
+\end{algorithm}
+
+
+\TODO: Ottimizzazione del crivello. Avere un fattore
+che differisce meno di ${\p{4n}}^{1/4}$ da $\sqrt n$ significa
+fattorizzazione certa in un passo. Nel nostro caso, ci\`o significa che
+$p$ e $q$ devono distare almeno $\XXX$.
+
+\subsubsection{Esponente privato $d$ ``piccolo''}
+
+\begin{theorem}
+Siano $p < q < 2p$, $n = pq$, $d \leq \frac{\sqrt[4]{n}}{\sqrt{6}}$.
+Noti $n$ ed $e$ tale che $ed \congruent 1 \mmod{\ephi{n}}$, esiste un
+algoritmo deterministico polinomiale in $\log n$ che consente di
+determinare $d$.
+\end{theorem}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
