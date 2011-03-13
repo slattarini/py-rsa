@@ -22,7 +22,8 @@ PDFLATEX_CMD = $(LATEXMK) </dev/null -pdf -nonstopmode
 
 DIST_FILES := \
     README TODO Links.txt $(MAKEFILE) \
-    RSA.tex sty/*.sty pubkey-postal-analogy.png \
+    RSA.tex sty/*.sty \
+    OAEP-diagram.png pubkey-postal-analogy.png \
     RSA-for-display.pdf RSA-for-print.pdf \
     RSA.py tests/*.py pytest.ini random.bytes
 
