@@ -530,20 +530,6 @@ zero_to_zero_exponentiation_modulos = define_zero_to_zero_exponentiation_modulos
 ### TESTS
 
 
-@pytest.mark.skipif("is_py3k") # FIXME: a test that works also for python3?
-def test_integermod_repr():
-    class MyType(type):
-        def __repr__(self):
-            return self.__name__
-    class MyClass(RSA.IntegerMod):
-        __metaclass__ = MyType
-        modulo = 5
-    class MySubClass(MyClass):
-        modulo = 11
-    assert (repr(MyClass(23)) == "MyClass(3)"
-            and repr(MySubClass(23)) == "MySubClass(1)")
-
-
 @with_params([integers_mod], 'factory')
 def test_integermod_named_params(factory):
     IntegerMod2 = factory(2)
