@@ -8,3 +8,4 @@
 /_texbuild_print/
 /py-rsa-0.5*/
 /py-rsa-0.5*.tar.gz
+__pycache__

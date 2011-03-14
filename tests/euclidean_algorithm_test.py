@@ -5,7 +5,17 @@
 """Unit tests for the RSA.py's implementation of euclidean algorithm"""
 
 from RSA import gcd, extended_gcd
-from tests.lib import pytest_generate_tests, with_params
+from tests.lib import is_py3k, pytest_generate_tests, with_params
+
+## PY3K COMPATIBILITY
+
+def assert_is_integer(obj):
+    __tracebackhide__ = True
+    if is_py3k:
+        assert type(obj) == int
+    else:
+        assert type(obj) in (int, long)
+
 
 ### DATA
 
@@ -134,7 +144,7 @@ egcd_data = known_values
 
 @with_params(gcd_args)
 def test_gcd_ret_type(a, b):
-    assert type(gcd(a, b)) in (int, long)
+    assert_is_integer(gcd(a, b))
 
 @with_params(gcd_data)
 def test_gcd_known(a, b, d):
@@ -163,10 +173,9 @@ def test_egcd_seq_type(a, b):
 @with_params(gcd_args)
 def test_egcd_ret_type(a ,b):
     d, x, y = extended_gcd(a, b)
-    assert (
-        type(d) in (int, long) and
-        type(x) in (int, long) and
-        type(y) in (int, long))
+    assert_is_integer(d)
+    assert_is_integer(x)
+    assert_is_integer(y)
 
 @with_params(egcd_data)
 def test_egcd_known(a, b, d, x ,y):
