@@ -7,30 +7,33 @@ of bytes."""
 
 from RSA import BinaryEncrypter, PublicKey, PrivateKey
 from tests.keys import keys as keys_dict
-from tests.lib import with_params, without_duplicates, pytest_generate_tests
+from tests.lib import ord2byte, with_params, without_duplicates
+from tests.lib import pytest_generate_tests
 
 keys_list = [ keys_dict[tag] for tag in keys_dict ]
 
 def define_texts():
     texts = set()
-    texts.add('')
-    chars = [chr(x) for x in range(0, 256)]
+    texts.add(b'')
+    chars = [ord2byte(x) for x in range(0, 256)]
     texts.update(chars)
-    texts.update(['abcde', '123', 'x\012\015', ':\000\000', '\000\000@'])
+    texts.update([b'abcde', b'123'])
+    texts.update([b'x\012\015', b':\000\000', b'\000\000@'])
     # Line feed, carriage return, and null bytes
-    texts.update(['x\n\n', '\n\n\n', 'x\r\r', '\r\r\r'])
-    texts.update(['\n\r\n', '\r\n\r', '\000\000\n\000', '\n\r\n\r'])
+    texts.update([b'x\n\n', b'\n\n\n', b'x\r\r', b'\r\r\r'])
+    texts.update([b'\n\r\n', b'\r\n\r', b'\000\000\n\000', b'\n\r\n\r'])
     # Try that we can handle DEL and BACKSPACE characters.
-    texts.update(['x\by', 'x\b\by', 'uv\b\bxy'])
-    texts.update(['x\177y', 'x\177\177y', 'uv\177\177xy'])
+    texts.update([b'x\by', b'x\b\by', b'uv\b\bxy'])
+    texts.update([b'x\177y', b'x\177\177y', b'uv\177\177xy'])
     return texts
     for c1 in chars:
         for c2 in chars:
-            texts.add("%s%s" % (c1, c2))
+            texts.add(b"%s%s" % (c1, c2))
     texts.extend([c*50 for c in chars])
-    texts.extend([c*23451 for c in ['\0', 'a', '\177', 'ab\177xy01@:\007']])
+    texts.extend([c*23451
+                  for c in [b'\0', b'a', b'\177', b'ab\177xy01@:\007']])
     # Plaintexts generated from `/dev/urandom'.
-    rand1 = """\
+    rand1 = b"""\
 ]\222\360?n\317\320q\257D\332\317~\315v\270\365\347Q1cZ\342}`\251\321\
 \223\266Q\206\267J\225R\221H\010\370\207\206\020\223\274\244\002\365\302\
 24\0163\277'\316h\312\313B\223i\261\324n\007\254\375\324Q\276\005\325\320\
@@ -50,7 +53,7 @@ y     a}\007\326'\022\335L\007\037\002Ff\247\275-\300\241\216_\307\352\233\
 V\364q\206\264\332\245k\370\373\304\013\025@\023\267\224+k=`-\221\374\266`\
 y\332\n\000\073\
 """
-    rand2 = """\
+    rand2 = b"""\
 \021|\026\3244PTq\361dX6\277\372\015crmD\263\277\247!\325\343hy(;\375Z9D\
 \032\317\334\002\024\301\244\341\246R\344\024\374\212\212:\237B\261\327e,s\
 j${\\\235\337\250j\204\n\243en\241n\264,\210\321P<Q\2072\251"\000\262\260\
@@ -75,8 +78,8 @@ Ja\277\335.Xe\026\2317k!\235\332\204\345\313\245\327_569\020 \374k\262\241\
 \024\203\272\320\307\306\375[\316\325N'\326\363|\233\361'@\
 """
     texts.update([rand1, rand2])
-    texts.update([x + '\000' for x in (rand1, rand2)])
-    texts.update(['\000' + x for x in (rand1, rand2)])
+    texts.update([x + b'\000' for x in (rand1, rand2)])
+    texts.update([b'\000' + x for x in (rand1, rand2)])
     return texts
 
 plaintexts = define_texts()
@@ -90,15 +93,15 @@ plaintexts = define_texts()
 def test_pubkey_encrypt_privkey_decrypt(n, p, q, e, d, plaintext):
     encrypter = BinaryEncrypter(PublicKey(n, e))
     decrypter = BinaryEncrypter(PrivateKey(p, q, e))
-    ciphertext = ''.join(encrypter.encrypt(plaintext))
-    assert plaintext == ''.join(decrypter.decrypt(ciphertext))
+    ciphertext = b''.join(encrypter.encrypt(plaintext))
+    assert plaintext == b''.join(decrypter.decrypt(ciphertext))
 
 @with_params(plaintexts, 'plaintext')
 @with_params([k for k in keys_list if k['n'].bit_length() > 16])
 def test_privkey_encrypt_privkey_decrypt(n, p, q, e, d, plaintext):
     encrypter = BinaryEncrypter(PrivateKey(p, q, e))
-    ciphertext = ''.join(encrypter.encrypt(plaintext))
-    assert plaintext == ''.join(encrypter.decrypt(ciphertext))
+    ciphertext = b''.join(encrypter.encrypt(plaintext))
+    assert plaintext == b''.join(encrypter.decrypt(ciphertext))
 
 # Check that we can enncrypt/decrypt also "biggish" byte sequences
 # (~ 50M) in a reasonable time.
@@ -108,7 +111,7 @@ def test_privkey_encrypt_privkey_decrypt(n, p, q, e, d, plaintext):
 def test_encrypt_decrypt_large(n, p, q, e, d):
     def gen_bytes():
         for i in range(0, 5):
-            fp = open("random.bytes")
+            fp = open('random.bytes', 'rb')
             while True:
                 byte = fp.read(1)
                 if byte:

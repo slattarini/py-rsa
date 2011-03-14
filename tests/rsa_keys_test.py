@@ -7,11 +7,11 @@
 import pytest
 from RSA import PublicKey, PrivateKey, CryptoValueError
 from tests.keys import keys
-from tests.lib import with_params, pytest_generate_tests
+from tests.lib import is_py3k, with_params, pytest_generate_tests
 
 def define_test_data():
     global private_keys, public_keys, invalid_private_keys
-    private_keys = [ v for (_, v) in keys.iteritems() ]
+    private_keys = [ v for (_, v) in keys.items() ]
     public_keys = [ dict(n = k['n'], e = k['e']) for k in private_keys ]
     invalid_private_keys = [
         dict(p=5, q=7, e=12),
@@ -61,13 +61,13 @@ def test_public_key_from_private_key(n, p, q, e, d):
 @with_params(public_keys)
 def test_public_keys_equality(n, e):
    key1 = PublicKey(n, e)
-   key2 = PublicKey(n + 0L, e + 0L)
+   key2 = PublicKey(n, e)
    assert key1 == key2 and not (key1 != key2)
 
 @with_params(private_keys)
 def test_private_keys_equality(n, p, q, e, d):
-   key1 = PrivateKey(p, q, e + 0L)
-   key2 = PrivateKey(p + 0L, q + 0L, e)
+   key1 = PrivateKey(p, q, e)
+   key2 = PrivateKey(p, q, e)
    assert key1 == key2 and not (key1 != key2)
 
 @with_params(invalid_private_keys)

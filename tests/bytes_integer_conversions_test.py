@@ -8,7 +8,7 @@ conversions."""
 import pytest
 import random
 from tests.lib import with_params, without_duplicates, pytest_generate_tests
-from tests.lib import infinite_iteration, seq2gen, TestError
+from tests.lib import infinite_iteration, seq2gen, ord2byte, TestError
 from RSA import BinaryEncrypter, CryptoValueError, CryptoException
 
 # Return "some" random positive integers that requires, to be represented,
@@ -100,14 +100,14 @@ def generate_cipher_conversion_data():
     data = []
     for n_byte in (3, 4, 5, 12, 32, 1000):
         for n in n_with_bytes(n_byte):
-            data.append(dict(n=n, bytes='', ints=[]))
-            data.append(dict(n=n, bytes='\x00' * n_byte, ints=[0x00]))
+            data.append(dict(n=n, bytes=b'', ints=[]))
+            data.append(dict(n=n, bytes=b'\x00' * n_byte, ints=[0x00]))
             for x in [
                 '00', '01', '02', '03', '07', '09', '0a', '41', '61',
                 '6a', '7e', '80', '81', '94', 'f1', 'fe', 'ff'
             ]:
-                bytes = eval("'\\x%s'" % x)
-                bytes += '\x00' * (n_byte - 1)
+                bytes = eval("b'\\x%s'" % x)
+                bytes += b'\x00' * (n_byte - 1)
                 ints = [eval("0x%s" % x)]
                 data.append(dict(n=n, bytes=bytes, ints=ints))
             for x in [
@@ -115,14 +115,14 @@ def generate_cipher_conversion_data():
                 '5a:f3', '7e:0f', '80:81', '94:b1', 'bc:ff', '1b:ea',
             ]:
                 x1, x2 = x.split(':')
-                bytes = eval("'\\x%s\\x%s'" % (x1, x2))
-                bytes +='\x00' * (n_byte - 2)
+                bytes = eval("b'\\x%s\\x%s'" % (x1, x2))
+                bytes += b'\x00' * (n_byte - 2)
                 ints = [eval("0x%s%s" % (x2, x1))]
                 data.append(dict(n=n, bytes=bytes, ints=ints))
     raw_data = [
         dict(
             n_byte = 3,
-            bytes = '\x44\x3a\x00\x11\xfe\x00',
+            bytes = b'\x44\x3a\x00\x11\xfe\x00',
             ints = [0x3a44, 0xfe11],
         ),
     ]
@@ -142,75 +142,75 @@ def generate_plain_conversion_data():
         5**123 + 7**43, 13**57 + 12, 2**1000,  2**2000 + 3**1000
     ]
     for n in miscellaneous_integers_with_17_or_more_bits:
-        data.append(dict(n=n, bytes='', ints=[]))
-        data.append(dict(n=n, bytes='\000', ints=[0xff00]))
-        data.append(dict(n=n, bytes='\001', ints=[0xff01]))
+        data.append(dict(n=n, bytes=b'', ints=[]))
+        data.append(dict(n=n, bytes=b'\000', ints=[0xff00]))
+        data.append(dict(n=n, bytes=b'\001', ints=[0xff01]))
         if n.bit_length() > 32:
-            data.append(dict(n=n, bytes='\000\000', ints=[0xff0000]))
-            data.append(dict(n=n, bytes='\000\001', ints=[0xff0100]))
-            data.append(dict(n=n, bytes='\001\000', ints=[0xff0001]))
-            data.append(dict(n=n, bytes='\001\001', ints=[0xff0101]))
+            data.append(dict(n=n, bytes=b'\000\000', ints=[0xff0000]))
+            data.append(dict(n=n, bytes=b'\000\001', ints=[0xff0100]))
+            data.append(dict(n=n, bytes=b'\001\000', ints=[0xff0001]))
+            data.append(dict(n=n, bytes=b'\001\001', ints=[0xff0101]))
     raw_data = [
         dict(
             n_byte = 1,
-            bytes = '\000\000',
+            bytes = b'\000\000',
             ints = [0xff00, 0xff00],
         ),
         dict(
             n_byte = 1,
-            bytes = 'ab',
+            bytes = b'ab',
             ints = [0xff61, 0xff62],
         ),
         dict(
             n_byte = 1,
-            bytes = 'abz',
+            bytes = b'abz',
             ints = [0xff61, 0xff62, 0xff7a],
         ),
         dict(
             n_byte = 2,
-            bytes = '\000\000\000',
+            bytes = b'\000\000\000',
             ints = [0xff0000, 0xff00],
         ),
         dict(
             n_byte = 2,
-            bytes = '\001\000\000',
+            bytes = b'\001\000\000',
             ints = [0xff0001, 0xff00],
         ),
         dict(
             n_byte = 2,
-            bytes = '\000\000\001',
+            bytes = b'\000\000\001',
             ints = [0xff0000, 0xff01],
         ),
         dict(
             n_byte = 3,
-            bytes = '\001\000\000',
+            bytes = b'\001\000\000',
             ints = [0xff000001],
         ),
         dict(
             n_byte = 3,
-            bytes = '\000\000\001',
+            bytes = b'\000\000\001',
             ints = [0xff010000],
         ),
         dict(
             n_byte = 10,
-            bytes = '0123456789',
+            bytes = b'0123456789',
             ints = [0xff39383736353433323130],
         ),
         dict(
             n_byte = 10,
-            bytes = '0123456789\000',
+            bytes = b'0123456789\000',
             ints = [0xff39383736353433323130, 0xff00],
         ),
         dict(
             n_byte = 10,
-            bytes = 'abcdefghijklmnopqrstuvwxyz',
+            bytes = b'abcdefghijklmnopqrstuvwxyz',
             ints = [0xff6a696867666564636261,
                     0xff74737271706f6e6d6c6b,
                     0xff7a7978777675],
         ),
         dict(
             n_byte = 10,
-            bytes = 'klmnopqrstabcdefghijuvwxyz',
+            bytes = b'klmnopqrstabcdefghijuvwxyz',
             ints = [0xff74737271706f6e6d6c6b,
                     0xff6a696867666564636261,
                     0xff7a7978777675],
@@ -218,31 +218,31 @@ def generate_plain_conversion_data():
         dict(
             n_byte = 13,
             # courtesy of random.shuffle()
-            bytes = 'wzqtdchpsvolkxargejyubfnim',
+            bytes = b'wzqtdchpsvolkxargejyubfnim',
             ints = [0xff6b6c6f76737068636474717a77,
                     0xff6d696e666275796a6567726178],
         ),
         dict(
             n_byte = 14,
-            bytes = 'ababababababababababababab',
+            bytes = b'ababababababababababababab',
             ints = [0xff6261626162616261626162616261,
                     0xff626162616261626162616261],
         ),
         dict(
             n_byte = 15,
-            bytes = 'ababababababababababababab',
+            bytes = b'ababababababababababababab',
             ints = [0xff616261626162616261626162616261,
                     0xff6261626162616261626162],
         ),
         dict(
             n_byte = 1,
-            bytes = ''.join([chr(i) for i in range(0, 256)]),
+            bytes = b''.join([ord2byte(i) for i in range(0, 256)]),
             ints = [0xff00 + i for i in range(0, 256)],
         ),
         dict(
             # Finally a "nice" "stress test".
             n_byte = 22,
-            bytes = ''.join([chr(i) for i in range(0, 256)]),
+            bytes = b''.join([ord2byte(i) for i in range(0, 256)]),
             ints = [0xff1514131211100f0e0d0c0b0a09080706050403020100,
                     0xff2b2a292827262524232221201f1e1d1c1b1a19181716,
                     0xff41403f3e3d3c3b3a393837363534333231302f2e2d2c,
@@ -289,9 +289,9 @@ def generate_unpadded_cipher_text_data():
     data = []
     for n_byte in (3, 4, 5, 24, 1000):
         for n in n_with_bytes(n_byte):
-            for i in set([1, 2, n_byte / 2, n_byte - 2, n_byte - 1]):
+            for i in set([1, 2, n_byte // 2, n_byte - 2, n_byte - 1]):
                 for j in (0, 1, 2, 4, 23):
-                    data.append(dict(n=n, bytes='a'*i + 'b'*n_byte*j))
+                    data.append(dict(n=n, bytes=b'a'*i + b'b'*n_byte*j))
     return data
 
 def generate_too_big_cipher_integer_data():
@@ -358,11 +358,11 @@ def test_p2i_with_generator(n, bytes, ints):
 
 @with_params(plain_conversion_data)
 def test_i2p(n, bytes, ints):
-    assert ''.join((ByteSeqConverter(n).i2p(ints))) == bytes
+    assert b''.join((ByteSeqConverter(n).i2p(ints))) == bytes
 
 @with_params(plain_conversion_data)
 def test_i2p_with_generator(n, bytes, ints):
-    assert ''.join((ByteSeqConverter(n).i2p(seq2gen(ints)))) == bytes
+    assert b''.join((ByteSeqConverter(n).i2p(seq2gen(ints)))) == bytes
 
 
 @with_params(cipher_conversion_data)
@@ -375,11 +375,11 @@ def test_c2i_with_generator(n, bytes, ints):
 
 @with_params(cipher_conversion_data)
 def test_i2c(n, bytes, ints):
-    assert ''.join((ByteSeqConverter(n).i2c(ints))) == bytes
+    assert b''.join((ByteSeqConverter(n).i2c(ints))) == bytes
 
 @with_params(cipher_conversion_data)
 def test_i2c_with_generator(n, bytes, ints):
-    assert ''.join((ByteSeqConverter(n).i2c(seq2gen(ints)))) == bytes
+    assert b''.join((ByteSeqConverter(n).i2c(seq2gen(ints)))) == bytes
 
 
 @with_params(unpadded_plain_integer_data)
@@ -442,7 +442,7 @@ def test_i2c_too_big_with_generator(n, ints):
 # test hang in case of failure...
 def test_p2i_or_i2p_with_infinite_generator(n_byte, n_iter, convtype):
     iter_count = 0
-    character = 'a'
+    character = b'a'
     string = character * (n_byte - 1)
     integer = int('0xff' + '61' * (n_byte - 1), 16)
     n = 1 << n_byte * 8
@@ -468,7 +468,7 @@ def test_p2i_or_i2p_with_infinite_generator(n_byte, n_iter, convtype):
 def test_p2i_large(n):
     def gen_bytes():
         for i in range(0, 20):
-            fp = open("random.bytes")
+            fp = open('random.bytes', 'rb')
             while True:
                 byte = fp.read(1)
                 if byte:
@@ -477,6 +477,5 @@ def test_p2i_large(n):
                     fp.close()
                     break
     for _ in ByteSeqConverter(n).p2i(gen_bytes()): pass
-
 
 # vim: et sw=4 ts=4 ft=python

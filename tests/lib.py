@@ -6,6 +6,11 @@
 
 import RSA
 
+is_py3k = RSA._is_py3k
+is_integer = RSA._is_integer
+is_string = RSA._is_string
+ord2byte = RSA._ord2byte
+
 class TestError(Exception):
     pass
 
@@ -37,7 +42,7 @@ def integers_mod(n, class_name=None):
         class klass(RSA.IntegerModPQ):
             p, q = n[0], n[1]
         n = n[0] * n[1]
-    elif isinstance(n, (int, long)) or n <= 0:
+    elif is_integer(n) or n <= 0:
         class klass(RSA.IntegerMod):
             modulo = n
     else:

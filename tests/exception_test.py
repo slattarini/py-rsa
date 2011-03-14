@@ -6,6 +6,7 @@
 
 import pytest
 import RSA
+from tests.lib import is_string
 
 ### DATA
 
@@ -50,16 +51,16 @@ def pytest_generate_tests(metafunc):
 ### TESTS
 
 def fix_exception(exc):
-    if isinstance(exc, basestring):
+    if is_string(exc):
         exc = getattr(RSA, exc)
     return exc
 
 def test_exc_subclass(exc, su_exc):
-    exc, su_exc = map(fix_exception, (exc, su_exc))
+    exc, su_exc = tuple(map(fix_exception, (exc, su_exc)))
     issubclass(exc, su_exc),
 
 def test_exc_subexception(exc, su_exc):
-    exc, su_exc = map(fix_exception, (exc, su_exc))
+    exc, su_exc = tuple(map(fix_exception, (exc, su_exc)))
     pytest.raises(su_exc, "raise exc")
 
 def test_exc_raisable(exc):

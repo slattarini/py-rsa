@@ -87,8 +87,9 @@ pdf-print: RSA-for-print.pdf
 clean:
 	$(FIND) . \( -name '*.tmp' -o -name '*.tmp[0-9]' \) -print | \
 	   $(XARGS) rm -f
-	$(FIND) . -name '*.tmpdir' -print | $(XARGS) rm -rf
+	$(FIND) . -name '*.tmpdir' -prune | $(XARGS) rm -rf
 	$(FIND) . -name '*.py[co]' -print | $(XARGS) rm -f
+	$(FIND) . -name __pycache__ -prune | $(XARGS) rm -rf
 	rm -rf $(distdir) _texbuild_display _texbuild_print
 	rm -f $(distdir).tar.gz
 	rm -f RSA-for-display.pdf RSA-for-print.pdf

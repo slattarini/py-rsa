@@ -10,8 +10,39 @@
 """An "educational" implementation of the RSA encryption and digital sign
 algorithm"""
 
+#--------------------------------------------------------------------------
+
+## -------------------------------------- ##
+##  Python3000 support and compatibility  ##
+## -------------------------------------- ##
+
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+
+_is_py3k = __import__('sys').version_info[0] >= 3
+
+if _is_py3k:
+    def _is_integer(obj): return isinstance(obj, int)
+    def _is_string(obj): return isinstance(obj, str)
+    def _ord2byte(i): return bytes((i,))
+else:
+    def _is_integer(obj): return isinstance(obj, (int, long))
+    def _is_string(obj): return isinstance(obj, basestring)
+    def _ord2byte(i): return bytes(chr(i))
+
+def _byte2ord(b):
+    try:
+        return ord(b)
+    except TypeError:
+        if _is_integer(b):
+            return b
+        else:
+            raise
+
 # All classes declared in this file are to be new-style classes.
-__metaclass__ = type
+if not _is_py3k:
+    __metaclass__ = type
 
 #--------------------------------------------------------------------------
 
@@ -71,7 +102,7 @@ class CryptoValueError(CryptoException, ValueError):
 
 def _operation_modulo_integer(func):
     def wrapper(self, other):
-        if isinstance(other, (int, long)):
+        if _is_integer(other):
             other = self.__class__(other)
         elif not isinstance(other, self.__class__):
             raise IMTypeError("%r is not a %s", other, self.__class__)
@@ -103,7 +134,7 @@ def extended_gcd(a, b):
     x0, y0 = 1, 0
     x1, y1 = 0, 1
     while r1 != 0:
-        q = r0 / r1
+        q = r0 // r1
         r0, r1 = r1, r0 % r1
         x0, x1 = x1, x0 - q * x1
         y0, y1 = y1, y0 - q * y1
@@ -135,7 +166,7 @@ def int_to_pos(n, base):
     seq = []
     while 1:
         seq.append(n % base)
-        n = n / base
+        n = n // base
         if n == 0:
             break
     return seq
@@ -156,13 +187,13 @@ class IntegerMod(object):
       >>> class IntegerMod15(IntegerMod):
       ...    modulo = 15
       >>> # They print nicely, and can be initialized from any integer.
-      >>> print IntegerMod15(11)
+      >>> print (IntegerMod15(11))
       11 (mod 15)
-      >>> print IntegerMod15(17)
+      >>> print (IntegerMod15(17))
       2 (mod 15)
-      >>> print IntegerMod15(-1)
+      >>> print (IntegerMod15(-1))
       14 (mod 15)
-      >>> print IntegerMod15(150000000000000000000000000000000L + 1)
+      >>> print (IntegerMod15(150000000000000000000000000000000 + 1))
       1 (mod 15)
       >>> # A nice trick to have all integers (modulo 15) at hand.
       >>> mod15 = []
@@ -204,10 +235,12 @@ class IntegerMod(object):
       7 (mod 15)
       >>> # Proper exceptions should be raised for impossible operations
       >>> mod15[10]**(-1)
+      ... #doctest: +IGNORE_EXCEPTION_DETAIL
       Traceback (most recent call last):
        ...
       IMValueError: 15 is not prime with 10
       >>> 1 / mod15[9]
+      ... #doctest: +IGNORE_EXCEPTION_DETAIL
       Traceback (most recent call last):
        ...
       IMValueError: 15 is not prime with 9
@@ -215,6 +248,7 @@ class IntegerMod(object):
       >>> # since otherwise the operation is impossible (has no solutions)
       >>> # or indefinite (has multiple possible results).
       >>> mod15[12] / mod15[3]
+      ... #doctest: +IGNORE_EXCEPTION_DETAIL
       Traceback (most recent call last):
        ...
       IMValueError: 15 is not prime with 3
@@ -279,13 +313,15 @@ class IntegerMod(object):
     @_operation_modulo_integer
     def __div__(self, other):
         return self * other**(-1)
+    __truediv__ = __div__
 
     @_operation_modulo_integer
     def __rdiv__(self, other):
         return self**(-1) * other
+    __rtruediv__ = __rdiv__
 
     def __pow__(self, exponent):
-        if not isinstance(exponent, (int, long)):
+        if not _is_integer(exponent):
             raise IMTypeError("exponent %r is not an integer", exponent)
         elif exponent < 0:
             exponent *= -1
@@ -307,7 +343,7 @@ class IntegerMod(object):
                 partial1 *= base
                 exponent -= 1
             else:
-                exponent /= 2
+                exponent //= 2
                 partial2 = base = base * base
                 if exponent == 1:
                     break
@@ -359,7 +395,7 @@ class IntegerModPQ(IntegerMod):
         self.mod_q = self.int_mod_q(whole)
 
     def __pow__(self, exponent):
-        if not isinstance(exponent, (int, long)):
+        if not _is_integer(exponent):
             raise IMTypeError("exponent %r is not an integer", exponent)
         a = (self.mod_p ** (exponent % (self.p - 1))).residue
         b = (self.mod_q ** (exponent % (self.q - 1))).residue
@@ -373,7 +409,7 @@ def modular_reciprocal(a, m):
     coprime"""
     class cls(IntegerMod):
         modulo = m
-    cls.__name__ = "IntegerMod%u" % m  # for better error messages
+    cls.__name__ = str("IntegerMod%u" % m)  # for better error messages
     return (cls(a)**(-1)).residue
 
 
@@ -452,6 +488,7 @@ class BasicEncrypter:
       >>> # to be able to decrypt.
       >>> cipher = E.encrypt(plain)
       >>> E.decrypt(cipher) == plain
+      ... #doctest: +IGNORE_EXCEPTION_DETAIL
       Traceback (most recent call last):
        ...
       CryptoRuntimeError: can't decrypt without a private key
@@ -489,11 +526,13 @@ class BasicEncrypter:
     # of different types.  This might be truly useful in practice.
     #
     def o2i(self, text):
-        """From plaintext and/or ciphertext to sequence of integers."""
+        """From plaintext and/or ciphertext to sequence of integers.
+        Should be able to deal with generators and map objects."""
         return (text,)
     def i2o(self, seq):
-        """From sequence of integers to plaintext and/or ciphertext."""
-        return seq[0]
+        """From sequence of integers to plaintext and/or ciphertext.
+        Should be able to deal with generators and map objects."""
+        for x in seq: return x
     def p2i(self, plaintext):
         """From plaintext to sequence of integers.
         By default, equivalent to 'o2i'"""
@@ -527,6 +566,11 @@ class BasicEncrypter:
             raise CryptoRuntimeError("can't decrypt without a private key")
         else:
             return self._modexp(integer, d)
+#        d = getattr(self.key, 'd', None)
+#        if d is None:
+#            raise CryptoRuntimeError("can't decrypt without a private key")
+#        else:
+#            return self._modexp(integer, d)
 
     def encrypt(self, plaintext):
         return self.i2c(map(self._encrypt, self.p2i(plaintext)))
@@ -560,10 +604,12 @@ class BinaryEncrypter(BasicEncrypter):
     This class requires a key with n > 65536 (i.e., 17 or more bits
     long) in order to work correctly:
       >>> BinaryEncrypter(PrivateKey(p=53, q=67, e=17))
+      ... #doctest: +IGNORE_EXCEPTION_DETAIL
       Traceback (most recent call last):
        ...
       CryptoValueError: key is too small (12 bits)
       >>> BinaryEncrypter(PrivateKey(p=17, q=2667, e=59))
+      ... #doctest: +IGNORE_EXCEPTION_DETAIL
       Traceback (most recent call last):
        ...
       CryptoValueError: key is too small (16 bits)
@@ -576,14 +622,14 @@ class BinaryEncrypter(BasicEncrypter):
     rather than as a single string:
       >>> key = PrivateKey(p=4111, q=4703, e=127)
       >>> encrypter = BinaryEncrypter(key)
-      >>> plaintext = 'foobar' * 1000
+      >>> plaintext = b'foobar' * 1000
       >>> ciphertext = encrypter.encrypt(plaintext)
       >>> ciphertext
       <generator object ...>
       >>> len(list(ciphertext))
       3000
       >>> # Express the ciphertext as a single string.
-      >>> ciphertext = ''.join(encrypter.encrypt(plaintext))
+      >>> ciphertext = b''.join(encrypter.encrypt(plaintext))
       >>> # Also decrypted text is returned through a generator.
       >>> deciphertext = encrypter.decrypt(ciphertext)
       >>> deciphertext
@@ -593,8 +639,8 @@ class BinaryEncrypter(BasicEncrypter):
     the result as a single string, you're advised to resort to something
     like:
       >>> encrypter = BinaryEncrypter(key)
-      >>> ciphertext = ''.join(encrypter.encrypt(plaintext))
-      >>> deciphertext = ''.join(encrypter.decrypt(ciphertext))
+      >>> ciphertext = b''.join(encrypter.encrypt(plaintext))
+      >>> deciphertext = b''.join(encrypter.decrypt(ciphertext))
       >>> deciphertext == plaintext
       True
 
@@ -606,85 +652,85 @@ class BinaryEncrypter(BasicEncrypter):
        >>> # Helper subroutine.
        >>> def cipher_overhead(key, plaintext):
        ...     encrypter = BinaryEncrypter(key)
-       ...     ciphertext = ''.join(encrypter.encrypt(plaintext))
+       ...     ciphertext = b''.join(encrypter.encrypt(plaintext))
        ...     overhead = float(len(ciphertext)) / len(plaintext) - 1
-       ...     print "%.0f%%" % (overhead * 100)
+       ...     print("%.0f%%" % (overhead * 100))
 
 
        >>> key = PrivateKey(p=4111, q=4703, e=127)
-       >>> cipher_overhead(key, 'x')
+       >>> cipher_overhead(key, b'x')
        300%
-       >>> cipher_overhead(key, 'x' * 20)
+       >>> cipher_overhead(key, b'x' * 20)
        100%
        >>> # Even increasing the size of the message, we won't see
        >>> # any further improvements.
-       >>> cipher_overhead(key, 'x' * 100)
+       >>> cipher_overhead(key, b'x' * 100)
        100%
-       >>> cipher_overhead(key, 'x' * 1000)
+       >>> cipher_overhead(key, b'x' * 1000)
        100%
 
        >>> key = PrivateKey(p=99713, q=104707, e=997)
-       >>> cipher_overhead(key, 'x')
+       >>> cipher_overhead(key, b'x')
        400%
-       >>> cipher_overhead(key, 'x' * 20)
+       >>> cipher_overhead(key, b'x' * 20)
        75%
-       >>> cipher_overhead(key, 'x' * 100)
+       >>> cipher_overhead(key, b'x' * 100)
        70%
-       >>> cipher_overhead(key, 'x' * 1000)
+       >>> cipher_overhead(key, b'x' * 1000)
        67%
        >>> # Even increasing the size of the message, we won't see
        >>> # any real further improvements.
-       >>> cipher_overhead(key, 'x' * 3000)
+       >>> cipher_overhead(key, b'x' * 3000)
        67%
-       >>> cipher_overhead(key, 'x' * 40000)
+       >>> cipher_overhead(key, b'x' * 40000)
        67%
 
        >>> key = PublicKey(n=(2**107-1)*(2**127-1), e=4201)
-       >>> cipher_overhead(key, 'x' * 3)
+       >>> cipher_overhead(key, b'x' * 3)
        900%
-       >>> cipher_overhead(key, 'x' * 10)
+       >>> cipher_overhead(key, b'x' * 10)
        200%
-       >>> cipher_overhead(key, 'x' * 20)
+       >>> cipher_overhead(key, b'x' * 20)
        50%
-       >>> cipher_overhead(key, 'x' * 500)
+       >>> cipher_overhead(key, b'x' * 500)
        8%
-       >>> cipher_overhead(key, 'x' * 10000)
+       >>> cipher_overhead(key, b'x' * 10000)
        7%
 
        >>> key = PrivateKey(p=2**521-1, q=2**607-1, e=65537)
-       >>> cipher_overhead(key, 'x' * 100)
+       >>> cipher_overhead(key, b'x' * 100)
        41%
        >>> # Noticeable fluctuations are possible with smaller inputs.
        >>> # This is due to the fact that the required amount of padding
        >>> # can vary noticeably among inputs of similar size.
-       >>> cipher_overhead(key, 'x' * 400)
+       >>> cipher_overhead(key, b'x' * 400)
        6%
-       >>> cipher_overhead(key, 'x' * 900)
+       >>> cipher_overhead(key, b'x' * 900)
        10%
-       >>> cipher_overhead(key, 'x' * 1000)
+       >>> cipher_overhead(key, b'x' * 1000)
        13%
-       >>> cipher_overhead(key, 'x' * 1100)
+       >>> cipher_overhead(key, b'x' * 1100)
        3%
-       >>> cipher_overhead(key, 'x' * 1200)
+       >>> cipher_overhead(key, b'x' * 1200)
        6%
        >>> # For largish inputs, the overhead stabilizes around small
        >>> # value (~ 2%).
-       >>> cipher_overhead(key, 'x' * 5000)
+       >>> cipher_overhead(key, b'x' * 5000)
        2%
-       >>> cipher_overhead(key, 'x' * 20000)
+       >>> cipher_overhead(key, b'x' * 20000)
        2%
-       >>> cipher_overhead(key, 'x' * 70000)
+       >>> cipher_overhead(key, b'x' * 70000)
        2%
 
        >>> key = PublicKey(n=(2**2281-1)*(2**2203-1), e=65537)
-       >>> cipher_overhead(key, 'x' * 300)
+       >>> cipher_overhead(key, b'x' * 300)
        87%
-       >>> cipher_overhead(key, 'x' * 1000)
+       >>> cipher_overhead(key, b'x' * 1000)
        12%
        >>> # The overhead will soon become negligible.
-       >>> cipher_overhead(key, 'x' * 10**4)
+       >>> cipher_overhead(key, b'x' * 10**4)
        1%
-       >>> cipher_overhead(key, 'x' * 10**5)
+       >>> cipher_overhead(key, b'x' * 10**5)
        0%
     """
 
@@ -727,10 +773,10 @@ class BinaryEncrypter(BasicEncrypter):
         self._setup_byte_lengths(key.n)
 
     def _setup_byte_lengths(self, n):
-        self.n_byte_length = n.bit_length() / 8
+        self.n_byte_length = n.bit_length() // 8
         if n.bit_length() % 8 > 0:
             self.n_byte_length += 1
-        self.plain_chunk_byte_length = (n.bit_length() - 1) / 8
+        self.plain_chunk_byte_length = (n.bit_length() - 1) // 8
         self.plain_chunk_byte_length -= 1 # make room for padding byte
         if self.plain_chunk_byte_length <= 0:
             raise CryptoValueError(
@@ -746,7 +792,7 @@ class BinaryEncrypter(BasicEncrypter):
         count = 0
         digits = []
         for byte in bytes:
-            digits.append(ord(byte))
+            digits.append(_byte2ord(byte))
             count += 1
             # Convert one chunk at a time into an integer.
             if count == self._chunk_bytelen(is_plain):
@@ -782,7 +828,7 @@ class BinaryEncrypter(BasicEncrypter):
                 pad_length = self._chunk_bytelen(is_plain) - len(digits)
                 digits.extend([0] * pad_length)
             # Yield one encrypted chunk at a time.
-            yield ''.join(map(chr, digits))
+            yield b''.join(map(_ord2byte, digits))
 
     def p2i(self, bytes):
         return self._o2i(bytes, is_plain=True)
