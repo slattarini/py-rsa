@@ -4,7 +4,7 @@
 
 """Define RSA keys to be used in tests."""
 
-from tests.lib import s2i
+from .lib import s2i
 
 keys = {
 

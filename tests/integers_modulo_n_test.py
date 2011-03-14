@@ -6,8 +6,8 @@
 
 import pytest
 import RSA
-from tests.lib import is_py3k, s2i, integers_mod, with_params, \
-                      without_duplicates, pytest_generate_tests
+from .lib import is_py3k, s2i, integers_mod, with_params
+from .lib import without_duplicates, pytest_generate_tests
 
 if is_py3k:
     from functools import reduce

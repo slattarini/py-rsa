@@ -6,7 +6,7 @@
 
 import pytest
 from RSA import int_to_pos, pos_to_int
-from tests.lib import with_params, pytest_generate_tests
+from .lib import with_params, pytest_generate_tests
 
 # b is the base, n the integer, r its positional representation
 # TODO: it should be easy to have more automatically-generated test

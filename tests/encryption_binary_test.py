@@ -6,9 +6,9 @@
 of bytes."""
 
 from RSA import BinaryEncrypter, PublicKey, PrivateKey
-from tests.keys import keys as keys_dict
-from tests.lib import ord2byte, with_params, without_duplicates
-from tests.lib import pytest_generate_tests
+from .keys import keys as keys_dict
+from .lib import ord2byte, with_params, without_duplicates
+from .lib import pytest_generate_tests
 
 keys_list = [ keys_dict[tag] for tag in keys_dict ]
 

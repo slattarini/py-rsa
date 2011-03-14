@@ -5,7 +5,7 @@
 """Unit tests for the RSA.py's implementation of euclidean algorithm"""
 
 from RSA import gcd, extended_gcd
-from tests.lib import is_py3k, pytest_generate_tests, with_params
+from .lib import is_py3k, pytest_generate_tests, with_params
 
 ## PY3K COMPATIBILITY
 
