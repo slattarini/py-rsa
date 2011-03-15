@@ -7,8 +7,8 @@ conversions."""
 
 import pytest
 import random
-from tests.lib import with_params, without_duplicates, pytest_generate_tests
-from tests.lib import infinite_iteration, seq2gen, ord2byte, TestError
+from .lib import with_params, without_duplicates, pytest_generate_tests
+from .lib import infinite_iteration, seq2gen, ord2byte, TestError
 from RSA import BinaryEncrypter, CryptoValueError, CryptoException
 
 # Return "some" random positive integers that requires, to be represented,

@@ -566,11 +566,6 @@ class BasicEncrypter:
             raise CryptoRuntimeError("can't decrypt without a private key")
         else:
             return self._modexp(integer, d)
-#        d = getattr(self.key, 'd', None)
-#        if d is None:
-#            raise CryptoRuntimeError("can't decrypt without a private key")
-#        else:
-#            return self._modexp(integer, d)
 
     def encrypt(self, plaintext):
         return self.i2c(map(self._encrypt, self.p2i(plaintext)))

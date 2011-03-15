@@ -6,8 +6,8 @@
 
 import pytest
 import RSA
-from tests.lib import is_py3k, s2i, integers_mod, with_params, \
-                      without_duplicates, pytest_generate_tests
+from .lib import is_py3k, s2i, integers_mod, with_params
+from .lib import without_duplicates, pytest_generate_tests
 
 if is_py3k:
     from functools import reduce
@@ -530,13 +530,14 @@ zero_to_zero_exponentiation_modulos = define_zero_to_zero_exponentiation_modulos
 ### TESTS
 
 
-@pytest.mark.skipif("is_py3k") # FIXME: a test that works also for python3?
 def test_integermod_repr():
-    class MyType(type):
+    class MyPrettyReprType(type):
         def __repr__(self):
             return self.__name__
-    class MyClass(RSA.IntegerMod):
-        __metaclass__ = MyType
+    # Hack to support both python2 and python3 metaclasses.
+    MyPrettyReprClass = MyPrettyReprType('MyPrettyReprClass',
+                                         (object, ), {})
+    class MyClass(MyPrettyReprClass, RSA.IntegerMod):
         modulo = 5
     class MySubClass(MyClass):
         modulo = 11

@@ -6,8 +6,8 @@
 
 import pytest
 from RSA import PublicKey, PrivateKey, CryptoValueError
-from tests.keys import keys
-from tests.lib import is_py3k, with_params, pytest_generate_tests
+from .keys import keys
+from .lib import is_py3k, with_params, pytest_generate_tests
 
 def define_test_data():
     global private_keys, public_keys, invalid_private_keys

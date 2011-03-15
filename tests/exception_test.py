@@ -6,7 +6,7 @@
 
 import pytest
 import RSA
-from tests.lib import is_string
+from .lib import is_string
 
 ### DATA
 

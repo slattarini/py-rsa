@@ -5,9 +5,9 @@
 """Tests for our implementation of RSA applied to integers."""
 
 from RSA import PublicKey, PrivateKey, IntegerEncrypter
-from tests.lib import s2i, with_params, without_duplicates, \
-                      pytest_generate_tests
-from tests.keys import keys
+from .lib import s2i, with_params, without_duplicates
+from .lib import pytest_generate_tests
+from .keys import keys
 
 # ---------------------------- #
 #  Create data for the tests.  #
