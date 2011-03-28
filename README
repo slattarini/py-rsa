@@ -4,6 +4,8 @@ tight security.
 
 Requires python version >= 2.7 (this includes python3 too).
 
+Generation of RSA keys is *not* implemented.
+
 Existing documentation is in the docstrings of RSA.py.
 
 There is no installation procedure.
