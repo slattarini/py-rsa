@@ -10,7 +10,7 @@ TODO list for py-rsa
  * implement digital signature (using sha-512 and md5 provided by
    the 'hashlib' python's standard module?)
 
- * make the "Encrypter" objects of py-rsa work with iterators.
+ * make the "Encrypter" objects of py-rsa work better with iterators.
 
  * implement key generation.
 
