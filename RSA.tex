@@ -146,12 +146,12 @@
 
 Le nozioni qui riportate dovrebbero essere ben note, quindi le
 passeremo in rassegna molto velocemente, solo per avere riferimenti
-facilmente accessibile nel seguito.
+facilmente accessibili nel seguito.
 
 \begin{theorem}[Teorema di divisione]
 Dati due interi (non necessariamente positivi) $a$ e $b$ con $b \neq 0$,
 esistono due interi $q$ ed $r$ tali che $a = bq + r$ e $0 \leq r
-< \abs{b}$. Essi sono unici, e sono chiamati rispettivamente
+< \abs{b}$. Questi due interi sono unici, e sono chiamati rispettivamente
 \emph{quoziente} e \emph{resto} della divisione di $a$ per $b$.
 Il resto si indica, dove conveniente, come \,$r = \rem{a}{b}$.
 \end{theorem}
@@ -196,8 +196,8 @@ anche $bc$ divide $a$.
 \end{theorem}
 
 Usando il teorema di divisione ed il principio di induzione, possiamo
-offrire dimostrazioni di questi teoremi rimarchevolmente semplici, ed
-indipendenti dal \TFA.
+offrire dimostrazioni rimarchevolmente semplici di questi teoremi, senza
+assumere il \TFA.
 %
 \begin{proof}[Dimostrazione del teorema~\eqref{thm:TFA-mul-2}]
 %
@@ -239,9 +239,9 @@ si ha che $am \divides ab$, da cui si ricava facilmente $m \divides b$.
 \end{proof}
 
 \begin{proof}[Dimostrazione del teorema~\eqref{thm:TFA-mul-1}]
-Sia $d$ un intero che divide sia $m$ che $ab$.  Allora $d$ \`e primo
-con $a$ (altrimenti ogni loro divisore comune $> 1$ dividerebbe sia
-$m$ che $a$, assurdo), e quindi, essendo $d \divides ab$, deriva dal
+Sia $d$ un intero che divide sia $m$ che $ab$.  Allora $d$ ed $a$
+sono coprimi (ogni loro divisore comune $> 1$ dividerebbe sia $m$
+che $a$, assurdo), e quindi, essendo $d \divides ab$, deriva dal
 teorema~\eqref{thm:TFA-div} che $d \divides b$.  Ma allora $d$ divide
 sia $b$ che $m$, ed essendo questi coprimi, $d$ \`e necessariamente
 $= 1$. Perci\`o $m$ ed $ab$ sono coprimi.
@@ -286,15 +286,15 @@ il massimo comun divisore ``contiene'' tutti gli altri divisori comuni.
 
 Dati due interi positivi\footnote{Quanto segue potrebbe essere facilmente
 generalizzato anche ad interi negativi, ma noi ci limiteremo a trattare
-interi positivi per non appesantire troppo la discussione} $a$ e $b$,
+interi positivi per non appesantire troppo la discussione.} $a$ e $b$,
 \`e possibile calcolare il loro massimo comun divisore con
 l'\emph{algoritmo di Euclide}, che consiste in una serie di divisioni
 \emph{intere} (cio\`e con quoziente e resto) successive:
 
 \begin{displaymath}
   \begin{array}{rcll}
-      r_0  & \!=\! & a \\
-      r_1  & \!=\! & b \\
+      r_0  & \!\!:=\! & a \\
+      r_1  & \!\!:=\! & b \\
       r_0  & \!=\! & r_1 q_0 + r_2\,, & 0 < r_2 < r_1 \\
       r_1  & \!=\! & r_2 q_1 + r_3\,, & 0 < r_3 < r_2 \\
     \ldots &       & \ldots \\
@@ -457,7 +457,7 @@ equivalenza}, ossia:
 \begin{enumerate}
 \item $a \congruent a \mmod m$
 \item $a \congruent b \mmod m \implies b \congruent a \mmod m$
-\item $a \congruent b \mmod m ~\:\textrm{e}\:~
+\item $a \congruent b \mmod m ~\,\textrm{e}\:~
        b \congruent c \mmod m \implies
        a \congruent c \mmod m$
 \end{enumerate}
@@ -495,7 +495,7 @@ che $a \congruent b \mmod m$.
 \begin{proof}
 Abbiamo che $ac \congruent bc \mmod m$, ossia $m \divides \p{a -b}c$.
 Poich\`e $c$ ed $m$ sono coprimi, dal teorema~\eqref{thm:TFA-div}
-segue che $m \divides \p{a -b}c$, i.e., $a \congruent b \mmod m$.
+segue $m \divides \p{a -b}$, ossia $a \congruent b \mmod m$.
 \end{proof}
 
 \begin{definition}
@@ -586,15 +586,18 @@ tre sequenze di numeri $b_i$, $e_i$, ed $f_i$ come segue:
   \end{array}
 \end{displaymath}
 Le sequenze si fermano all'ultimo indice $k$ con $e_k > 0$.  Per tale
-$k$, risulta $e_k = 1$ e $a^m \congruent b_k f_k \mmod m$.  Inoltre,
-$k \leq \log_2 n$, cosicch\`e l'algorimo termina dopo al pi\`u\,
-$\floor{\log_2 n}$ passi.
+$k$, risulta $e_k = 1$ e:
+\begin{equation}\label{eq:last-sq-mul-pass}
+  a^m \congruent b_k f_k \mmod m
+\end{equation}
+Inoltre, $k \leq \log_2 n$, cosicch\`e l'algorimo termina dopo al
+pi\`u\, $\floor{\log_2 n}$ passi.
 \end{algorithm}
 
 \begin{proof}
 Usando~\eqref{eq:sq-mul-even} e~\eqref{eq:sq-mul-odd}, si dimostra
 facilmente per induzione che, ad ogni passo, $a^m \congruent b_i f_i
-\mmod m$, da cui la prima parte della tesi ponendo $i = k$.  Inoltre,
+\mmod m$, da cui la~\eqref{eq:last-sq-mul-pass} ponendo $i = k$.  Inoltre,
 se fosse $e_k \geq 2$, avremmo $e_{k+1} \geq 1$, e $k$ non sarebbe
 l'ultimo indice con $e_k > 0$, assurdo.  Infine, \`e evidente che
 per ogni indice $i$ si ha $e_{i+1} \leq \frac{e_i}{2}$, da cui segue
@@ -607,7 +610,7 @@ $2^k = 2^k e_k \leq n \implies k \leq \log_2 n$.
 \subsection{Inverso modulo $m$}
 
 \begin{definition}
-Dato un intero $a$, il suo inverso secondo il modulo $m$, \`e quell'intero
+Dato un intero $a$, il suo inverso secondo il modulo $m$ \`e quell'intero
 $b$ (se esiste) tale che $ab \congruent 1 \mmod m$.
 \end{definition}
 
@@ -832,16 +835,17 @@ dalla chiave pubblica.
 \medskip
 L'idea base della crittografia asimmetrica pu\`o essere resa pi\`u
 intuitiva con l'uso di un'analogia ``postale'', in cui il mittente \`e
-Alice, il destinatario \`e Bob, i lucchetti fanno le veci delle chiavi,
-pubbliche e le chiavi recitano la parte delle chiavi private.
+Alice, il destinatario \`e Bob, i pacchi fanno le veci dei messaggi,
+i lucchetti recitano la parte delle chiavi pubbliche, e le chiavi dei
+lucchetti recitano la parte delle chiavi private.
 
-Alice chiede a Bob di spedirle il suo lucchetto, gi\`a aperto. La chiave
-dello stesso verr\`a per\`o gelosamente conservata da Bob. Alice riceve
-il lucchetto e, con esso, chiude il pacco e lo spedisce a Bob. Bob riceve
-il pacco e pu\`o aprirlo con la chiave di cui \`e l'unico proprietario.
-Similamente, se adesso Bob volesse mandare un altro pacco ad Alice,
-dovrebbe farlo chiudendolo con il lucchetto di Alice (che lei dovrebbe
-aver preventivamente dato a Bob) che solo lei potrebbe aprire.
+Bob spedisce ad Alice il suo lucchetto, gi\`a aperto, ma custodisce
+gelosamente la chiave dello stesso. Alice riceve il lucchetto e, con
+esso, chiude il pacco e lo spedisce a Bob. Bob riceve il pacco e pu\`o
+aprirlo con la chiave di cui \`e l'unico proprietario. Similamente, se
+adesso Bob volesse mandare un altro pacco ad Alice, dovrebbe farlo
+chiudendolo con il lucchetto di Alice (che lei dovrebbe aver
+preventivamente dato a Bob) che solo lei potrebbe aprire.
 
 \begin{figure}[!h]
   \centering
@@ -945,8 +949,8 @@ cosicch\`e decrittando $c$ si riottiene davvero $m$.
 
 \medskip
 Altrettato importante \`e la possibilit\`a di produrre facilmente
-implementazioni ``ragionevolmente efficienti'' di RSA. Esse si
-avvantaggiano dell'uso dell'algoritmo~\eqref{alg:square-and-multiply}
+implementazioni ``ragionevolmente efficienti'' di RSA. Tali implementazioni
+si avvantaggiano dell'uso dell'algoritmo~\eqref{alg:square-and-multiply}
 ``square and multiply'' per l'esponenziazone modulare (o di algoritmi
 simili, ma ancor pi\`u efficienti).
 
@@ -1010,7 +1014,7 @@ efficiente} a partire dalla conoscenza di $e$ e $d$, cosicch\`e  $p$ e $q$
 (e con essi anche $\ephi{n}$) sono rivelati.
 \end{proof}
 
-La sicurezza del crittosistema RSA deriva quindi dall'impossibilit\`a
+La sicurezza del crittosistema RSA dipende quindi dall'impossibilit\`a
 pratica di fattorizzare efficientemente numeri ``grandi'' che siano
 dati dal prodotto di due numeri primi ``grandi''.  Diremo di pi\`u su
 questo argomento pi\`u avanti, nella sezione~\eqref{sect:rsa-attacks}.
@@ -1026,39 +1030,39 @@ conoscenza della chiave privata -- che come noto non pu\`o essere resa
 nota al pubblico.}:
 %
 \begin{theorem}\label{thm:modular-exponentation-rsa-optimization}
-Sia $n = pq$ prodotto di due primi distinti, e siano $m$, $k$ due
-interi con $k > 0$.  Siano poi \,$k_p := \rem{k}{(p-1)}$,
-\,$k_q := \rem{k}{(q-1)}$, e sia $x$ intero tale che
+Sia $n = pq$ prodotto di due primi distinti, e siano $m$, $e$ due
+interi con $e > 0$.  Siano poi \,$e_p := \rem{e}{(p-1)}$,
+\,$e_q := \rem{e}{(q-1)}$, e sia $x$ intero tale che
 $px \congruent 1 \mmod q$. Risulta allora:
 \begin{displaymath}
-  m^k \congruent m^{k_p} + px\,\big(m^{k_q} - m^{k_p}\big)\mmod n
+  m^e \congruent m^{e_p} + px\,\big(m^{e_q} - m^{e_p}\big)\mmod n
 \end{displaymath}
 \end{theorem}
 %
 \begin{proof}
-Poniamo $a = m^{k_p} + px\p{m^{k_q} - m^{k_p}}$.  In virt\`u del
+Poniamo $a = m^{e_p} + px\p{m^{e_q} - m^{e_p}}$.  In virt\`u del
 teorema~\eqref{thm:TFA-mul-2}, per provare la tesi dobbiamo solo
-dimostrare che $m^k \congruent a \mmod p$ e $m^k \congruent a \mmod q$.
+dimostrare che $m^e \congruent a \mmod p$ e $m^e \congruent a \mmod q$.
 Ma \`e immediato verificare che:
 \begin{displaymath}
-  a \congruent m^{k_p} \mmod p
+  a \congruent m^{e_p} \mmod p
     \text{\quad e \quad}
-  a \congruent m^{k_q} \mmod q
+  a \congruent m^{e_q} \mmod q
 \end{displaymath}
-e dunque ci basta dimostrare che $m^k \congruent m^{k_p} \mmod p$ e
-$m^k \congruent m^{k_q} \mmod q$. Se $p \divides m$ si ha banalmente:
+e dunque ci basta dimostrare che $m^e \congruent m^{e_p} \mmod p$ e
+$m^e \congruent m^{e_q} \mmod q$. Se $p \divides m$ si ha banalmente:
 \begin{displaymath}
-  m^k \congruent m^{k_p} \congruent 0 \mmod p
+  m^e \congruent m^{e_p} \congruent 0 \mmod p
 \end{displaymath}
-mentre se $p \notdivides m$, posto $k = (p - 1)t_p + k_p$ con $t_p$ intero
+mentre se $p \notdivides m$, posto $e = (p - 1)t_p + e_p$ con $t_p$ intero
 opportuno, si ha per il teorema di Fermat (applicato nel secondo
 passaggio):
 \begin{displaymath}
-  m^k = \p{m^{p-1}}^{t_p} \cdot m^{k_p} \congruent 1^{t_p} \cdot m^{k_p}
-      \congruent m^{k_p} \mmod m
+  m^e = \p{m^{p-1}}^{t_p} \cdot m^{e_p} \congruent 1^{t_p} \cdot m^{e_p}
+      \congruent m^{e_p} \mmod m
 \end{displaymath}
-coicch\`e in ogni caso $m^k \congruent m^{k_p} \mmod p$. Analogamente si
-dimostra che $m^k \congruent m^{k_q} \mmod q$, e la tesi \`e provata.
+coicch\`e in ogni caso $m^e \congruent m^{e_p} \mmod p$. Analogamente si
+dimostra che $m^e \congruent m^{e_q} \mmod q$, e la tesi \`e provata.
 \end{proof}
 
 \subsection{Un esempio basilare dell'uso di RSA}
@@ -1066,7 +1070,7 @@ dimostra che $m^k \congruent m^{k_q} \mmod q$, e la tesi \`e provata.
 Presentiamo qui un semplice esempio dell'uso di RSA\footnote{Questo
 esempio \`e in effetti spudoratamente copiato da Wikipedia, ma visto
 che \`e usato anche nei nostri test python, non ci facciamo scrupolo
-a ``ripresentarlo''.}. Si noti che i parametri qui utilizzati sono
+a riportarlo.}. Si noti che i parametri qui utilizzati sono
 artificialmente piccoli, per evitare che dettagli e calcoli complessi
 oscurino l'esposizione. Nella pratica, i parametri coinvolti hanno
 in genere centinaia di cifre decimali.
@@ -1095,7 +1099,7 @@ da cui:
       & = & 2 \cdot \p{ 3120 - 183 \cdot 17 } - 17
       ~ = ~ 2 \cdot 3120 - 367 \cdot 17
 \end{eqnarray*}
-e quindi $d = \p{\rem{-367}{3120}} = 3120 - 367 = 2753$.
+e quindi $d = \rem{\p{-367}}{3120} = 3120 - 367 = 2753$.
 
 \medskip\noindent
 Dunque la chiave pubblica \`e \,$(3233,\;17)$\, e la chiave privata
@@ -1124,7 +1128,7 @@ Vorremo poi decriptare $c = 2790$, e verificare che il risulato \`e
 proprio $m = 65$ come ci si aspetterebbe. A tale scopo dobbiamo
 effettuare il pi\`u complesso calcolo $\rem{2790^{2753}}{3233}$.
 Sempre seguendo da vicino la nostra implementazione python, sfrutteremo a
-tale scopo il teorema~\eqref{thm:modular-exponentation-rsa-optimization}
+tale scopo il teorema~\eqref{thm:modular-exponentation-rsa-optimization}.
 
 \smallskip
 Essendo $2790 \congruent 45 \mmod{61}$ e $2753 \congruent 53 \mmod{60}$,
@@ -1134,8 +1138,8 @@ operando modulo $61$ abbiamo:
   \begin{eqnarray}
   2790^{2753}
     & \congruent &
-      {45}^{53} \p{{45}^2}^{26} \cdot 45 = 1764^{26} \cdot 45 \congruent
-      12^{26} \cdot 45 = 144^{13} \cdot 45 \congruent
+      {45}^{53} \congruent \p{{45}^2}^{26} \cdot 45 = 1764^{26} \cdot 45
+      \congruent 12^{26} \cdot 45 = 144^{13} \cdot 45 \congruent
     \nonumber\\
     & \congruent &
       22^{13} \cdot 45 = 22^{12} \cdot \p{22 \cdot 45} = {484}^6 \cdot 990
@@ -1197,13 +1201,13 @@ chiave privata}.  Ecco alcuni possibili attacchi di questo tipo:
   ottenere il testo in chiaro.
 \item
   Poich\`e RSA \`e un algoritmo di criptazione deterministico, il medesimo
-  testo in chiaro viene sempre trasforamato nello stesso testo criptato.
+  testo in chiaro viene sempre trasformato nello stesso testo criptato.
   RSA \`e dunque suscettibile ad attacchi di tipo ``chosen plaintext'':
   l'attaccante cripta possibili testi in chiaro\footnote{Si ricordi che
   la chiave pubblica permette ad ognuno di \emph{criptare} (ma non
   decriptare!) messaggi.}, confrontando poi i risultati con il messaggio
   criptato che vuole violare --- se c'\`e una corrispondanza, il testo in
-  chiaro ``tirato a indovinare'' \`e quello corretto.
+  chiaro che egli aveva ``tirato a indovinare'' \`e quello corretto.
 \item
   Il prodotto di due numeri cifrati risulta essere uguale al risultato
   cifratura del prodotto dei corrispettivi testi in chiaro.  La
@@ -1220,7 +1224,7 @@ chiave privata}.  Ecco alcuni possibili attacchi di questo tipo:
   il cui corrispondente testo in chiaro (ovviamente ignoto \emph{a priori})
   \`e $m$.  L'attacante pu\`o ``chiedere'' (probabilmente in maniera
   indiretta) al possessore della chiave privata la decriptazione del
-  differente, ed apparantemente innocuo, testo cifrato $c' = \rem{cr^e}{n}$
+  differente, ed apparentemente innocuo, testo cifrato $c' = \rem{cr^e}{n}$
   (ove il valore di $r$ \`e noto all'attacante).  Se il corrispondente
   testo in chiaro \`e $m'$, allora per la propriet\`a moltiplicativa di
   RSA descritta prima risulter\`a che $m' \congruent  mr \mmod n$; dunque,
@@ -1310,15 +1314,17 @@ Siano:
        la responsabilit\`a di frammentare un generico testo in chiaro in
        sottostringhe di lunghezza appropriata.};
  \item $G$ una funzione di hash crittografica che espande stringhe di bit
-       di lunghezza $k_0$ in stringhe di bit di lunghezza $n - k_0$ (in
-       effetti, ci\`o varr\`a in genere per stringhe di input di ogni
-       lunghezza);
+       di lunghezza $k_0$ in stringhe di bit di lunghezza $n - k_0$;
  \item $H$ una funzione di hash crittografica che espande stringhe di bit
-       di lunghezza $n - k_0$ in stringhe di bit di lunghezza $k_0$ (in
-       effetti, ci\`o varr\`a in genere per stringhe di input di ogni
-       lunghezza);
+       di lunghezza $n - k_0$ in stringhe di bit di lunghezza $k_0$;
 \end{itemize}
 %
+Si noti che in genere le funzioni $H$ e $G$ (che non possono essere
+fissate a priori, in quanto dipendono dalla dimensione della chiave)
+sono in genere derivate in maniera appropriata da funzioni di hash
+crittografiche standard.
+
+\medskip\noindent
 La procedura di codifica di un messaggio $m$ consiste allora dei seguenti
 passi:
 \begin{enumerate}
@@ -1379,28 +1385,27 @@ La procedura di decodifica consiste dei seguenti passi:
 \noindent
 Il procedimento di codifica \`e illustrato in
 figura~\eqref{fig:OAEP-diagram}.
-\vspace*{-10pt}
-\begin{figure}[!h]
+\begin{figure}[ht]
   \centering
     \includegraphics[scale=0.5]{OAEP-diagram}
     \caption{Diagramma dello schema di padding OAEP}
     \label{fig:OAEP-diagram}
 \end{figure}
 
+\bigskip
 Ricapitolando: il punto delle trasformazioni effettuate dal protocollo
 OEAP \`e che i dati casuali in $r$ sono, attraverso l'uso di $G$ ed $H$,
 mischiati ``a fondo'' con i bit del messaggio originale; il messaggio
 risultante \`e cos\`i pi\`u lungo e possiede ora un notevole grado di
 casualit\`a e impredicibilit\`a, il che rende le propriet\`a numeriche
-di RSA inutilizzabili in un eventuale attacco.
+e deterministiche di RSA inutilizzabili in un eventuale attacco.
 
 \begin{remark}
-La nostra implementazione in python di RSA non offre
-attualmente alcuna funzionalit\`a di padding, ed \`e quindi totalmente
-inappropriata per ogni uso pratico.  Tuttavia, essendo tale
-implementazione deliberatamente progettata per essere estesa in modo
-semplice e naturale, non dovrebbe essere difficile adattarla per
-introdurvi schemi di padding.
+La nostra implementazione di RSA in python non offre attualmente alcuna
+funzionalit\`a di padding, ed \`e quindi totalmente inappropriata per
+ogni uso pratico.  Tuttavia, essendo tale implementazione deliberatamente
+progettata per essere estesa in modo semplice e naturale, non dovrebbe
+essere difficile adattarla per introdurvi schemi di padding.
 \end{remark}
 
 \subsection{Cenni ad altri attachi ad RSA}\label{sect:rsa-attacks}
@@ -1432,9 +1437,9 @@ la chiave privata.
 
 L'attacco delineato nel punto~\eqref{item:fermat-vulnerable} della
 precedente sezione \`e basato sul coddetto \emph{metodo di fattorizzazione
-di Fermat}, un algoritmo piuttosto elementare che si pu\` applicare a tutti
-gli interi dispari, e che risulta particolarmente efficace per numeri aventi
-fattori non banali ``vicini'' tra loro.
+di Fermat}, un algoritmo piuttosto elementare che si pu\`o applicare a
+tutti gli interi dispari, e che risulta particolarmente efficace per
+numeri aventi fattori non banali ``vicini'' tra loro.
 
 Il metodo si basa sull'osservazione che se un intero $n$ \`e rappresentabile
 come una differenza di quadrati interi:
@@ -1467,8 +1472,9 @@ o equivalentemente:
   a_{i+1} & := & a_i + 1 \\
   B_{i+1} & := & B_i + 2 a_i + 1
 \end{eqnarray*}
-Dopo l'ultima interazione, si ha che $b := \sqrt{B}$ \`e intero, che
-$a - b$ \`e un fattore non banale di $n$, e che $n = (a - b)(a + b)$.
+Dopo l'ultima iterazione $k$, si ha che $a := a_k$ e $b := \sqrt{B_k}$
+sono interi, che $a - b$ \`e un fattore non banale di $n$, e che
+$n = (a - b)(a + b)$.
 \end{algorithm}
 
 Per esempio, per fattorizzare $n = 5959$ con il metodo di Fermat, si
@@ -1488,19 +1494,19 @@ Una propriet\`a del metodo di Fermat particolarmente importante per RSA
 prodotto di due primi distinti \emph{relativamente} vicini:
 \begin{theorem}
 Sia $n = pq$, con $p$ e $q$ primi dispari distinti e $p > q$, e sia
-$t$ intero tale che $p - q \leq \sqrt{2t}\sqrt[4]{n}$. Allora il metodo
+$t$ intero tale che $p - q \leq 2\sqrt{2t}\sqrt[4]{n}$. Allora il metodo
 di Fermat applicato ad $n$ termina in al pi\`u $t$ passi.
 \end{theorem}
 \begin{proof}
-Poich\`e il metodo di Fermat offre sempre una fattorizzazione non banale,
-poich\`e $n$ ammette un'unica fattorizzazione non banale, e poich\`e,
-$p > q$, avremo che $p = \frac{a + b}{2}$ e $q = \frac{a - b}{2}$, dove
-$a$ e $b$ sono ricavati dal metodo di Fermat.
+Poich\`e il metodo di Fermat offre sempre (quando applicato ad interi
+composti) una fattorizzazione non banale, poich\`e $n$ ammette un'unica
+fattorizzazione non banale, e poich\`e, $p > q$, avremo che $p = a + b$
+e $q = a - b$, dove $a$ e $b$ sono ricavati dal metodo di Fermat.
 
 \medskip\noindent
 Abbiamo poi:
 \begin{displaymath}
-  b = p - q \leq \sqrt{2t}\sqrt[4]{n} \implies b^2 \leq 2t\sqrt{n}
+  2b = p - q \leq 2\sqrt{2t}\sqrt[4]{n} \implies b^2 \leq 2t\sqrt{n}
 \end{displaymath}
 da cui:
 \begin{displaymath}
@@ -1528,7 +1534,7 @@ ogni spiegazione della terminologia coinvolta:
 
 \begin{theorem}
 Siano $p < q < 2p$, $n = pq$, $d \leq \frac{\sqrt[4]{n}}{\sqrt{6}}$.
-Noti $n$ ed $e$ tale che $ed \congruent 1 \mmod{\ephi{n}}$, esiste un
+Noti $n$ ed $e$ tali che $ed \congruent 1 \mmod{\ephi{n}}$, esiste un
 algoritmo deterministico polinomiale in $\log n$ che consente di
 determinare $d$.
 \end{theorem}
