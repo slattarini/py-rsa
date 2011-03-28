@@ -552,8 +552,7 @@ class BasicEncrypter:
 
     def _modexp(self, integer, exponent):
         if not 0 <= integer < self.key.n:
-            # FIXME: better error class?
-            raise CryptoRuntimeError("integer %d out of range" % integer)
+            raise CryptoValueError("integer %d out of range" % integer)
         return (self.mod_n(integer)**exponent).residue
 
     def _encrypt(self, integer):
