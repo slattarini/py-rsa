@@ -14,7 +14,6 @@
 \usepackage{verbatim}
 \usepackage{amsfonts,mathrsfs,amsmath,amssymb,amstext,amsthm}
 \usepackage{graphicx}
-\usepackage{xcolor}
 
 \usepackage[perpage,symbol]{footmisc}
 
@@ -33,44 +32,23 @@
 \let\OldEmph\emph
 \renewcommand{\emph}[1]{\OldEmph{#1\/}}
 
-\newcommand{\XXX}[1][XXX]{\text{\bfseries{\color{red}{\emph{#1}}}}}
-\newcommand{\TODO}[0]{\XXX[TODO]}
-\newcommand{\FIXME}[0]{\XXX[FIXME]}
-\newcommand{\UNEXPANDED}[0]{\XXX[SHOULD-BE-UNEXPANDED]}
-
-\newcommand{\acro}[1]{\text{{\frenchspacing {#1} }}}
-\newcommand{\ie}[0]{\acro{i.e.}}
-\newcommand{\eg}[0]{\acro{e.g.}}
-\newcommand{\tc}[0]{\acro{t.c.}}
-
 \newcommand{\p}[1]{\left({#1}\right)}
-\newcommand{\q}[1]{\left({#1}\right)^2}
 \newcommand{\abs}[1]{\left|{#1}\right|}
-\newcommand{\card}[1]{\abs{#1}}
-\newcommand{\varcard}[2][\,]{\pmb{\#}{#1}{#2}}
 
 \let\gold=\varphi
 \newcommand{\ephi}[1]{\ensuremath{\phi\p{#1}}}
-
-\newcommand{\N}[0]{\mathbb{N}}
-\newcommand{\Z}[0]{\mathbb{Z}}
 
 \newcommand{\divides}[0]{\mid}
 \newcommand{\notdivides}[0]{\nmid}
 
 \newcommand{\floor}[1]{\left\lfloor{#1}\right\rfloor}
-\newcommand{\ceil}[1]{\left\lceil{#1}\right\rceil}
 
 \newcommand{\congruent}[0]{\equiv}
 \newcommand{\notcongruent}[0]{\not\equiv}
 \newcommand{\mmodop}[0]{\ensuremath{\operatorname{mod}}}
 \newcommand{\mmod}[1]{\ensuremath{\allowbreak\ (\mmodop\:{#1})}}
-\newcommand{\xmod}[1]{\ensuremath{\allowbreak\ \left(\mmodop\:{#1}\right)}}
 \newcommand{\rem}[2]{\ensuremath{{#1}\:\mmodop\:{#2}}}
 
-\newcommand{\cc}[2][m]{\ensuremath{\left[\:{#2}\,\right]_{\,#1}}}
-
-\newcommand{\iseq}[1]{\ensuremath{0,\,1,\,\ldots,\, {#1} - 1}}
 \newcommand{\set}[1]{\ensuremath{\left\{\,{#1}\,\right\}}}
 \newcommand{\setdef}[2]{\set{{#1}:\:{#2}}}
 
@@ -82,7 +60,7 @@
 
 %%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-\newtheorem{TheoremLike}{\UNEXPANDED}
+\newtheorem{TheoremLike}{\text{\bfseries{\emph{BAD-EXPANSION}}}}
 \newtheorem{algorithm}[TheoremLike]{Algoritmo}
 \newtheorem{*xalgorithm}{Algoritmo}
 \newtheorem{theorem}[TheoremLike]{Teorema}
@@ -93,12 +71,6 @@
 \newtheorem*{xlemma}{Lemma}
 \newtheorem{corollary}[TheoremLike]{Corollario}
 \newtheorem*{xcorollary}{Corollario}
-\newtheorem{proposition}[TheoremLike]{Proposizione}
-\newtheorem*{xproposition}{Proposizione}
-\newtheorem{example}[TheoremLike]{Esempio}
-\newtheorem*{xexample}{Esempio}
-\newtheorem{property}[TheoremLike]{Propriet\`a}
-\newtheorem*{xproperty}{Propriet\`a}
 \newtheorem{remark}[TheoremLike]{Osservazione}
 \newtheorem*{xremark}{Osservazione}
 
@@ -523,7 +495,7 @@ che $a \congruent b \mmod m$.
 \begin{proof}
 Abbiamo che $ac \congruent bc \mmod m$, ossia $m \divides \p{a -b}c$.
 Poich\`e $c$ ed $m$ sono coprimi, dal teorema~\eqref{thm:TFA-div}
-segue che $m \divides \p{a -b}c$, \ie $a \congruent b \mmod m$.
+segue che $m \divides \p{a -b}c$, i.e., $a \congruent b \mmod m$.
 \end{proof}
 
 \begin{definition}
