@@ -545,9 +545,8 @@ def test_integermod_repr():
             and repr(MySubClass(23)) == "MySubClass(1)")
 
 
-@with_params([integers_mod], 'factory')
-def test_integermod_named_params(factory):
-    IntegerMod2 = factory(2)
+def test_integermod_named_params():
+    IntegerMod2 = integers_mod(2)
     assert IntegerMod2(whole=1) == IntegerMod2(1)
 
 def test_integermod_pq_init():
@@ -577,36 +576,32 @@ def test_integermod_pq_subclass_incomplete_instantiation_exception(attr):
 
 
 # Test that 'whole % modulo == residue' (subclassing IntegerMod)
-@with_params([integers_mod], 'factory')
 @with_params(init_known_values)
-def test_make_int_modulo_int(whole, modulo, residue, factory):
-    got = factory(modulo)(whole).residue
+def test_make_int_modulo_int(whole, modulo, residue):
+    got = integers_mod(modulo)(whole).residue
     assert residue == got, \
            "%u = %u != %u (mod %u)" % (whole, got, residue, modulo)
 
 
 # Test that an IntegerMods can be converted to itself.
-@with_params([integers_mod], 'factory')
 @with_params(init_known_values)
-def test_int_modulo_int_to_itself(whole, modulo, residue, factory):
-    integermod_subclass = factory(modulo)
+def test_int_modulo_int_to_itself(whole, modulo, residue):
+    integermod_subclass = integers_mod(modulo)
     integermod_instance1 = integermod_subclass(whole)
     integermod_instance2 = integermod_subclass(integermod_instance1)
     assert integermod_instance1 == integermod_instance2
 
 # Test that an IntegerMod converte to itself return a copy, not
 # a reference to self.
-@with_params([integers_mod], 'factory')
-def test_int_modulo_int_to_itself_copy_not_ref(factory):
-    integermod_subclass = factory(5)
+def test_int_modulo_int_to_itself_copy_not_ref():
+    integermod_subclass = integers_mod(5)
     integermod_instance1 = integermod_subclass(1)
     integermod_instance2 = integermod_subclass(integermod_instance1)
     assert integermod_instance1 is not integermod_instance2
 
-@with_params([integers_mod], 'factory')
-def test_integermod_different_subclasses_not_equal(factory):
-    integermod_subclass_1 = factory(2)
-    integermod_subclass_2 = factory(2)
+def test_integermod_different_subclasses_not_equal():
+    integermod_subclass_1 = integers_mod(2)
+    integermod_subclass_2 = integers_mod(2)
     instance_subclass_1 = integermod_subclass_1(1)
     instance_subclass_2 = integermod_subclass_2(1)
     # In case both __eq__ and __neq__ are defined
@@ -614,170 +609,146 @@ def test_integermod_different_subclasses_not_equal(factory):
             and not (instance_subclass_1 == instance_subclass_2))
 
 
-@with_params([integers_mod], 'factory')
 @with_params(stringify_data)
-def test_stringify(whole, modulo, string, factory):
-    integermod_subclass = factory(modulo)
+def test_stringify(whole, modulo, string):
+    integermod_subclass = integers_mod(modulo)
     assert str(integermod_subclass(whole)) == string
 
 
-@with_params([integers_mod], 'factory')
 @with_params(init_known_values)
-def test_integermod_equality(whole, modulo, residue, factory):
-    cls = factory(modulo)
+def test_integermod_equality(whole, modulo, residue):
+    cls = integers_mod(modulo)
     assert (cls(whole) == cls(whole) and
             cls(whole) == cls(residue) and
             cls(residue) == cls(whole))
 
-@with_params([integers_mod], 'factory')
 @with_params(init_known_values)
-def test_integermod_equality_negated(whole, modulo, residue, factory):
-    cls = factory(modulo)
+def test_integermod_equality_negated(whole, modulo, residue):
+    cls = integers_mod(modulo)
     if modulo != 1:
         assert (not (cls(whole+1) == cls(whole)) and
                 not (cls(whole) == cls(residue+1)) and
                 not (cls(whole+1) == cls(residue)))
 
-@with_params([integers_mod], 'factory')
 @with_params(init_known_values)
-def test_integermod_inequality_negated(whole, modulo, residue, factory):
-    cls = factory(modulo)
+def test_integermod_inequality_negated(whole, modulo, residue):
+    cls = integers_mod(modulo)
     assert (not (cls(whole) != cls(whole)) and
             not (cls(whole) != cls(residue)) and
             not (cls(residue) != cls(whole)))
 
-@with_params([integers_mod], 'factory')
 @with_params(init_known_values)
-def test_integermod_inequality(whole, modulo, residue, factory):
-    cls = factory(modulo)
+def test_integermod_inequality(whole, modulo, residue):
+    cls = integers_mod(modulo)
     if modulo != 1:
         assert (cls(whole+1) != cls(whole) and
                 cls(whole) != cls(residue+1) and
                 cls(whole+1) != cls(residue))
 
 
-@with_params([integers_mod], 'factory')
 @with_params(addition_data)
-def test_integermod_add(modulo, addend1, addend2, result, factory):
-    cls = factory(modulo)
+def test_integermod_add(modulo, addend1, addend2, result):
+    cls = integers_mod(modulo)
     check_integermod_result(cls, result, cls(addend1) + cls(addend2))
 
-@with_params([integers_mod], 'factory')
 @with_params(addition_data)
-def test_integermod_ladd(modulo, addend1, addend2, result, factory):
-    cls = factory(modulo)
+def test_integermod_ladd(modulo, addend1, addend2, result):
+    cls = integers_mod(modulo)
     check_integermod_result(cls, result, cls(addend1) + addend2)
 
-@with_params([integers_mod], 'factory')
 @with_params(addition_data)
-def test_integermod_radd(modulo, addend1, addend2, result, factory):
-    cls = factory(modulo)
+def test_integermod_radd(modulo, addend1, addend2, result):
+    cls = integers_mod(modulo)
     check_integermod_result(cls, result, addend1 + cls(addend2))
 
 
-@with_params([integers_mod], 'factory')
 @with_params(subtraction_data)
-def test_integermod_sub(modulo, minuend, subtrahend, result, factory):
-    cls = factory(modulo)
+def test_integermod_sub(modulo, minuend, subtrahend, result):
+    cls = integers_mod(modulo)
     check_integermod_result(cls, result, cls(minuend) - cls(subtrahend))
 
-@with_params([integers_mod], 'factory')
 @with_params(subtraction_data)
-def test_integermod_lsub(modulo, minuend, subtrahend, result, factory):
-    cls = factory(modulo)
+def test_integermod_lsub(modulo, minuend, subtrahend, result):
+    cls = integers_mod(modulo)
     check_integermod_result(cls, result, cls(minuend) - subtrahend)
 
-@with_params([integers_mod], 'factory')
 @with_params(subtraction_data)
-def test_integermod_rsub(modulo, minuend, subtrahend, result, factory):
-    cls = factory(modulo)
+def test_integermod_rsub(modulo, minuend, subtrahend, result):
+    cls = integers_mod(modulo)
     check_integermod_result(cls, result, minuend - cls(subtrahend))
 
 
-@with_params([integers_mod], 'factory')
 @with_params(multiplication_data)
-def test_integermod_mul(modulo, factor1, factor2, result, factory):
-    cls = factory(modulo)
+def test_integermod_mul(modulo, factor1, factor2, result):
+    cls = integers_mod(modulo)
     check_integermod_result(cls, result, cls(factor2) * cls(factor1))
 
-@with_params([integers_mod], 'factory')
 @with_params(multiplication_data)
-def test_integermod_lmul(modulo, factor1, factor2, result, factory):
-    cls = factory(modulo)
+def test_integermod_lmul(modulo, factor1, factor2, result):
+    cls = integers_mod(modulo)
     check_integermod_result(cls, result, cls(factor1) * factor2)
 
-@with_params([integers_mod], 'factory')
 @with_params(multiplication_data)
-def test_integermod_rmul(modulo, factor1, factor2, result, factory):
-    cls = factory(modulo)
+def test_integermod_rmul(modulo, factor1, factor2, result):
+    cls = integers_mod(modulo)
     check_integermod_result(cls, result, factor1 * cls(factor2))
 
 
-@with_params([integers_mod], 'factory')
 @with_params(division_data)
-def test_integermod_div(modulo, dividend, divisor, result, factory):
-    cls = factory(modulo)
+def test_integermod_div(modulo, dividend, divisor, result):
+    cls = integers_mod(modulo)
     check_integermod_result(cls, result, cls(dividend) / cls(divisor))
 
-@with_params([integers_mod], 'factory')
 @with_params(division_data)
-def test_integermod_ldiv(modulo, dividend, divisor, result, factory):
-    cls = factory(modulo)
+def test_integermod_ldiv(modulo, dividend, divisor, result):
+    cls = integers_mod(modulo)
     check_integermod_result(cls, result, cls(dividend) / divisor)
 
-@with_params([integers_mod], 'factory')
 @with_params(division_data)
-def test_integermod_rdiv(modulo, dividend, divisor, result, factory):
-    cls = factory(modulo)
+def test_integermod_rdiv(modulo, dividend, divisor, result):
+    cls = integers_mod(modulo)
     check_integermod_result(cls, result, dividend / cls(divisor))
 
 
-@with_params([integers_mod], 'factory')
 @with_params(additive_inversion_data)
-def test_integermod_inverse(modulo, residue, inverse, factory):
-    cls = factory(modulo)
+def test_integermod_inverse(modulo, residue, inverse):
+    cls = integers_mod(modulo)
     check_integermod_result(cls, inverse, - cls(residue))
 
 
-@with_params([integers_mod], 'factory')
 @with_params(multiplicative_inversion_data)
-def test_integermod_reciprocal_pow(modulo, residue, reciprocal, factory):
-    cls = factory(modulo)
+def test_integermod_reciprocal_pow(modulo, residue, reciprocal):
+    cls = integers_mod(modulo)
     check_integermod_result(cls, reciprocal, cls(residue)**(-1))
 
-@with_params([integers_mod], 'factory')
 @with_params(multiplicative_inversion_data)
-def test_integermod_reciprocal_rdiv(modulo, residue, reciprocal, factory):
-    cls = factory(modulo)
+def test_integermod_reciprocal_rdiv(modulo, residue, reciprocal):
+    cls = integers_mod(modulo)
     check_integermod_result(cls, reciprocal, cls(1) / residue)
 
-@with_params([integers_mod], 'factory')
 @with_params(multiplicative_inversion_data)
-def test_integermod_reciprocal_ldiv(modulo, residue, reciprocal, factory):
-    cls = factory(modulo)
+def test_integermod_reciprocal_ldiv(modulo, residue, reciprocal):
+    cls = integers_mod(modulo)
     check_integermod_result(cls, reciprocal, 1 / cls(residue))
 
 @with_params(multiplicative_inversion_data)
 def test_integermod_reciprocal_func(modulo, residue, reciprocal):
     assert RSA.modular_reciprocal(residue, modulo) == reciprocal
 
-@with_params([integers_mod], 'factory')
 @with_params(noncoprime_modulo_and_residue_data)
 @with_params([1,2,3,10,1023], 'exp')
-def test_integermod_invalid_reciprocal_pow(modulo, residue, exp, factory):
-    cls = factory(modulo)
+def test_integermod_invalid_reciprocal_pow(modulo, residue, exp):
+    cls = integers_mod(modulo)
     pytest.raises(RSA.IMValueError, "cls(%d)**(-%u)" % (residue, exp))
 
-@with_params([integers_mod], 'factory')
 @with_params(noncoprime_modulo_and_residue_data)
-def test_integermod_invalid_reciprocal_rdiv(modulo, residue, factory):
-    cls = factory(modulo)
+def test_integermod_invalid_reciprocal_rdiv(modulo, residue):
+    cls = integers_mod(modulo)
     pytest.raises(RSA.IMValueError, "cls(1)/%d" % residue)
 
-@with_params([integers_mod], 'factory')
 @with_params(noncoprime_modulo_and_residue_data)
-def test_integermod_invalid_reciprocal_ldiv(modulo, residue, factory):
-    cls = factory(modulo)
+def test_integermod_invalid_reciprocal_ldiv(modulo, residue):
+    cls = integers_mod(modulo)
     pytest.raises(RSA.IMValueError, "1/cls(%d)" % residue)
 
 @with_params(noncoprime_modulo_and_residue_data)
@@ -786,41 +757,36 @@ def test_integermod_invalid_reciprocal_func(modulo, residue):
                   residue, modulo)
 
 
-@with_params([integers_mod], 'factory')
 @with_params(exponentiation_data)
-def test_integermod_exponentiation(modulo, base, exponent, result, factory):
-    cls = factory(modulo)
+def test_integermod_exponentiation(modulo, base, exponent, result):
+    cls = integers_mod(modulo)
     check_integermod_result(cls, result, cls(base)**exponent)
 
-@with_params([integers_mod], 'factory')
 @with_params(zero_to_zero_exponentiation_modulos, 'modulo')
-def test_integermod_zero_to_zero_exponentiation(modulo, factory):
-    cls = factory(modulo)
+def test_integermod_zero_to_zero_exponentiation(modulo):
+    cls = integers_mod(modulo)
     check_integermod_result(cls, 0, cls(0)**0)
 
 @with_params([1.0, '1', [1], (1,), {1:1}, DummyClass(), object()], 'other')
 @with_params(['+', '-', '*', '/', '**'], 'operation')
-@with_params([integers_mod], 'factory')
 @with_params([2, 100, (5, 11), (97, 73)], 'modulo')
-def test_integermod_invalid_operation(other, operation, modulo, factory):
-    cls = factory(modulo)
+def test_integermod_invalid_operation(other, operation, modulo):
+    cls = integers_mod(modulo)
     pytest.raises(RSA.IMTypeError, "cls(0) %s other" % operation)
     if operation != '**':
         pytest.raises(RSA.IMTypeError, "other %s cls(0)" % operation)
 
 @with_params([dict(b=3, e=2), dict(b=(3, 5), e=8)])
-@with_params([integers_mod], 'factory')
-def test_integermodpq_invalid_exponentation(factory, b, e):
-    int_mod_b = factory(b)
-    int_mod_e = factory(e)
+def test_integermodpq_invalid_exponentation(b, e):
+    int_mod_b = integers_mod(b)
+    int_mod_e = integers_mod(e)
     pytest.raises(RSA.IMTypeError, "int_mod_b(1) ** int_mod_b(1)")
     pytest.raises(RSA.IMTypeError, "int_mod_b(1) ** int_mod_e(1)")
 
 
-@with_params([integers_mod], 'factory')
 @with_params(primes, 'p')
-def test_prime_integermod_reciprocal(p, factory):
-    cls = factory(p)
+def test_prime_integermod_reciprocal(p):
+    cls = integers_mod(p)
     if p == 2:
         x = y = 1
     else:
@@ -829,23 +795,21 @@ def test_prime_integermod_reciprocal(p, factory):
     assert (cls(x)**(-1)) == cls(y)
 
 
-@with_params([integers_mod], 'factory')
 @with_params(primes, 'p')
-def test_fermat_little_theorem(p, factory):
-    cls = factory(p)
+def test_fermat_little_theorem(p):
+    cls = integers_mod(p)
     for d in (2, 3, 10):
         x = max(1, p//d)
         assert cls(x)**(p - 1) == cls(1)
 
-@with_params([integers_mod], 'factory')
 @with_params(primes, 'p')
-def test_integermod_reciprocal_power_of_prime(p, factory):
+def test_integermod_reciprocal_power_of_prime(p):
     # It can be proved that if p is prime and:
     #  a^-1 = b (mod p^n)
     # then:
     #  a^-1 = 2 * b - a * b^2 (mod p^(n+1))
-    modp100 = factory(p**120)
-    modp101 = factory(p**121)
+    modp100 = integers_mod(p**120)
+    modp101 = integers_mod(p**121)
     if p == 5:
         a = 3**113
     else:
@@ -854,5 +818,6 @@ def test_integermod_reciprocal_power_of_prime(p, factory):
     b_exp = modp101(2 * b - a * b**2)
     b_got = 1 / modp101(a)
     assert b_exp == b_got
+
 
 # vim: et sw=4 ts=4 ft=python
