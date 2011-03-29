@@ -559,10 +559,10 @@ moltiplicazioni.
 Un metedo assai pi\`u efficiente deriva dalle seguenti relazioni
 (pressoch\`e immediate, se non banali, da dimostrare):
 \begin{eqnarray}
-  a^{2n}   & \congruent & \p{\rem{a^2}{m}}^m \mmod m
+  a^{2n}   & \congruent & \p{\rem{a^2}{m}}^n \mmod m
     \label{eq:sq-mul-even}
   \\
-  a^{2n+1} & \congruent & a \p{\rem{a^2}{m}}^m \mmod m
+  a^{2n+1} & \congruent & a \p{\rem{a^2}{m}}^n \mmod m
     \label{eq:sq-mul-odd}
 \end{eqnarray}
 %
@@ -692,11 +692,11 @@ $R$ ed $S$ sono due sistemi completi di residui modulo $p$ si ha:
 
 Sia ora $a$ un intero non divisibile per $p$. Allora $a$ \`e primo con
 $p$, da cui segue che $ax \not\congruent ay \mmod a$ se $x \not\congruent
-y \mmod m$. Dunque l'insieme $\setdef{ax}{0 \leq x \leq p}$ \`e un
+y \mmod m$. Dunque l'insieme $\setdef{ax}{0 \leq x < p}$ \`e un
 sistema completo di residui modulo $m$, cosicch\`e
 da~\eqref{eq:product-complete-residue-system} deriva:
 \begin{displaymath}
-  \prod_{1 \leq x \leq p} ax \congruent \prod_{1 \leq x \leq p} a \mmod m
+  \prod_{1 \leq x < p} ax \congruent \prod_{1 \leq x < p} a \mmod m
 \end{displaymath}
 ossia:
 \begin{displaymath}
@@ -920,7 +920,7 @@ python.}:
 \end{enumerate}
 
 Si noti che, grazie all'algoritmo di Euclide esteso, ricavare la
-chiave privata a partire dalla dalla chiava pubblica \`e facile ed
+chiave pubblica a partire dalla dalla chiava privata \`e facile ed
 efficiente. D'altra parte, come visto nella precedente sezione,
 affinc\`e il crittosistema RSA funzioni, \`e necessario che il
 viceversa (ossia ricavare la chiave privata dalla chiave pubblica)
@@ -1185,7 +1185,7 @@ come ci si aspettava.
 
 \subsection{Attachi ad RSA e schemi di padding}\label{sect:rsa-padding}
 
-L'algoritmo RSA ``semplice'', come descritto non nella precedente sezione%
+L'algoritmo RSA ``semplice'', come descritto nella precedente sezione%
 ~\eqref{sect:rsa-basic}, non \`e purtroppo veramente sicuro.  In effetti,
 la sua elegante semplicit\`a e alcune delle sue interessanti propriet\`a
 matematiche possono essere sfruttate da un attaccante per decriptare
