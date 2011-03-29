@@ -9,7 +9,7 @@
 .SUFFIXES:
 
 PACKAGE := py-rsa
-VERSION := 0.5
+VERSION := 0.5.1
 MAKEFILE := GNUmakefile
 
 GZIP := gzip
